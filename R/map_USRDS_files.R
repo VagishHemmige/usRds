@@ -1,4 +1,12 @@
-#This function maps all CSV and SAS files in the USRDS working directory defined above
+#' This function maps all CSV and SAS files in the USRDS working directory defined by
+#' the function 'set_USRDS_wd()'
+#'
+#' @return tibble
+#' @export
+#'
+#' @examples
+#'
+#'
 map_USRDS_files<-function() {
 
 
@@ -16,7 +24,7 @@ map_USRDS_files<-function() {
   #Creates a clean data frame with file_name and file_path variables of CSVs
   File_List_csv_clean<<-tibble(file_path=File_List_csv_raw)%>%
     filter(str_detect(File_List_csv_raw,paste(USRDS_directories, collapse = "|")))%>%
-    mutate(file_name=path_file(file_path))%>%
+    mutate(file_name=fs::path_file(file_path))%>%
     mutate(file_path=paste0(USRDS_wd,"/",file_path))
 
   #Creates raw list of all SAS files stored in USRDS WD
@@ -25,7 +33,7 @@ map_USRDS_files<-function() {
   #Creates a clean data frame with file_name and file_path variables of SAS files
   File_List_sas_clean<<-tibble(file_path=File_List_sas_raw)%>%
     filter(str_detect(File_List_sas_raw,paste(USRDS_directories, collapse = "|")))%>%
-    mutate(file_name=path_file(file_path))%>%
+    mutate(file_name=fs::path_file(file_path))%>%
     mutate(file_path=paste0(USRDS_wd,"/",file_path))
 
   #Merge files, separate the root and suffix, create a label for year

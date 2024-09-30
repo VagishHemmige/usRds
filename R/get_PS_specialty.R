@@ -1,0 +1,57 @@
+.load_individual_file_PS_specialty<-function(file_path,file_root,file_suffix,Year,file_directory,specialtycodelist,
+                                            variablelist)
+{
+  print(file_path)
+  print(file_root)
+  print(file_suffix)
+  print(Year)
+  print(file_directory)
+  print(specialtycodelist)
+
+
+  if( file_suffix=="csv")
+  {
+    temp<-read_csv(file_path)%>%
+      rename_with(toupper)%>%
+      filter(SPCLTY %in% specialtycodelist)%>%
+      select(all_of(variablelist))%>%
+      mutate(CLM_FROM=dmy(CLM_FROM))
+    return(temp)
+  }
+
+  if( file_suffix=="sas7bdat")
+  {
+    temp<-haven::read_sas(file_path, col_select=variablelist)%>%
+      rename_with(toupper)%>%
+      filter(SPCLTY %in% specialtycodelist)%>%
+      return(temp)
+  }
+
+}
+get_PS_specialty<-function(specialtycodelist,yearlist, DIAG=FALSE, HCPCS=FALSE, PLCSRV=FALSE) {
+
+  variablelist<-c("USRDS_ID","CLM_FROM","SPCLTY")
+
+  if( DIAG==TRUE)
+  {
+    variablelist<-c(variablelist, "DIAG")
+  }
+
+  if( HCPCS==TRUE)
+  {
+    variablelist<-c(variablelist, "HCPCS")
+  }
+
+  if( PLCSRV==TRUE)
+  {
+    variablelist<-c(variablelist, "PLCSRV")
+  }
+
+
+  .File_List_clean%>%
+    inner_join(PS_HCPCS) %>%
+    filter(Year %in% yearlist)%>%
+    pmap(.load_individual_file_PS_specialty,specialtycodelist, variablelist)%>%
+    bind_rows()%>%
+    return()
+}

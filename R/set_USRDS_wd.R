@@ -11,7 +11,7 @@
 set_USRDS_wd<-function(x) {
 
 
-    USRDS_wd<<-x
+    .USRDS_wd<<-x
 }
 
 #This function sets the working directory where the USRDS files are stored

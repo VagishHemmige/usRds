@@ -12,6 +12,7 @@ RoxygenNote: 7.2.3
 URL: https://github.com/VagishHemmige/usRds
 BugReports: https://github.com/VagishHemmige/usRds/issues
 Depends: 
+    R (>= 2.10),
     tidyverse
 Imports: 
     dplyer,

@@ -7,9 +7,9 @@ devtools::install_github("VagishHemmige/usRds")
 You will need to use the **set_USRDS_wd** function to establish the directory where the USRDS files are stored, and the 
 **map_USRDS_files** function afterward to set up the main functions to extract data from the USRDS:
 
-get_IN_HCPCS
-get_IN_ICD
-get_PS_ICD
-get_PS_HCPCS
+get_IN_HCPCS  
+get_IN_ICD  
+get_PS_ICD  
+get_PS_HCPCS  
 
 Much more, including help files, vignettes, etc. will be coming soon!

@@ -1,12 +1,22 @@
-#' This function maps all CSV and SAS files in the USRDS working directory defined by
-#' the function 'set_USRDS_wd()'
+#' Map USRDS data files in the working directory
 #'
-#' @return tibble
+#' Scans the directory set with `set_USRDS_wd()` and identifies all relevant CSV and SAS files
+#' in standard USRDS subdirectories. The resulting file list is parsed into a structured tibble
+#' with file paths, inferred data types, and years.
+#'
+#' This function populates a global variable `.File_List_clean` for downstream use
+#' in data extraction functions.
+#'
+#' @return A tibble with columns: `file_path`, `file_root`, `file_suffix`, `Year`, `file_directory`
 #' @export
 #'
 #' @examples
-#'
-#'
+#' \dontrun{
+#' set_USRDS_wd("C:/path/to/usrds")
+#' file_map <- map_USRDS_files()
+#' head(file_map)
+#' }
+
 map_USRDS_files<-function() {
 
 

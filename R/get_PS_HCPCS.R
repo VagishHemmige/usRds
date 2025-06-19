@@ -1,3 +1,9 @@
+#' Load and filter a single PS HCPCS file
+#'
+#' Internal helper function to load and filter a single file by HCPCS codes.
+#'
+#' @noRd
+
 .load_individual_file_PS_HCPCS<-function(file_path,file_root,file_suffix,Year,file_directory,HCPCScodelist,
                                         variablelist)
 {
@@ -30,6 +36,18 @@
 
 }
 
+
+#' Searches Physician Supplier files for HCPCS codes in specific years
+#'
+#' This function searches all physician supplier files from the appropriate year
+#'
+#' @param HCPCScodelist ICD codes to identify
+#' @param yearlist Years to search
+#'
+#' @return Data frame
+#' @export
+#'
+#' @examples
 get_PS_HCPCS<-function(HCPCScodelist,yearlist) {
 
   .variablelist<-c("USRDS_ID","CLM_FROM","HCPCS")

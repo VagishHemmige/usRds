@@ -9,6 +9,9 @@ set_USRDS_wd(x)
 \arguments{
 \item{x}{The path to the directory where the USRDS files are stored}
 }
+\value{
+Invisibly returns the path as a character string.
+}
 \description{
-Set USRDS working directory
+This function sets the working directory where the USRDS files are stored
 }

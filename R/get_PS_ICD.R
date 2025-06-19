@@ -1,3 +1,9 @@
+#' Load and filter a single PS ICD file
+#'
+#' Internal helper function to load and filter a single file by ICD codes.
+#'
+#' @noRd
+
 .load_individual_file_PS_ICD<-function(file_path,file_root,file_suffix,Year,file_directory,ICDcodelist)
 {
   print(file_path)
@@ -28,6 +34,18 @@
 
 }
 
+
+#' Searches Physician Supplier files for ICD codes in specific years
+#'
+#' This function searches all physician supplier files from the appropriate year
+#'
+#' @param ICDcodelist ICD codes to identify
+#' @param yearlist Years to search
+#'
+#' @return Data frame
+#' @export
+#'
+#' @examples
 get_PS_ICD<-function(ICDcodelist,yearlist) {
 
   .File_List_clean%>%

@@ -10,6 +10,8 @@
 #' @return A tibble with columns: `file_path`, `file_root`, `file_suffix`, `Year`, `file_directory`
 #' @export
 #'
+#' @import dplyr
+#'
 #' @examples
 #' \dontrun{
 #' set_USRDS_wd("C:/path/to/usrds")
@@ -46,8 +48,17 @@ map_USRDS_files<-function() {
     mutate(file_name=fs::path_file(file_path))%>%
     mutate(file_path=paste0(.USRDS_wd,"/",file_path))
 
+  #Creates raw list of all parquet files stored in USRDS WD
+  .File_List_parquet_raw<<-list.files(path=.USRDS_wd, pattern="parquet", recursive = TRUE)
+
+  #Creates a clean data frame with file_name and file_path variables of Parquet files
+  .File_List_parquet_clean<<-tibble(file_path=.File_List_parquet_raw)%>%
+    filter(str_detect(.File_List_parquet_raw,paste(.USRDS_directories, collapse = "|")))%>%
+    mutate(file_name=fs::path_file(file_path))%>%
+    mutate(file_path=paste0(.USRDS_wd,"/",file_path))
+
   #Merge files, separate the root and suffix, create a label for year
-  .File_List_clean<<-bind_rows(.File_List_csv_clean,.File_List_sas_clean)%>%
+  .File_List_clean<<-bind_rows(.File_List_csv_clean,.File_List_sas_clean, .File_List_parquet_clean )%>%
     separate(file_name, c("file_root","file_suffix"), sep="\\.")%>%
     mutate(Year=str_extract(file_root, "20[0-9][0-9]"))%>%
     mutate(Year=as.numeric(Year))%>%

@@ -13,10 +13,12 @@ BugReports: https://github.com/VagishHemmige/usRds/issues
 Depends: 
     R (>= 2.10),
 Imports: 
+    arrow,
     dplyr,
     fs,
     haven,
     lubridate,
+    parquetize,
     purrr,
     readr,
     stringr,

@@ -34,6 +34,18 @@
   }
 
 
+  if( file_suffix=="parquet")
+  {
+    temp<-arrow::read_parquet(file_path)%>%
+      rename_with(toupper)%>%
+      select(all_of(variablelist))%>%
+      filter(HCPCS %in% HCPCScodelist)%>%
+      mutate(CLM_FROM=as_date(CLM_FROM))%>%
+      collect()
+    return(temp)
+  }
+
+
 }
 
 

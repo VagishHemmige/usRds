@@ -27,6 +27,18 @@
       return(temp)
   }
 
+
+  if( file_suffix=="parquet")
+  {
+    temp<-arrow::read_parquet(file_path)%>%
+      rename_with(toupper)%>%
+      select(all_of(variablelist))%>%
+      filter(SPCLTY %in% specialtycodelist)%>%
+      mutate(CLM_FROM=as_date(CLM_FROM))%>%
+      collect()
+    return(temp)
+  }
+
 }
 get_PS_specialty<-function(specialtycodelist,yearlist, DIAG=FALSE, HCPCS=FALSE, PLCSRV=FALSE) {
 

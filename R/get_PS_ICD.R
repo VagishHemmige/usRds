@@ -31,6 +31,18 @@
       return(temp)
   }
 
+  if( file_suffix=="parquet")
+  {
+    temp<-arrow::read_parquet(file_path)%>%
+      rename_with(toupper)%>%
+      select(USRDS_ID,CLM_FROM,DIAG, CLM_THRU)%>%
+      filter(DIAG %in% ICDcodelist)%>%
+      mutate(CLM_FROM=as_date(CLM_FROM))%>%
+      mutate(CLM_THRU=as_date(CLM_THRU))%>%
+      collect()
+    return(temp)
+  }
+
 
 }
 

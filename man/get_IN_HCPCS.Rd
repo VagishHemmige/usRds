@@ -7,7 +7,7 @@
 get_IN_HCPCS(HCPCScodelist, yearlist)
 }
 \arguments{
-\item{HCPCScodelist}{ICD codes to identify}
+\item{HCPCScodelist}{HCPCS codes to identify}
 
 \item{yearlist}{Years to search}
 }

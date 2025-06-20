@@ -28,6 +28,16 @@
     return(temp)
   }
 
+  if( file_suffix=="parquet")
+  {
+    temp<-arrow::read_parquet(file_path)%>%
+      rename_with(toupper)%>%
+      filter(HCPCS %in% HCPCScodelist)%>%
+      select(USRDS_ID,CLM_FROM,HCPCS, REV_CH)%>%
+      mutate(CLM_FROM=as_date(CLM_FROM))%>%
+      collect()
+    return(temp)
+  }
 
 }
 
@@ -35,7 +45,7 @@
 #'
 #' This function searches all physician supplier files from the appropriate year
 #'
-#' @param HCPCScodelist ICD codes to identify
+#' @param HCPCScodelist HCPCS codes to identify
 #' @param yearlist Years to search
 #'
 #' @return Data frame

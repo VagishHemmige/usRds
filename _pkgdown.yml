@@ -4,4 +4,4 @@ template:
   includes:
     in_header: |
       <meta name="google-site-verification" content="TBumihuxSFxK8muRvdo69ca7bmvzWmy-3OMfCZ2692A" />
-
+  logo: man/figures/myhex.png

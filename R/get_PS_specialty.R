@@ -40,6 +40,23 @@
   }
 
 }
+
+
+
+#' Extract PS specialty claims
+#'
+#' Returns claims filtered by specialty code from the PS HCPCS dataset.
+#'
+#' @param specialtycodelist A vector of specialty codes to keep.
+#' @param yearlist A vector of years to include.
+#' @param DIAG Logical, include DIAG column.
+#' @param HCPCS Logical, include HCPCS column.
+#' @param PLCSRV Logical, include PLCSRV column.
+#'
+#' @return A tibble with filtered and selected PS HCPCS data.
+#' @export
+
+
 get_PS_specialty<-function(specialtycodelist,yearlist, DIAG=FALSE, HCPCS=FALSE, PLCSRV=FALSE) {
 
   variablelist<-c("USRDS_ID","CLM_FROM","SPCLTY")

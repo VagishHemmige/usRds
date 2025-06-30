@@ -6,7 +6,7 @@
 <!-- badges: start -->
 <!-- badges: end -->
 
-<img src="man/figures/myhex.png" align="right" height="139" />
+<img src="man/figures/logo.png" align="right" height="139" />
 
 This is a prototype of an R package to facilitate analysis of the United
 States Renal Data System using R, “usRds”. The package assumes that the

@@ -6,6 +6,8 @@
 \alias{usRds-package}
 \title{usRds: A package to automate processes involving the USRDS}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 What the package does (one paragraph).
 }
 \seealso{

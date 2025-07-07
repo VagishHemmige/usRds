@@ -16,6 +16,12 @@
     <loc>https://vagishhemmige.github.io/usRds/LICENSE.html</loc>
   </url>
   <url>
+    <loc>https://vagishhemmige.github.io/usRds/reference/dot-map_USRDS_files.html</loc>
+  </url>
+  <url>
+    <loc>https://vagishhemmige.github.io/usRds/reference/dot-usrds_env.html</loc>
+  </url>
+  <url>
     <loc>https://vagishhemmige.github.io/usRds/reference/get_IN_HCPCS.html</loc>
   </url>
   <url>
@@ -26,6 +32,9 @@
   </url>
   <url>
     <loc>https://vagishhemmige.github.io/usRds/reference/get_PS_ICD.html</loc>
+  </url>
+  <url>
+    <loc>https://vagishhemmige.github.io/usRds/reference/get_PS_specialty.html</loc>
   </url>
   <url>
     <loc>https://vagishhemmige.github.io/usRds/reference/index.html</loc>

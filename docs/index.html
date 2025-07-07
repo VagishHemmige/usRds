@@ -71,19 +71,40 @@
 </div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>This is a prototype of an R package to facilitate analysis of the United States Renal Data System using R, “usRds”. The package assumes that the user already has obtained the data from the USRDS system, and that all files are in CSV or SAS format. To install the package, type the following into R:</p>
+<p><img src="reference/figures/logo.png" align="right" height="139"></p>
+<p>This is a prototype of an R package to facilitate analysis of the United States Renal Data System using R, “usRds”. The package assumes that the user already has obtained the data from the USRDS system, and that all files are in CSV, SAS, or parquet format. To install the package, type the following into R:</p>
 <p>devtools::install_github(“VagishHemmige/usRds”)</p>
-<p>You will need to use the <strong>set_USRDS_wd</strong> function to establish the directory where the USRDS files are stored, and the <strong>map_USRDS_files</strong> function afterward to set up the main functions to extract data from the USRDS:</p>
-<p>get_IN_HCPCS<br>
-get_IN_ICD<br>
-get_PS_ICD<br>
-get_PS_HCPCS</p>
+<p>You will need to use the <strong>set_USRDS_wd()</strong> function to establish the directory where the USRDS files are stored:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/VagishHemmige/usRds" class="external-link">usRds</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Session only:</span></span>
+<span><span class="fu"><a href="reference/set_USRDS_wd.html">set_USRDS_wd</a></span><span class="op">(</span><span class="st">"C:/Path/To/USRDS"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Or set permanently:</span></span>
+<span><span class="fu"><a href="reference/set_USRDS_wd.html">set_USRDS_wd</a></span><span class="op">(</span><span class="st">"C:/Path/To/USRDS"</span>, permanent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>The following functions are used to extract claims and diagnosis data from the USRDS files:</p>
+<ul>
+<li>
+<strong><code><a href="reference/get_IN_HCPCS.html">get_IN_HCPCS()</a></code></strong> — Extract inpatient claims with specified HCPCS codes<br>
+</li>
+<li>
+<strong><code><a href="reference/get_IN_ICD.html">get_IN_ICD()</a></code></strong> — Extract inpatient claims with specified ICD diagnosis codes<br>
+</li>
+<li>
+<strong><code><a href="reference/get_PS_ICD.html">get_PS_ICD()</a></code></strong> — Extract Physician Supplier claims by ICD codes<br>
+</li>
+<li>
+<strong><code><a href="reference/get_PS_HCPCS.html">get_PS_HCPCS()</a></code></strong> — Extract Physician Supplier claims by HCPCS codes</li>
+</ul>
+<p>Each function searches across all supported file formats (<code>.csv</code>, <code>.sas7bdat</code>, <code>.parquet</code>) and filters efficiently by year and code list.</p>
+<p>See <a href="reference/index.html">Function Reference</a> for full documentation.</p>
 <p>Much more, including help files, vignettes, etc. will be coming soon!</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>You can install the development version of usRds from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"VagishHemmige/usRds"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -91,7 +112,7 @@ get_PS_HCPCS</p>
 <h2 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h2>
 <p>This is a basic example which shows you how to solve a common problem:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/VagishHemmige/usRds" class="external-link">usRds</a></span><span class="op">)</span></span>
 <span><span class="co">## basic example code</span></span></code></pre></div>
 </div>

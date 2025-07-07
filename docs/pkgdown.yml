@@ -2,7 +2,7 @@ pandoc: 3.1.1
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles: {}
-last_built: 2025-06-30T16:31Z
+last_built: 2025-07-07T21:12Z
 urls:
   reference: https://vagishhemmige.github.io/usRds/reference
   article: https://vagishhemmige.github.io/usRds/articles

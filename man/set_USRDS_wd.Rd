@@ -2,16 +2,25 @@
 % Please edit documentation in R/set_USRDS_wd.R
 \name{set_USRDS_wd}
 \alias{set_USRDS_wd}
-\title{Set USRDS working directory}
+\title{Set the USRDS working directory}
 \usage{
-set_USRDS_wd(x)
+set_USRDS_wd(path, permanent = FALSE)
 }
 \arguments{
-\item{x}{The path to the directory where the USRDS files are stored}
+\item{path}{Path to the USRDS data folder}
+
+\item{permanent}{Logical; if TRUE, appends the setting to \code{.Renviron} for persistence}
 }
 \value{
-Invisibly returns the path as a character string.
+The normalized path, invisibly
 }
 \description{
-This function sets the working directory where the USRDS files are stored
+Sets the USRDS working directory for the current session, or optionally saves it permanently
+in the user's \code{.Renviron} file as the environment variable \code{USRDS_WD}.
+}
+\examples{
+\dontrun{
+set_USRDS_wd("C:/Data/USRDS")          # Session only
+set_USRDS_wd("C:/Data/USRDS", TRUE)    # Persistent across sessions
+}
 }

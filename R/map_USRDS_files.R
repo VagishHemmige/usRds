@@ -1,73 +1,52 @@
-#' Map USRDS data files in the working directory
+#' Internal: Map USRDS data files in the working directory
 #'
-#' Scans the directory set with `set_USRDS_wd()` and identifies all relevant CSV and SAS files
-#' in standard USRDS subdirectories. The resulting file list is parsed into a structured tibble
-#' with file paths, inferred data types, and years.
+#' Scans the directory set by the USRDS_WD environment variable and stores
+#' a cleaned file list in the package's internal environment for downstream use.
 #'
-#' This function populates a global variable `.File_List_clean` for downstream use
-#' in data extraction functions.
+#' This function is intended for internal use only and is automatically
+#' run on package load if USRDS_WD is set.
 #'
-#' @return A tibble with columns: `file_path`, `file_root`, `file_suffix`, `Year`, `file_directory`
-#' @export
-#'
-#' @import dplyr
-#'
-#' @examples
-#' \dontrun{
-#' set_USRDS_wd("C:/path/to/usrds")
-#' file_map <- map_USRDS_files()
-#' head(file_map)
-#' }
+#' @keywords internal
+.map_USRDS_files <- function() {
+  USRDS_wd <- Sys.getenv("USRDS_WD")
+  if (USRDS_wd == "") {
+    warning("USRDS_WD is not set. Use `set_USRDS_wd()` to configure your working directory.")
+    return(invisible(NULL))
+  }
 
-map_USRDS_files<-function() {
+  USRDS_directories <- c("ESRD core", "ESRD transplant", "ESRD hospital",
+                         "ESRD PartD", "ESRD Institution", "Physician supplier")
 
+  list_and_clean <- function(pattern) {
+    raw_files <- list.files(path = USRDS_wd, pattern = pattern, recursive = TRUE)
+    tibble::tibble(file_path = raw_files) %>%
+      filter(str_detect(file_path, paste(USRDS_directories, collapse = "|"))) %>%
+      mutate(
+        file_name = fs::path_file(file_path),
+        file_path = file.path(USRDS_wd, file_path)
+      )
+  }
 
-  #Define list of working directories
-  .USRDS_directories<-c("ESRD core",
-                       "ESRD transplant",
-                       "ESRD hospital",
-                       "ESRD PartD",
-                       "ESRD Institution",
-                       "Physician supplier")
+  File_List_clean <- bind_rows(
+    list_and_clean("csv$"),
+    list_and_clean("sas7bdat$"),
+    list_and_clean("parquet$")
+  ) %>%
+    tidyr::separate(file_name, c("file_root", "file_suffix"), sep = "\\.(?=[^.]+$)", remove = FALSE) %>%
+    mutate(
+      Year = stringr::str_extract(file_root, "20[0-9]{2}"),
+      Year = as.numeric(Year),
+      file_directory = case_when(
+        str_detect(file_path, "ESRD core")          ~ "Core",
+        str_detect(file_path, "ESRD transplant")    ~ "Transplant",
+        str_detect(file_path, "ESRD hospital")      ~ "Hospital",
+        str_detect(file_path, "ESRD PartD")         ~ "Part D",
+        str_detect(file_path, "ESRD Institution")   ~ "Institution",
+        str_detect(file_path, "Physician supplier") ~ "PS",
+        TRUE ~ NA_character_
+      )
+    )
 
-  #Creates raw list of all CSVs stored in USRDS WD
-  .File_List_csv_raw<<-list.files(path=.USRDS_wd, pattern="csv", recursive = TRUE)
-
-  #Creates a clean data frame with file_name and file_path variables of CSVs
-  .File_List_csv_clean<<-tibble(file_path=.File_List_csv_raw)%>%
-    filter(str_detect(.File_List_csv_raw,paste(.USRDS_directories, collapse = "|")))%>%
-    mutate(file_name=fs::path_file(file_path))%>%
-    mutate(file_path=paste0(.USRDS_wd,"/",file_path))
-
-  #Creates raw list of all SAS files stored in USRDS WD
-  .File_List_sas_raw<<-list.files(path=.USRDS_wd, pattern="sas7bdat", recursive = TRUE)
-
-  #Creates a clean data frame with file_name and file_path variables of SAS files
-  .File_List_sas_clean<<-tibble(file_path=.File_List_sas_raw)%>%
-    filter(str_detect(.File_List_sas_raw,paste(.USRDS_directories, collapse = "|")))%>%
-    mutate(file_name=fs::path_file(file_path))%>%
-    mutate(file_path=paste0(.USRDS_wd,"/",file_path))
-
-  #Creates raw list of all parquet files stored in USRDS WD
-  .File_List_parquet_raw<<-list.files(path=.USRDS_wd, pattern="parquet", recursive = TRUE)
-
-  #Creates a clean data frame with file_name and file_path variables of Parquet files
-  .File_List_parquet_clean<<-tibble(file_path=.File_List_parquet_raw)%>%
-    filter(str_detect(.File_List_parquet_raw,paste(.USRDS_directories, collapse = "|")))%>%
-    mutate(file_name=fs::path_file(file_path))%>%
-    mutate(file_path=paste0(.USRDS_wd,"/",file_path))
-
-  #Merge files, separate the root and suffix, create a label for year
-  .File_List_clean<<-bind_rows(.File_List_csv_clean,.File_List_sas_clean, .File_List_parquet_clean )%>%
-    separate(file_name, c("file_root","file_suffix"), sep="\\.")%>%
-    mutate(Year=str_extract(file_root, "20[0-9][0-9]"))%>%
-    mutate(Year=as.numeric(Year))%>%
-    mutate(file_directory=case_when(
-      str_detect(file_path,"ESRD core")~"Core",
-      str_detect(file_path,"ESRD transplant")~"Transplant",
-      str_detect(file_path,"ESRD hospital")~"Hospital",
-      str_detect(file_path,"ESRD PartD")~"Part D",
-      str_detect(file_path,"ESRD Institution")~"Institution",
-      str_detect(file_path,"Physician supplier")~"PS"
-    ))
+  .usrds_env$file_list <- File_List_clean
+  invisible(File_List_clean)
 }

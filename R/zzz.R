@@ -7,3 +7,8 @@ utils::globalVariables(c(
   ".USRDS_wd", ".File_List_clean", ".File_List_csv_clean", ".File_List_csv_raw",
   ".File_List_sas_clean", ".File_List_sas_raw", "file_path", "file_name", "file_root"
 ))
+
+#' @noRd
+.onLoad <- function(libname, pkgname) {
+  try(.map_USRDS_files(), silent = TRUE)
+}

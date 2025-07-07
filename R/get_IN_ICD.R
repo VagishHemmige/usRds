@@ -57,7 +57,7 @@
 #' @examples
 get_IN_ICD<-function(ICDcodelist,yearlist) {
 
-  .File_List_clean%>%
+  .usrds_env$list_files%>%
     inner_join(IN_ICD) %>%
     filter(Year %in% yearlist)%>%
     pmap(.load_individual_file_IN_ICD,ICDcodelist)%>%

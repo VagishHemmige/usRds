@@ -2,18 +2,26 @@
 % Please edit documentation in R/get_PS_HCPCS.R
 \name{get_PS_HCPCS}
 \alias{get_PS_HCPCS}
-\title{Searches Physician Supplier files for HCPCS codes in specific years}
+\title{Retrieve HCPCS codes from Physician/Supplier claims}
 \usage{
-get_PS_HCPCS(HCPCScodelist, yearlist)
+get_PS_HCPCS(hcpcs_codes, years, usrds_ids = NULL)
 }
 \arguments{
-\item{HCPCScodelist}{ICD codes to identify}
+\item{hcpcs_codes}{Character vector of HCPCS codes.}
 
-\item{yearlist}{Years to search}
+\item{years}{Integer vector of calendar years to include.}
+
+\item{usrds_ids}{Optional. Vector of USRDS_IDs to restrict results to.}
 }
 \value{
-Data frame
+A data frame with columns: \code{USRDS_ID}, \code{HCPCS}, \code{CLM_FROM}
 }
 \description{
-This function searches all physician supplier files from the appropriate year
+Extracts all claims containing specified HCPCS codes from physician/supplier billing
+data for the selected years. Optionally filter to a list of USRDS_IDs.
+}
+\examples{
+\dontrun{
+get_PS_HCPCS(c("81003", "87086"), years = 2006:2008)
+}
 }

@@ -2,18 +2,27 @@
 % Please edit documentation in R/get_IN_HCPCS.R
 \name{get_IN_HCPCS}
 \alias{get_IN_HCPCS}
-\title{Searches Institutional files for HCPCS codes in specific years}
+\title{Retrieve Institutional HCPCS Claims}
 \usage{
-get_IN_HCPCS(HCPCScodelist, yearlist)
+get_IN_HCPCS(hcpcs_codes, years, usrds_ids = NULL)
 }
 \arguments{
-\item{HCPCScodelist}{HCPCS codes to identify}
+\item{hcpcs_codes}{Character vector of HCPCS codes to search for.}
 
-\item{yearlist}{Years to search}
+\item{years}{Integer vector of years to include.}
+
+\item{usrds_ids}{Optional vector of USRDS_IDs to filter to specific patients.}
 }
 \value{
-Data frame
+A data frame with claims containing the specified HCPCS codes.
 }
 \description{
-This function searches all physician supplier files from the appropriate year
+Searches institutional claim files for specified HCPCS codes in specified years.
+Supports filtering by HCPCS and optionally USRDS_IDs. Handles CSV, SAS, and Parquet formats.
+}
+\examples{
+\dontrun{
+hcpcs_list <- c("J1234", "A4567")
+get_IN_HCPCS(hcpcs_codes = hcpcs_list, years = 2012:2016)
+}
 }

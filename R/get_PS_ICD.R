@@ -63,6 +63,7 @@ get_PS_ICD<-function(ICDcodelist,yearlist) {
   .usrds_env$file_list%>%
     inner_join(PS_ICD) %>%
     filter(Year %in% yearlist)%>%
+    select(-file_name)%>%
     pmap(.load_individual_file_PS_ICD,ICDcodelist)%>%
     bind_rows()%>%
     return()

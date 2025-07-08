@@ -22,4 +22,8 @@ Imports:
     purrr,
     readr,
     stringr,
-    tidyr
+    tidyr,
+    labelled,
+    rlang, 
+    tibble, 
+    tidyselect

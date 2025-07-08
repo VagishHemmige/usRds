@@ -35,7 +35,7 @@
       select(all_of(variablelist))%>%
       filter(SPCLTY %in% specialtycodelist)%>%
       mutate(CLM_FROM=as_date(CLM_FROM))%>%
-      collect()
+      arrow::collect()
     return(temp)
   }
 
@@ -77,9 +77,10 @@ get_PS_specialty<-function(specialtycodelist,yearlist, DIAG=FALSE, HCPCS=FALSE, 
   }
 
 
-  .File_List_clean%>%
+  .usrds_env$file_list%>%
     inner_join(PS_HCPCS) %>%
     filter(Year %in% yearlist)%>%
+    select(-file_name)%>%
     pmap(.load_individual_file_PS_specialty,specialtycodelist, variablelist)%>%
     bind_rows()%>%
     return()

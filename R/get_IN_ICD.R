@@ -53,13 +53,15 @@
 #'
 #' @return Data frame
 #' @export
-#'
+#' @importFrom dplyr inner_join
+
 #' @examples
 get_IN_ICD<-function(ICDcodelist,yearlist) {
 
-  .usrds_env$list_files%>%
+  .usrds_env$file_list%>%
     inner_join(IN_ICD) %>%
     filter(Year %in% yearlist)%>%
+    select(-file_name)%>%
     pmap(.load_individual_file_IN_ICD,ICDcodelist)%>%
     bind_rows()%>%
     return()

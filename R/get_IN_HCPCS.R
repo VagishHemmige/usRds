@@ -51,12 +51,15 @@
 #' @return Data frame
 #' @export
 #'
+#' @importFrom dplyr inner_join
+#'
 #' @examples
 get_IN_HCPCS<-function(HCPCScodelist,yearlist) {
 
-  .File_List_clean%>%
+  .usrds_env$file_list%>%
     inner_join(IN_HCPCS) %>%
     filter(Year %in% yearlist)%>%
+    select(-file_name)%>%
     pmap(.load_individual_file_IN_HCPCS,HCPCScodelist)%>%
     bind_rows()%>%
     return()

@@ -2,18 +2,39 @@
 % Please edit documentation in R/get_PS_ICD.R
 \name{get_PS_ICD}
 \alias{get_PS_ICD}
-\title{Searches Physician Supplier files for ICD codes in specific years}
+\title{Retrieve diagnosis codes from Physician/Supplier claims}
 \usage{
-get_PS_ICD(ICDcodelist, yearlist)
+get_PS_ICD(icd_codes, years, usrds_ids = NULL)
 }
 \arguments{
-\item{ICDcodelist}{ICD codes to identify}
+\item{icd_codes}{Character vector of ICD diagnosis codes (without periods).}
 
-\item{yearlist}{Years to search}
+\item{years}{Integer vector of calendar years to include.}
+
+\item{usrds_ids}{Optional. Vector of USRDS_IDs to restrict the output to specific patients.}
 }
 \value{
-Data frame
+A data frame with columns: \code{USRDS_ID}, \code{DIAG}, \code{CLM_FROM}, and \code{CLM_THRU}.
 }
 \description{
-This function searches all physician supplier files from the appropriate year
+Extracts all claims containing specified ICD-9 or ICD-10 diagnosis codes from
+physician/supplier billing data for the selected years. The data may be stored
+in CSV, SAS, or Parquet format. The function automatically loads and combines
+matching files and can optionally filter to a subset of USRDS_IDs.
+}
+\examples{
+\dontrun{
+# ICD-9 and ICD-10 codes for Cryptococcosis (no periods)
+cryptococcus_icd <- c("1175", "B45")
+
+# Retrieve claims for all patients in selected years
+result <- get_PS_ICD(icd_codes = cryptococcus_icd, years = 2013:2018)
+
+# Retrieve claims for specific patients
+result_subset <- get_PS_ICD(
+  icd_codes = cryptococcus_icd,
+  years = c(2016, 2017),
+  usrds_ids = c(100012345, 100078901)
+)
+}
 }

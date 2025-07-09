@@ -1,8 +1,9 @@
 pandoc: '3.4'
 pkgdown: 2.0.7
 pkgdown_sha: ~
-articles: {}
-last_built: 2025-07-09T15:05Z
+articles:
+  getting-started: getting-started.html
+last_built: 2025-07-09T19:10Z
 urls:
   reference: https://vagishhemmige.github.io/usRds/reference
   article: https://vagishhemmige.github.io/usRds/articles

@@ -1,0 +1,79 @@
+---
+title: "Getting Started with the usRds Package"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with the usRds Package}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This vignette introduces the core setup steps for using the `usRds` package to work with United States Renal Data System (USRDS) datasets. The package supports flexible reading of raw data and optionally allows storage in more efficient formats like Parquet.
+
+## Accepted File Formats
+
+The `usRds` package supports the following raw data formats:
+
+- `.sas7bdat` (SAS files) — common for most official USRDS datasets
+- `.csv` — older files and alternate exports
+- `.parquet` — efficient, columnar storage format (preferred when available)
+
+Note: If multiple versions of the same file exist (e.g., SAS and Parquet), the package prefers Parquet unless otherwise specified.
+
+## Why Use Parquet?
+
+Reading large CSV or SAS files into R can be slow and memory-intensive. If you already have `.parquet` versions of the files, `usRds` will use them automatically. The benefits include:
+
+- **Faster reads** via `arrow::read_parquet()`
+- **Smaller disk usage** due to compression
+- **Selective column reads**
+
+While the package does not currently export Parquet conversion functions, you can use your own conversion scripts or third-party tools to generate `.parquet` versions of USRDS files.
+
+## Setting the Data Directory
+
+Before loading data, you must register the location of your USRDS dataset files. This is done using:
+
+```r
+set_USRDS_wd("/path/to/usrds_data")
+```
+
+To save this setting across sessions:
+
+```r
+set_USRDS_wd("/path/to/usrds_data", permanent = TRUE)
+```
+
+This sets an internal environment variable that all `get_*()` functions rely on to locate files.
+
+The directory should contain subfolders by year or file type (depending on your organization scheme). For example:
+
+```
+/path/to/usrds_data/
+├── 5) ESRD Institution/
+│   ├── IN2006/
+│   │   └── in2006a.sas7bdat
+│   └── IN2012/
+│       └── in2012a.parquet
+├── 6) Physician Supplier/
+│   └── PS2006/
+│       └── ps2006a.parquet
+```
+
+## Next Steps
+
+Once your directory is set, you can:
+
+- Use `get_IN_HCPCS()` or `get_PS_ICD()` to extract filtered claims
+
+Example:
+
+```r
+ps <- get_PS_HCPCS("81003", 2006)
+head(ps)
+```
+
+This will automatically find and filter the relevant Physician/Supplier file for 2006, using the HCPCS code "81003".
+
+---
+
+This vignette is a starting point for streamlined, reproducible access to USRDS data in R. See additional vignettes and documentation for advanced cohort building and labeling features.

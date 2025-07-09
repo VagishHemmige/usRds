@@ -2,6 +2,7 @@
 
 export(apply_usrds_factors)
 export(apply_usrds_varlabels)
+export(convert_usrds_to_parquet)
 export(get_IN_HCPCS)
 export(get_IN_ICD)
 export(get_PS_HCPCS)

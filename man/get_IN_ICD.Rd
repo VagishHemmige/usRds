@@ -4,10 +4,11 @@
 \alias{get_IN_ICD}
 \title{Retrieve diagnosis codes from Institutional claims}
 \usage{
-get_IN_ICD(icd_codes, years, usrds_ids = NULL)
+get_IN_ICD(icd_codes = NULL, years, usrds_ids = NULL)
 }
 \arguments{
-\item{icd_codes}{Character vector of ICD diagnosis codes (without periods).}
+\item{icd_codes}{Optional. Character vector of ICD diagnosis codes (without periods).
+If NULL (default), returns all diagnosis claims for the selected years (and USRDS_IDs, if specified).}
 
 \item{years}{Integer vector of calendar years to include.}
 
@@ -30,11 +31,7 @@ cryptococcus_icd <- c("1175", "B45")
 # Retrieve claims for all patients in selected years
 result <- get_IN_ICD(icd_codes = cryptococcus_icd, years = 2013:2018)
 
-# Retrieve claims for specific patients
-result_subset <- get_IN_ICD(
-  icd_codes = cryptococcus_icd,
-  years = c(2016, 2017),
-  usrds_ids = c(100012345, 100078901)
-)
+# Retrieve all diagnosis claims for selected patients
+result_all <- get_IN_ICD(icd_codes = NULL, years = 2015, usrds_ids = c(100000001, 100000002))
 }
 }

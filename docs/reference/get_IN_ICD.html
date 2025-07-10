@@ -63,13 +63,14 @@ matching files and can optionally filter to a subset of USRDS_IDs.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_IN_ICD</span><span class="op">(</span><span class="va">icd_codes</span>, <span class="va">years</span>, usrds_ids <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_IN_ICD</span><span class="op">(</span>icd_codes <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">years</span>, usrds_ids <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>icd_codes</dt>
-<dd><p>Character vector of ICD diagnosis codes (without periods).</p></dd>
+<dd><p>Optional. Character vector of ICD diagnosis codes (without periods).
+If NULL (default), returns all diagnosis claims for the selected years (and USRDS_IDs, if specified).</p></dd>
 
 
 <dt>years</dt>
@@ -96,12 +97,8 @@ matching files and can optionally filter to a subset of USRDS_IDs.</p>
 <span class="r-in"><span><span class="co"># Retrieve claims for all patients in selected years</span></span></span>
 <span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">get_IN_ICD</span><span class="op">(</span>icd_codes <span class="op">=</span> <span class="va">cryptococcus_icd</span>, years <span class="op">=</span> <span class="fl">2013</span><span class="op">:</span><span class="fl">2018</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Retrieve claims for specific patients</span></span></span>
-<span class="r-in"><span><span class="va">result_subset</span> <span class="op">&lt;-</span> <span class="fu">get_IN_ICD</span><span class="op">(</span></span></span>
-<span class="r-in"><span>  icd_codes <span class="op">=</span> <span class="va">cryptococcus_icd</span>,</span></span>
-<span class="r-in"><span>  years <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2016</span>, <span class="fl">2017</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  usrds_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100012345</span>, <span class="fl">100078901</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Retrieve all diagnosis claims for selected patients</span></span></span>
+<span class="r-in"><span><span class="va">result_all</span> <span class="op">&lt;-</span> <span class="fu">get_IN_ICD</span><span class="op">(</span>icd_codes <span class="op">=</span> <span class="cn">NULL</span>, years <span class="op">=</span> <span class="fl">2015</span>, usrds_ids <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100000001</span>, <span class="fl">100000002</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>

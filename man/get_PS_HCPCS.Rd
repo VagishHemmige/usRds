@@ -4,10 +4,10 @@
 \alias{get_PS_HCPCS}
 \title{Retrieve HCPCS codes from Physician/Supplier claims}
 \usage{
-get_PS_HCPCS(hcpcs_codes, years, usrds_ids = NULL)
+get_PS_HCPCS(hcpcs_codes = NULL, years, usrds_ids = NULL)
 }
 \arguments{
-\item{hcpcs_codes}{Character vector of HCPCS codes.}
+\item{hcpcs_codes}{Optional. Character vector of HCPCS codes to filter by. If \code{NULL}, returns all codes.}
 
 \item{years}{Integer vector of calendar years to include.}
 
@@ -17,11 +17,15 @@ get_PS_HCPCS(hcpcs_codes, years, usrds_ids = NULL)
 A data frame with columns: \code{USRDS_ID}, \code{HCPCS}, \code{CLM_FROM}
 }
 \description{
-Extracts all claims containing specified HCPCS codes from physician/supplier billing
-data for the selected years. Optionally filter to a list of USRDS_IDs.
+Extracts all claims from physician/supplier billing data for the selected years,
+optionally filtering by HCPCS codes and/or USRDS_IDs.
+}
+\details{
+If \code{hcpcs_codes} is \code{NULL}, all HCPCS-coded claims are returned.
 }
 \examples{
 \dontrun{
 get_PS_HCPCS(c("81003", "87086"), years = 2006:2008)
+get_PS_HCPCS(NULL, years = 2006:2008)  # All HCPCS codes
 }
 }

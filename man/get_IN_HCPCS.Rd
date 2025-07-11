@@ -4,25 +4,28 @@
 \alias{get_IN_HCPCS}
 \title{Retrieve Institutional HCPCS Claims}
 \usage{
-get_IN_HCPCS(hcpcs_codes, years, usrds_ids = NULL)
+get_IN_HCPCS(hcpcs_codes = NULL, years, usrds_ids = NULL)
 }
 \arguments{
-\item{hcpcs_codes}{Character vector of HCPCS codes to search for.}
+\item{hcpcs_codes}{Optional character vector of HCPCS codes to search for. If \code{NULL}, all codes are returned.}
 
 \item{years}{Integer vector of years to include.}
 
 \item{usrds_ids}{Optional vector of USRDS_IDs to filter to specific patients.}
 }
 \value{
-A data frame with claims containing the specified HCPCS codes.
+A data frame with columns: \code{USRDS_ID}, \code{CLM_FROM}, \code{HCPCS}, \code{REV_CH}
 }
 \description{
 Searches institutional claim files for specified HCPCS codes in specified years.
-Supports filtering by HCPCS and optionally USRDS_IDs. Handles CSV, SAS, and Parquet formats.
+Supports filtering by HCPCS and optionally by USRDS_IDs. Handles CSV, SAS, and Parquet formats.
+}
+\details{
+If \code{hcpcs_codes} is \code{NULL}, all HCPCS-coded claims are returned.
 }
 \examples{
 \dontrun{
-hcpcs_list <- c("J1234", "A4567")
-get_IN_HCPCS(hcpcs_codes = hcpcs_list, years = 2012:2016)
+get_IN_HCPCS(c("J1234", "A4567"), years = 2012:2016)
+get_IN_HCPCS(NULL, years = 2012:2016)  # All HCPCS claims
 }
 }

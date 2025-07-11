@@ -46,3 +46,22 @@ test_that("get_PS_HCPCS supports filtering by USRDS_IDs", {
   expect_s3_class(result, "data.frame")
   expect_true(all(c("USRDS_ID", "CLM_FROM", "HCPCS") %in% names(result)))
 })
+
+test_that("get_PS_HCPCS works when hcpcs_codes = NULL", {
+  result <- suppressMessages(get_PS_HCPCS(hcpcs_codes = NULL, years = valid_year))
+
+  expect_s3_class(result, "data.frame")
+  expect_true(all(c("USRDS_ID", "CLM_FROM", "HCPCS") %in% names(result)))
+  expect_gt(nrow(result), 0)  # No `info` arg — just bare assertion
+})
+
+test_that("get_PS_HCPCS filters by both HCPCS and USRDS_ID", {
+  result <- suppressMessages(
+    get_PS_HCPCS(hcpcs_codes = hcpcs_test, years = valid_year, usrds_ids = test_ids)
+  )
+
+  expect_s3_class(result, "data.frame")
+  expect_true(all(c("USRDS_ID", "CLM_FROM", "HCPCS") %in% names(result)))
+  expect_true(all(result$HCPCS == hcpcs_test))
+  expect_true(all(result$USRDS_ID %in% test_ids))
+})

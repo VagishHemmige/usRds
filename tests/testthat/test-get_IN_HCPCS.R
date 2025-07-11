@@ -46,3 +46,18 @@ test_that("get_IN_HCPCS supports filtering by USRDS_IDs", {
   expect_s3_class(result, "data.frame")
   expect_true(all(c("USRDS_ID", "CLM_FROM", "HCPCS", "REV_CH") %in% names(result)))
 })
+
+test_that("get_IN_HCPCS works when hcpcs_codes = NULL", {
+  result <- suppressMessages(get_IN_HCPCS(hcpcs_codes = NULL, years = valid_year))
+
+  expect_s3_class(result, "data.frame")
+  expect_true(all(c("USRDS_ID", "CLM_FROM", "HCPCS", "REV_CH") %in% names(result)))
+  expect_true(nrow(result) > 0)
+})
+
+test_that("get_IN_HCPCS returns empty result when no matches", {
+  result <- suppressMessages(get_IN_HCPCS(hcpcs_codes = "ZZZZZ", years = valid_year))
+
+  expect_s3_class(result, "data.frame")
+  expect_equal(nrow(result), 0)
+})

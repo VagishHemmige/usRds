@@ -4,23 +4,27 @@
 \name{usRds-package}
 \alias{usRds}
 \alias{usRds-package}
-\title{usRds: A package to automate processes involving the USRDS}
+\title{usRds: A Package to Automate Processing and Access to the USRDS}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-What the package does (one paragraph).
+Provides tools to simplify access to and processing of data from the United States Renal Data System (USRDS). Supports multiple raw formats (SAS, CSV, Parquet), automated file detection, optional value and variable labeling using USRDS appendices, and functions to filter claims data by diagnosis and procedure codes. Designed for reproducible, large-scale cohort construction and longitudinal analysis.
 }
 \seealso{
 Useful links:
 \itemize{
   \item \url{https://github.com/VagishHemmige/usRds}
-  \item \url{https://vagishhemmige.github.io/usRds/}
   \item Report bugs at \url{https://github.com/VagishHemmige/usRds/issues}
 }
 
 }
 \author{
 \strong{Maintainer}: Vagish Hemmige \email{vahemmig@montefiore.org}
+
+Other contributors:
+\itemize{
+  \item Cervera Hernandez Miguel \email{Miguel.Cerverahernandez@SanfordHealth.org} [contributor]
+}
 
 }
 \keyword{internal}

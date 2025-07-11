@@ -26,7 +26,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">usRds</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,7 +39,8 @@
 <li class="active nav-item dropdown">
   <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
-<li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with the usRds Package</a></li>
+<li><a class="dropdown-item" href="../articles/accessing-files.html">Using usRds to access data within the USRDS file system</a></li>
+    <li><a class="dropdown-item" href="../articles/getting-started.html">Getting Started with the usRds Package</a></li>
   </ul>
 </li>
       </ul>
@@ -69,86 +70,138 @@
 
     
     
-<p>This vignette introduces the core setup steps for using the
-<code>usRds</code> package to work with United States Renal Data System
-(USRDS) datasets. The package supports flexible reading of raw data and
-optionally allows storage in more efficient formats like Parquet.</p>
+<p>The <code>usRds</code> package provides tools to access and
+preprocess United States Renal Data System (USRDS) data files in R. It
+supports multiple raw data formats and optionally allows conversion to
+efficient Parquet format.</p>
+<p>This vignette walks through the initial setup and <em>optional</em>
+conversion process.</p>
 <div class="section level2">
-<h2 id="accepted-file-formats">Accepted File Formats<a class="anchor" aria-label="anchor" href="#accepted-file-formats"></a>
+<h2 id="supported-file-formats">Supported File Formats<a class="anchor" aria-label="anchor" href="#supported-file-formats"></a>
 </h2>
-<p>The <code>usRds</code> package supports the following raw data
-formats:</p>
+<p>The package works with:</p>
 <ul>
 <li>
-<code>.sas7bdat</code> (SAS files) — common for most official USRDS
-datasets</li>
+<code>.sas7bdat</code> — standard SAS format used in most official
+USRDS datasets</li>
 <li>
-<code>.csv</code> — older files and alternate exports</li>
+<code>.csv</code> — used in earlier years and alternate
+distributions</li>
 <li>
-<code>.parquet</code> — efficient, columnar storage format
-(preferred when available)</li>
+<code>.parquet</code> — efficient columnar format for fast and
+scalable access</li>
 </ul>
-<p>Note: If multiple versions of the same file exist (e.g., SAS and
-Parquet), the package prefers Parquet unless otherwise specified.</p>
+<p>If multiple versions of a file are present, <code>.parquet</code> is
+prioritized automatically.</p>
 </div>
 <div class="section level2">
-<h2 id="why-use-parquet">Why Use Parquet?<a class="anchor" aria-label="anchor" href="#why-use-parquet"></a>
+<h2 id="why-use-parquet-optional">Why Use Parquet? (Optional)<a class="anchor" aria-label="anchor" href="#why-use-parquet-optional"></a>
 </h2>
-<p>Reading large CSV or SAS files into R can be slow and
-memory-intensive. If you already have <code>.parquet</code> versions of
-the files, <code>usRds</code> will use them automatically. The benefits
-include:</p>
+<p>Working with large SAS or CSV files can be slow and memory-intensive.
+Parquet offers major performance and storage benefits:</p>
+<table class="table">
+<thead><tr class="header">
+<th>Format</th>
+<th>Load Time (Typical)</th>
+<th>Disk Size (Typical)</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>SAS</td>
+<td>~45–90 seconds</td>
+<td>~800 MB</td>
+</tr>
+<tr class="even">
+<td>CSV</td>
+<td>~30–60 seconds</td>
+<td>~600 MB</td>
+</tr>
+<tr class="odd">
+<td>Parquet</td>
+<td>~1–5 seconds</td>
+<td>~100–200 MB</td>
+</tr>
+</tbody>
+</table>
+<p>Parquet advantages include:</p>
 <ul>
 <li>
-<strong>Faster reads</strong> via
+<strong>Much faster loading</strong> with
 <code><a href="https://arrow.apache.org/docs/r/reference/read_parquet.html" class="external-link">arrow::read_parquet()</a></code>
 </li>
 <li>
-<strong>Smaller disk usage</strong> due to compression</li>
-<li><strong>Selective column reads</strong></li>
+<strong>Smaller file sizes</strong> (typically 3–8× smaller)</li>
+<li>
+<strong>Selective column access</strong> to minimize memory
+usage</li>
+<li>
+<strong>Modern compatibility</strong> with tools like Arrow and
+DuckDB</li>
 </ul>
-<p>While the package does not currently export Parquet conversion
-functions, you can use your own conversion scripts or third-party tools
-to generate <code>.parquet</code> versions of USRDS files.</p>
 </div>
 <div class="section level2">
-<h2 id="setting-the-data-directory">Setting the Data Directory<a class="anchor" aria-label="anchor" href="#setting-the-data-directory"></a>
+<h2 id="step-1-optional-convert-to-parquet">Step 1 (Optional): Convert to Parquet<a class="anchor" aria-label="anchor" href="#step-1-optional-convert-to-parquet"></a>
 </h2>
-<p>Before loading data, you must register the location of your USRDS
-dataset files. This is done using:</p>
+<p>If you’d like to take advantage of these benefits, convert your SAS
+or CSV files to Parquet <em>before</em> setting the working
+directory:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_USRDS_wd.html">set_USRDS_wd</a></span><span class="op">(</span><span class="st">"/path/to/usrds_data"</span><span class="op">)</span></span></code></pre></div>
-<p>To save this setting across sessions:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_USRDS_wd.html">set_USRDS_wd</a></span><span class="op">(</span><span class="st">"/path/to/usrds_data"</span>, permanent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p>This sets an internal environment variable that all
-<code>get_*()</code> functions rely on to locate files.</p>
-<p>The directory should contain subfolders by year or file type
-(depending on your organization scheme). For example:</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/VagishHemmige/usRds" class="external-link">usRds</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">convert_USRDS_to_parquet</span><span class="op">(</span></span>
+<span>  file_key <span class="op">=</span> <span class="st">"IN"</span>,</span>
+<span>  years <span class="op">=</span> <span class="fl">2006</span><span class="op">:</span><span class="fl">2012</span>,</span>
+<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
+<p>This will:</p>
+<ul>
+<li>Look up files based on <code>.usrds_env$file_list</code>
+</li>
+<li>Automatically detect whether the input is CSV or SAS</li>
+<li>Save <code>.parquet</code> versions in the same directory as the
+source</li>
+<li>Skip conversion if <code>.parquet</code> files already exist (unless
+<code>overwrite = TRUE</code>)</li>
+</ul>
+<div class="section level3">
+<h3 id="example-folder-structure-after-conversion">Example Folder Structure After Conversion<a class="anchor" aria-label="anchor" href="#example-folder-structure-after-conversion"></a>
+</h3>
 <pre><code>/path/to/usrds_data/
 ├── 5) ESRD Institution/
 │   ├── IN2006/
-│   │   └── in2006a.sas7bdat
-│   └── IN2012/
-│       └── in2012a.parquet
-├── 6) Physician Supplier/
-│   └── PS2006/
-│       └── ps2006a.parquet</code></pre>
+│   │   ├── in2006a.sas7bdat
+│   │   └── in2006a.parquet</code></pre>
+</div>
 </div>
 <div class="section level2">
-<h2 id="next-steps">Next Steps<a class="anchor" aria-label="anchor" href="#next-steps"></a>
+<h2 id="step-2-set-the-usrds-working-directory">Step 2: Set the USRDS Working Directory<a class="anchor" aria-label="anchor" href="#step-2-set-the-usrds-working-directory"></a>
 </h2>
-<p>Once your directory is set, you can:</p>
-<ul>
-<li>Use <code><a href="../reference/get_IN_HCPCS.html">get_IN_HCPCS()</a></code> or <code><a href="../reference/get_PS_ICD.html">get_PS_ICD()</a></code> to
-extract filtered claims</li>
-</ul>
-<p>Example:</p>
+<p>Once your data (in any format) is prepared, register the path
+with:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_USRDS_wd.html">set_USRDS_wd</a></span><span class="op">(</span><span class="st">"/path/to/usrds_data"</span><span class="op">)</span></span></code></pre></div>
+<p>To make this setting persist across sessions:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_PS_HCPCS.html">get_PS_HCPCS</a></span><span class="op">(</span><span class="st">"81003"</span>, <span class="fl">2006</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">ps</span><span class="op">)</span></span></code></pre></div>
-<p>This will automatically find and filter the relevant
-Physician/Supplier file for 2006, using the HCPCS code “81003”.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_USRDS_wd.html">set_USRDS_wd</a></span><span class="op">(</span><span class="st">"/path/to/usrds_data"</span>, permanent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p>This working directory is used by all downstream functions to locate
+USRDS files.</p>
+</div>
+<div class="section level2">
+<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+</h2>
+<p>To begin using <code>usRds</code>:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>(Optional)</strong> Convert raw files to Parquet using
+<code>convert_USRDS_to_parquet()</code>
+</li>
+<li>
+<strong>Set the working directory</strong> with
+<code><a href="../reference/set_USRDS_wd.html">set_USRDS_wd()</a></code>
+</li>
+<li>Proceed to the next vignette for filtering and extracting claims
+data with <code>get_*()</code> functions.</li>
+</ol>
 <hr>
 <p>This vignette is a starting point for streamlined, reproducible
 access to USRDS data in R. See additional vignettes and documentation

@@ -18,13 +18,12 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-<img src="man/figures/logo.png" align="right" height="139" />
-
 This is a prototype of an R package to facilitate analysis of the United States Renal Data System using R, "usRds".
 The package assumes that the user already has obtained the data from the USRDS system, and that all files are in CSV, SAS, or parquet format.
+
 To install the package, type the following into R:
 
-devtools::install_github("VagishHemmige/usRds")
+'devtools::install_github("VagishHemmige/usRds")'
 
 You will need to use the **set_USRDS_wd()** function to establish the directory where the USRDS files are stored:
 
@@ -60,7 +59,7 @@ Much more, including help files, vignettes, etc. will be coming soon!
 
 You can install the development version of usRds from [GitHub](https://github.com/) with:
 
-``` r
+``` {r, eval=FALSE}
 # install.packages("devtools")
 devtools::install_github("VagishHemmige/usRds")
 ```

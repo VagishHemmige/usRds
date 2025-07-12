@@ -4,17 +4,17 @@
 # usRds
 
 <!-- badges: start -->
-<!-- badges: end -->
 
-<img src="man/figures/logo.png" align="right" height="139" />
+<!-- badges: end -->
 
 This is a prototype of an R package to facilitate analysis of the United
 States Renal Data System using R, “usRds”. The package assumes that the
 user already has obtained the data from the USRDS system, and that all
-files are in CSV, SAS, or parquet format. To install the package, type
-the following into R:
+files are in CSV, SAS, or parquet format.
 
-devtools::install_github(“VagishHemmige/usRds”)
+To install the package, type the following into R:
+
+‘devtools::install_github(“VagishHemmige/usRds”)’
 
 You will need to use the **set_USRDS_wd()** function to establish the
 directory where the USRDS files are stored:

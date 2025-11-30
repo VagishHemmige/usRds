@@ -1,0 +1,104 @@
+# Getting Started with the usRds Package
+
+The `usRds` package provides tools to access and preprocess United
+States Renal Data System (USRDS) data files in R. It supports multiple
+raw data formats and optionally allows conversion to efficient Parquet
+format.
+
+This vignette walks through the initial setup and *optional* conversion
+process.
+
+## Supported File Formats
+
+The package works with:
+
+- `.sas7bdat` — standard SAS format used in most official USRDS datasets
+- `.csv` — used in earlier years and alternate distributions
+- `.parquet` — efficient columnar format for fast and scalable access
+
+If multiple versions of a file are present, `.parquet` is prioritized
+automatically.
+
+## Why Use Parquet? (Optional)
+
+Working with large SAS or CSV files can be slow and memory-intensive.
+Parquet offers major performance and storage benefits:
+
+| Format  | Load Time (Typical) | Disk Size (Typical) |
+|---------|---------------------|---------------------|
+| SAS     | ~45–90 seconds      | ~800 MB             |
+| CSV     | ~30–60 seconds      | ~600 MB             |
+| Parquet | ~1–5 seconds        | ~100–200 MB         |
+
+Parquet advantages include:
+
+- **Much faster loading** with
+  [`arrow::read_parquet()`](https://arrow.apache.org/docs/r/reference/read_parquet.html)
+- **Smaller file sizes** (typically 3–8× smaller)
+- **Selective column access** to minimize memory usage
+- **Modern compatibility** with tools like Arrow and DuckDB
+
+## Step 1 (Optional): Convert to Parquet
+
+If you’d like to take advantage of these benefits, convert your SAS or
+CSV files to Parquet *before* setting the working directory:
+
+``` r
+library(usRds)
+
+convert_USRDS_to_parquet(
+  file_key = "IN",
+  years = 2006:2012,
+  overwrite = FALSE
+)
+```
+
+This will:
+
+- Look up files based on `.usrds_env$file_list`
+- Automatically detect whether the input is CSV or SAS
+- Save `.parquet` versions in the same directory as the source
+- Skip conversion if `.parquet` files already exist (unless
+  `overwrite = TRUE`)
+
+### Example Folder Structure After Conversion
+
+    /path/to/usrds_data/
+    ├── 5) ESRD Institution/
+    │   ├── IN2006/
+    │   │   ├── in2006a.sas7bdat
+    │   │   └── in2006a.parquet
+
+## Step 2: Set the USRDS Working Directory
+
+Once your data (in any format) is prepared, register the path with:
+
+``` r
+set_USRDS_wd("/path/to/usrds_data")
+```
+
+To make this setting persist across sessions:
+
+``` r
+set_USRDS_wd("/path/to/usrds_data", permanent = TRUE)
+```
+
+This working directory is used by all downstream functions to locate
+USRDS files.
+
+## Summary
+
+To begin using `usRds`:
+
+1.  **(Optional)** Convert raw files to Parquet using
+    `convert_USRDS_to_parquet()`
+2.  **Set the working directory** with
+    [`set_USRDS_wd()`](https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.md)
+3.  Proceed to the next vignette for filtering and extracting claims
+    data with `get_*()` functions.
+
+------------------------------------------------------------------------
+
+This vignette is a starting point for streamlined, reproducible access
+to USRDS data in R. See additional vignettes and documentation for
+advanced cohort building and labeling features.

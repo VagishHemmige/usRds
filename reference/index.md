@@ -2,6 +2,8 @@
 
 ## All functions
 
+- [`apply_srtr_varlabels()`](https://vagishhemmige.github.io/usRds/reference/apply_srtr_varlabels.md)
+  : Apply SRTR variable labels to a data frame
 - [`apply_usrds_factors()`](https://vagishhemmige.github.io/usRds/reference/apply_usrds_factors.md)
   : Apply USRDS factor labels to a data frame
 - [`apply_usrds_varlabels()`](https://vagishhemmige.github.io/usRds/reference/apply_usrds_varlabels.md)

@@ -14,12 +14,12 @@ metadata_c <- .load_usrds_metadata_c("data-raw/USRDS_Res_Guide_Appendix_C_2024.x
 #This code creates the code necessary in order for the get_*_ICD functions to be able to use wildcards
 source(("data-raw/parse_icd_reference.R"))
 icd_reference <- .parse_icd_reference(
-  "data-raw/ICD-9-CM-v32-master-descriptions/CMS32_DESC_LONG_DX.txt",
-  "data-raw/ICD10/icd10cm-codes-2026.txt"
+  "data-raw/ICD9/Diagnosis codes/CMS32_DESC_LONG_DX.txt",
+  "data-raw/ICD10/Diagnosis codes/icd10cm-codes-2026.txt"
 )
 
 #Extract HCPCS reference
-hcpcs_reference <- readxl::read_excel("data-raw/hcpc2025_jul_anweb_v3/HCPC2025_JUL_ANWEB_v3.xlsx")
+#hcpcs_reference <- readxl::read_excel("data-raw/hcpc2025_jul_anweb_v3/HCPC2025_JUL_ANWEB_v3.xlsx")
 
 
 usethis::use_data(IN_HCPCS, IN_ICD, PS_HCPCS, PS_ICD, metadata_b, metadata_c,icd_reference, hcpcs_reference,

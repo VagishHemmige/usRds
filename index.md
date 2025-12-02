@@ -52,12 +52,3 @@ You can install the development version of usRds from
 # install.packages("devtools")
 devtools::install_github("VagishHemmige/usRds")
 ```
-
-## Example
-
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(usRds)
-## basic example code
-```

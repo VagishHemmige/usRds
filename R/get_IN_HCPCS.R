@@ -14,7 +14,7 @@
   if (file_suffix == "parquet") {
     arrow::read_parquet(file_path) |>
       dplyr::rename_with(toupper) |>
-      dplyr::select(dplyr::all_of(variablelist)) |>
+      dplyr::select(dplyr::any_of(variablelist)) |>
       (\(df) if (!is.null(hcpcs_codes)) dplyr::filter(df, HCPCS %in% hcpcs_codes) else df)() |>
       (\(df) if (!is.null(usrds_ids)) dplyr::filter(df, USRDS_ID %in% usrds_ids) else df)() |>
       dplyr::mutate(CLM_FROM = lubridate::as_date(CLM_FROM)) |>
@@ -25,12 +25,13 @@
       dplyr::rename_with(toupper) |>
       (\(df) if (!is.null(hcpcs_codes)) dplyr::filter(df, HCPCS %in% hcpcs_codes) else df)() |>
       (\(df) if (!is.null(usrds_ids)) dplyr::filter(df, USRDS_ID %in% usrds_ids) else df)() |>
-      dplyr::select(dplyr::all_of(variablelist)) |>
+      dplyr::select(dplyr::any_of(variablelist)) |>
       dplyr::mutate(CLM_FROM = suppressWarnings(lubridate::dmy(CLM_FROM)))
 
   } else if (file_suffix == "sas7bdat") {
-    haven::read_sas(file_path, col_select = variablelist) |>
+    haven::read_sas(file_path) |>
       dplyr::rename_with(toupper) |>
+      dplyr::select(dplyr::any_of(variablelist)) |>   # <-- safe even if some variables are missing
       (\(df) if (!is.null(hcpcs_codes)) dplyr::filter(df, HCPCS %in% hcpcs_codes) else df)() |>
       (\(df) if (!is.null(usrds_ids)) dplyr::filter(df, USRDS_ID %in% usrds_ids) else df)()
 
@@ -61,7 +62,7 @@
 #' get_IN_HCPCS(NULL, years = 2012:2016)  # All HCPCS claims
 #' }
 get_IN_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
-  variablelist <- c("USRDS_ID", "CLM_FROM", "HCPCS", "REV_CH")
+  variablelist <- c("USRDS_ID", "CLM_FROM", "HCPCS", "REV_CH", "REVPMT")
 
   .check_valid_years(
     years = years,

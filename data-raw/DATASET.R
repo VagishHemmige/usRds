@@ -3,8 +3,11 @@
 #This code creates the files needed to extract ICD codes and HCPCS codes
 IN_HCPCS <- readxl::read_excel("data-raw/File lists for functions/IN_HCPCS.xlsx")
 IN_ICD<- readxl::read_excel("data-raw/File lists for functions/IN_ICD.xlsx")
+IN_CLM_COSTS <- readxl::read_excel("data-raw/File lists for functions/IN_CLM_COSTS.xlsx")
+IN_REV_COSTS<- readxl::read_excel("data-raw/File lists for functions/IN_REV_COSTS.xlsx")
 PS_HCPCS <- readxl::read_excel("data-raw/File lists for functions/PS_HCPCS.xlsx")
 PS_ICD<- readxl::read_excel("data-raw/File lists for functions/PS_ICD.xlsx")
+
 
 #This code creates the code necessary in order for the labelling functions to work
 source("data-raw/sysdata-metadata_helpers.R")
@@ -22,5 +25,5 @@ icd_reference <- .parse_icd_reference(
 #hcpcs_reference <- readxl::read_excel("data-raw/hcpc2025_jul_anweb_v3/HCPC2025_JUL_ANWEB_v3.xlsx")
 
 
-usethis::use_data(IN_HCPCS, IN_ICD, PS_HCPCS, PS_ICD, metadata_b, metadata_c,icd_reference, hcpcs_reference,
+usethis::use_data(IN_HCPCS, IN_ICD, PS_HCPCS, PS_ICD, IN_CLM_COSTS, IN_REV_COSTS, metadata_b, metadata_c,icd_reference, hcpcs_reference,
                   overwrite = TRUE, internal=TRUE)

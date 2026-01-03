@@ -14,7 +14,7 @@
 #' @return A data frame with factor variables applied where applicable.
 #' @export
 #'
-#' @importFrom labelled var_label var_label<-
+#' @importFrom labelled var_label var_label
 #' @importFrom rlang enquo
 #' @importFrom tidyselect eval_select
 #' @importFrom tibble tibble
@@ -24,10 +24,10 @@
 #' df <- load_usrds_file("PATIENTS", factor_labels = TRUE)
 #' }
 apply_usrds_factors <- function(df, file_key, verbose = FALSE) {
-  if (!exists("metadata_b", envir = .GlobalEnv) ||
-      !exists("metadata_c", envir = .GlobalEnv)) {
-    stop("metadata_b and metadata_c must exist in the global environment or namespace.")
-  }
+#  if (!exists("metadata_b", envir = .GlobalEnv) ||
+#      !exists("metadata_c", envir = .GlobalEnv)) {
+#    stop("metadata_b and metadata_c must exist in the global environment or namespace.")
+#  }
 
   # Normalize column names
   df_names_upper <- toupper(names(df))

@@ -57,7 +57,7 @@
 #' }
 
 get_IN_CLM_costs <- function(years, usrds_ids = NULL) {
-  variablelist <- c("USRDS_ID", "CLM_FROM", "CLM_THRU", "CLM_TOT", "CLM_AMT")
+  variablelist <- c("USRDS_ID", "CLM_FROM", "CLM_THRU", "CLM_TOT", "CLM_AMT", "HCFASAF")
 
   .check_valid_years(
     years = years,
@@ -74,5 +74,21 @@ get_IN_CLM_costs <- function(years, usrds_ids = NULL) {
                                      variablelist = variablelist,
                                      usrds_ids = usrds_ids)
     }) |>
-    dplyr::bind_rows()
+    dplyr::bind_rows()%>%
+    dplyr::mutate(
+      HCFASAF = factor(
+        HCFASAF,
+        levels = c("I", "M", "O", "D", "N", "H", "S", "Q"),
+        labels = c(
+          "Inpatient",
+          "Inpatient (REBUS)",
+          "Outpatient",
+          "Dialysis",
+          "Skilled Nursing Facility",
+          "Home Health",
+          "Hospice",
+          "Non-claim / auxiliary"
+        )
+      )
+    )
 }

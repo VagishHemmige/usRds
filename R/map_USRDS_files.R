@@ -14,7 +14,7 @@
     return(invisible(NULL))
   }
 
-  USRDS_directories <- c("ESRD core", "ESRD transplant", "ESRD hospital",
+  USRDS_directories <- c("ESRD Core", "ESRD transplant", "ESRD hospital",
                          "ESRD PartD", "ESRD Institution", "Physician supplier")
 
   list_and_clean <- function(pattern) {
@@ -37,7 +37,7 @@
       Year = stringr::str_extract(file_root, "20[0-9]{2}"),
       Year = as.numeric(Year),
       file_directory = case_when(
-        str_detect(file_path, "ESRD core")          ~ "Core",
+        str_detect(file_path, "ESRD Core")          ~ "Core",
         str_detect(file_path, "ESRD transplant")    ~ "Transplant",
         str_detect(file_path, "ESRD hospital")      ~ "Hospital",
         str_detect(file_path, "ESRD PartD")         ~ "Part D",

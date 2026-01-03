@@ -49,6 +49,10 @@ A data frame with one row per diagnosis claim, containing:
 
   Claim end date (Date)
 
+- HCFASAF:
+
+  Source file
+
 ## Details
 
 When Parquet files are used, filtering by ICD code and USRDS_ID is

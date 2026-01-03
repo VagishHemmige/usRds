@@ -18,6 +18,8 @@
   : Retrieve diagnosis codes from Institutional claims
 - [`get_IN_REV_costs()`](https://vagishhemmige.github.io/usRds/reference/get_IN_REV_costs.md)
   : Retrieve Institutional costs Claims
+- [`get_PS_CLM_costs()`](https://vagishhemmige.github.io/usRds/reference/get_PS_CLM_costs.md)
+  : Retrieve claims costs from Physician/Supplier claims
 - [`get_PS_HCPCS()`](https://vagishhemmige.github.io/usRds/reference/get_PS_HCPCS.md)
   : Retrieve HCPCS codes from Physician/Supplier claims
 - [`get_PS_ICD()`](https://vagishhemmige.github.io/usRds/reference/get_PS_ICD.md)

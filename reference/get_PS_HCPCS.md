@@ -26,7 +26,7 @@ get_PS_HCPCS(hcpcs_codes = NULL, years, usrds_ids = NULL)
 
 ## Value
 
-A data frame with columns: `USRDS_ID`, `HCPCS`, `CLM_FROM`
+A data frame with columns: `USRDS_ID`, `HCPCS`, `CLM_FROM`, `HCFASAF`
 
 ## Details
 

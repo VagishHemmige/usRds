@@ -63,7 +63,7 @@
 #' get_PS_HCPCS(NULL, years = 2006:2008)  # All HCPCS codes
 #' }
 get_PS_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
-  variablelist <- c("USRDS_ID", "CLM_FROM", "SBMTCH")
+  variablelist <- c("USRDS_ID", "CLM_FROM", "HCPCS")
 
   .check_valid_years(
     years = years,

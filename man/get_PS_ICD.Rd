@@ -21,6 +21,7 @@ A data frame with one row per diagnosis claim, containing:
 \item{DIAG}{ICD diagnosis code (character)}
 \item{CLM_FROM}{Claim start date (Date)}
 \item{CLM_THRU}{Claim end date (Date)}
+\item{HCFASAF}{Source file}
 }
 }
 \description{

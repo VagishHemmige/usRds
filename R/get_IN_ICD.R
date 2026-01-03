@@ -20,7 +20,7 @@
       {
         if (!is.null(usrds_ids)) dplyr::filter(., USRDS_ID %in% usrds_ids) else .
       } %>%
-      dplyr::select(USRDS_ID, CODE, CLM_FROM) %>%
+      dplyr::select(USRDS_ID, CODE, CLM_FROM, HCFASAF) %>%
       dplyr::collect() %>%
       dplyr::mutate(CLM_FROM = as.Date(CLM_FROM))
 
@@ -34,10 +34,10 @@
       {
         if (!is.null(usrds_ids)) dplyr::filter(., USRDS_ID %in% usrds_ids) else .
       } %>%
-      dplyr::select(USRDS_ID, CODE, CLM_FROM)
+      dplyr::select(USRDS_ID, CODE, CLM_FROM, HCFASAF)
 
   } else if (file_suffix == "sas7bdat") {
-    temp <- haven::read_sas(file_path, col_select = c("USRDS_ID", "CLM_FROM", "CODE")) %>%
+    temp <- haven::read_sas(file_path, col_select = c("USRDS_ID", "CLM_FROM", "CODE", "HCFASAF")) %>%
       dplyr::rename_with(toupper) %>%
       {
         if (!is.null(icd_codes)) dplyr::filter(., CODE %in% icd_codes) else .
@@ -101,5 +101,28 @@ get_IN_ICD <- function(icd_codes = NULL, years, usrds_ids = NULL) {
                                    icd_codes = icd_codes,
                                    usrds_ids = usrds_ids)
     }) %>%
-    dplyr::bind_rows()
+    dplyr::bind_rows()%>%
+    dplyr::mutate(
+      HCFASAF = factor(
+        HCFASAF,
+        levels = c("I", "M", "O", "D", "N", "H", "S", "Q", "P"),
+        labels = c(
+          "Inpatient",
+          "Inpatient (REBUS)",
+          "Outpatient",
+          "Dialysis",
+          "Skilled Nursing Facility",
+          "Home Health",
+          "Hospice",
+          "Non-claim / auxiliary",
+          "Physician/Supplier"
+        )
+      )
+    )%>%
+    labelled::set_variable_labels(
+      USRDS_ID = "USRDS patient ID number",
+      HCFASAF = "HCFA SAF source of this bill",
+      CLM_FROM = "From date of service",
+      CODE= "ICD code"
+    )
 }

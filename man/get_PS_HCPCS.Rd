@@ -14,7 +14,7 @@ get_PS_HCPCS(hcpcs_codes = NULL, years, usrds_ids = NULL)
 \item{usrds_ids}{Optional. Vector of USRDS_IDs to restrict results to.}
 }
 \value{
-A data frame with columns: \code{USRDS_ID}, \code{HCPCS}, \code{CLM_FROM}
+A data frame with columns: \code{USRDS_ID}, \code{HCPCS}, \code{CLM_FROM}, \code{HCFASAF}
 }
 \description{
 Extracts all claims from physician/supplier billing data for the selected years,

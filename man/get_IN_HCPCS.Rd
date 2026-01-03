@@ -14,7 +14,7 @@ get_IN_HCPCS(hcpcs_codes = NULL, years, usrds_ids = NULL)
 \item{usrds_ids}{Optional vector of USRDS_IDs to filter to specific patients.}
 }
 \value{
-A data frame with columns: \code{USRDS_ID}, \code{CLM_FROM}, \code{HCPCS}, \code{REV_CH}
+A data frame with columns: \code{USRDS_ID}, \code{CLM_FROM}, \code{HCPCS}, \code{REV_CH}, \code{REVPMT}, \code{HCFASAF}
 }
 \description{
 Searches institutional claim files for specified HCPCS codes in specified years.

@@ -20,7 +20,7 @@
       {
         if (!is.null(usrds_ids)) dplyr::filter(., USRDS_ID %in% usrds_ids) else .
       } %>%
-      dplyr::select(USRDS_ID, DIAG, CLM_FROM, CLM_THRU) %>%
+      dplyr::select(USRDS_ID, DIAG, CLM_FROM, CLM_THRU, HCFASAF) %>%
       dplyr::collect() %>%
       dplyr::mutate(
         CLM_FROM = as.Date(CLM_FROM),
@@ -40,10 +40,14 @@
       {
         if (!is.null(usrds_ids)) dplyr::filter(., USRDS_ID %in% usrds_ids) else .
       } %>%
-      dplyr::select(USRDS_ID, DIAG, CLM_FROM, CLM_THRU)
+      dplyr::select(USRDS_ID, DIAG, CLM_FROM, CLM_THRU, HCFASAF)
 
   } else if (file_suffix == "sas7bdat") {
-    temp <- haven::read_sas(file_path, col_select = c("USRDS_ID", "CLM_FROM", "DIAG", "CLM_THRU")) %>%
+    temp <- haven::read_sas(file_path, col_select = c("USRDS_ID",
+                                                      "CLM_FROM",
+                                                      "DIAG",
+                                                      "CLM_THRU",
+                                                      "HCFASAF")) %>%
       dplyr::rename_with(toupper) %>%
       {
         if (!is.null(icd_codes)) dplyr::filter(., DIAG %in% icd_codes) else .
@@ -86,6 +90,7 @@
 #'     \item{DIAG}{ICD diagnosis code (character)}
 #'     \item{CLM_FROM}{Claim start date (Date)}
 #'     \item{CLM_THRU}{Claim end date (Date)}
+#'     \item{HCFASAF}{Source file}
 #'   }
 #'
 #' @export
@@ -124,5 +129,29 @@ get_PS_ICD <- function(icd_codes = NULL, years, usrds_ids = NULL) {
                                    icd_codes = icd_codes,
                                    usrds_ids = usrds_ids)
     }) %>%
-    dplyr::bind_rows()
+    dplyr::bind_rows()%>%
+    dplyr::mutate(
+      HCFASAF = factor(
+        HCFASAF,
+        levels = c("I", "M", "O", "D", "N", "H", "S", "Q", "P"),
+        labels = c(
+          "Inpatient",
+          "Inpatient (REBUS)",
+          "Outpatient",
+          "Dialysis",
+          "Skilled Nursing Facility",
+          "Home Health",
+          "Hospice",
+          "Non-claim / auxiliary",
+          "Physician/Supplier"
+        )
+      )
+    )%>%
+    labelled::set_variable_labels(
+      USRDS_ID = "USRDS patient ID number",
+      HCFASAF = "HCFA SAF source of this bill",
+      CLM_FROM = "From date of service",
+      CLM_THRU = "Thru date of service",
+      DIAG= "ICD code"
+    )
 }

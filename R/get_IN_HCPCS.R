@@ -53,7 +53,7 @@
 #' @param years Integer vector of years to include.
 #' @param usrds_ids Optional vector of USRDS_IDs to filter to specific patients.
 #'
-#' @return A data frame with columns: `USRDS_ID`, `CLM_FROM`, `HCPCS`, `REV_CH`
+#' @return A data frame with columns: `USRDS_ID`, `CLM_FROM`, `HCPCS`, `REV_CH`, `REVPMT`, `HCFASAF`
 #' @export
 #'
 #' @examples
@@ -62,7 +62,7 @@
 #' get_IN_HCPCS(NULL, years = 2012:2016)  # All HCPCS claims
 #' }
 get_IN_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
-  variablelist <- c("USRDS_ID", "CLM_FROM", "HCPCS", "REV_CH", "REVPMT")
+  variablelist <- c("USRDS_ID", "CLM_FROM", "HCPCS", "REV_CH", "REVPMT", "HCFASAF")
 
   .check_valid_years(
     years = years,
@@ -80,5 +80,31 @@ get_IN_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
                                      variablelist = variablelist,
                                      usrds_ids = usrds_ids)
     }) |>
-    dplyr::bind_rows()
+    dplyr::bind_rows()%>%
+    dplyr::mutate(
+      HCFASAF = factor(
+        HCFASAF,
+        levels = c("I", "M", "O", "D", "N", "H", "S", "Q", "P"),
+        labels = c(
+          "Inpatient",
+          "Inpatient (REBUS)",
+          "Outpatient",
+          "Dialysis",
+          "Skilled Nursing Facility",
+          "Home Health",
+          "Hospice",
+          "Non-claim / auxiliary",
+          "Physician/Supplier"
+        )
+      )
+    )%>%
+    labelled::set_variable_labels(
+      USRDS_ID = "USRDS patient ID number",
+      HCFASAF = "HCFA SAF source of this bill",
+      CLM_FROM = "From date of service",
+      HCPCS = "HCPCS code",
+      REVPMT = "Revenue Center Payment Amount Amount",
+      REV_CH = "Revenue center total charge"
+
+    )
 }

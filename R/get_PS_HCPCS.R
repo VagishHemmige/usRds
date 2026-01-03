@@ -13,6 +13,7 @@
   message("Reading file: ", file_path)
 
   if (file_suffix == "parquet") {
+
     arrow::read_parquet(file_path) |>
       dplyr::rename_with(toupper) |>
       dplyr::select(dplyr::all_of(variablelist)) |>
@@ -54,7 +55,7 @@
 #' @param years Integer vector of calendar years to include.
 #' @param usrds_ids Optional. Vector of USRDS_IDs to restrict results to.
 #'
-#' @return A data frame with columns: `USRDS_ID`, `HCPCS`, `CLM_FROM`
+#' @return A data frame with columns: `USRDS_ID`, `HCPCS`, `CLM_FROM`, `HCFASAF`
 #' @export
 #'
 #' @examples
@@ -63,7 +64,7 @@
 #' get_PS_HCPCS(NULL, years = 2006:2008)  # All HCPCS codes
 #' }
 get_PS_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
-  variablelist <- c("USRDS_ID", "CLM_FROM", "HCPCS")
+  variablelist <- c("USRDS_ID", "CLM_FROM", "HCPCS", "HCFASAF")
 
   .check_valid_years(
     years = years,
@@ -81,5 +82,28 @@ get_PS_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
                                      variablelist = variablelist,
                                      usrds_ids = usrds_ids)
     }) |>
-    dplyr::bind_rows()
+    dplyr::bind_rows()%>%
+    dplyr::mutate(
+      HCFASAF = factor(
+        HCFASAF,
+        levels = c("I", "M", "O", "D", "N", "H", "S", "Q", "P"),
+        labels = c(
+          "Inpatient",
+          "Inpatient (REBUS)",
+          "Outpatient",
+          "Dialysis",
+          "Skilled Nursing Facility",
+          "Home Health",
+          "Hospice",
+          "Non-claim / auxiliary",
+          "Physician/Supplier"
+        )
+      )
+    )%>%
+    labelled::set_variable_labels(
+      USRDS_ID = "USRDS patient ID number",
+      HCFASAF = "HCFA SAF source of this bill",
+      CLM_FROM = "From date of service",
+      HCPCS= "HCPCS code"
+    )
 }

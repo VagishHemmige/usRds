@@ -1,7 +1,7 @@
 
 #' Initialize a cohort of USRDS patients
 #'
-#' Initializes a cohort
+#' Initializes a cohort of USRDS patients.
 #'
 #' @param df is a data frame used to initialize a USRDS data frame.  Typically, this is a data frame created
 #' from the `PATIENTS` file, potentially merged with the `MEDEVID` file or other files with baseline

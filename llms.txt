@@ -57,6 +57,8 @@ devtools::install_github("VagishHemmige/usRds")
 
 ## All functions
 
+- [`add_cohort_event()`](https://vagishhemmige.github.io/usRds/reference/add_cohort_event.md)
+  : Add an event variable to a USRDS cohort
 - [`apply_srtr_varlabels()`](https://vagishhemmige.github.io/usRds/reference/apply_srtr_varlabels.md)
   : Apply SRTR variable labels to a data frame
 - [`apply_usrds_factors()`](https://vagishhemmige.github.io/usRds/reference/apply_usrds_factors.md)
@@ -65,6 +67,8 @@ devtools::install_github("VagishHemmige/usRds")
   : Apply USRDS variable labels to a data frame
 - [`convert_usrds_to_parquet()`](https://vagishhemmige.github.io/usRds/reference/convert_usrds_to_parquet.md)
   : Convert all USRDS raw files in a directory to Parquet
+- [`create_usrds_cohort()`](https://vagishhemmige.github.io/usRds/reference/create_usrds_cohort.md)
+  : Initialize a cohort of USRDS patients
 - [`establish_dx_date()`](https://vagishhemmige.github.io/usRds/reference/establish_dx_date.md)
   : Establish date a diagnosis is made
 - [`get_IN_CLM_costs()`](https://vagishhemmige.github.io/usRds/reference/get_IN_CLM_costs.md)

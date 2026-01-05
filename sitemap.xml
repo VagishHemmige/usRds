@@ -7,10 +7,12 @@
 <url><loc>https://vagishhemmige.github.io/usRds/articles/index.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/authors.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/index.html</loc></url>
+<url><loc>https://vagishhemmige.github.io/usRds/reference/add_cohort_event.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/apply_srtr_varlabels.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/apply_usrds_factors.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/apply_usrds_varlabels.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/convert_usrds_to_parquet.html</loc></url>
+<url><loc>https://vagishhemmige.github.io/usRds/reference/create_usrds_cohort.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/dot-map_USRDS_files.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/dot-usrds_env.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/establish_dx_date.html</loc></url>

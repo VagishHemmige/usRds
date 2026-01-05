@@ -1,7 +1,7 @@
 
 #' Initialize a cohort of USRDS patients
 #'
-#' Initializes a cohort of USRDS patients.
+#' Initializes a cohort of USRDS patients.  Data set must have a variable named USRDS_ID.
 #'
 #' @param df is a data frame used to initialize a USRDS data frame.  Typically, this is a data frame created
 #' from the `PATIENTS` file, potentially merged with the `MEDEVID` file or other files with baseline
@@ -23,6 +23,11 @@
 #' }
 
 create_usrds_cohort <- function(df, start_date, end_date) {
+
+  #Error check
+  if (!"USRDS_ID" %in% names(df)) {
+    stop("Data set must have a variable named 'USRDS_ID'", call. = FALSE)
+  }
 
   start_vec <- .resolve_date(df, start_date, "start_date")
   end_vec   <- .resolve_date(df, end_date,   "end_date")

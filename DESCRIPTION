@@ -32,9 +32,10 @@ Imports:
     stringr,
     tidyr,
     labelled,
-    rlang, 
-    tibble, 
-    tidyselect
+    rlang,
+    tibble,
+    tidyselect,
+    survival
 Suggests: 
     knitr,
     rmarkdown,

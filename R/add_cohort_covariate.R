@@ -81,6 +81,30 @@ add_cohort_event <- function(USRDS_cohort,
     )
   }
 
+  if (!is.null(covariate_value)) {
+
+    # Must be a single character string
+    if (!is.character(covariate_value) || length(covariate_value) != 1) {
+      stop(
+        "covariate_value must be a single character string naming a column in covariate_data_frame",
+        call. = FALSE
+      )
+    }
+
+    # Must exist in covariate_data_frame
+    if (!covariate_value %in% names(covariate_data_frame)) {
+      stop(
+        sprintf(
+          "covariate_value '%s' not found in covariate_data_frame",
+          covariate_value
+        ),
+        call. = FALSE
+      )
+    }
+  }
+
+
+
   ## ---- Time setup ----------------------------------------------------------
 
   origin_date <- as.Date("2000-01-01")
@@ -95,10 +119,24 @@ add_cohort_event <- function(USRDS_cohort,
 
   ## ---- tmerge --------------------------------------------------------------
 
+
+  if (is.null(covariate_value)){
   event_call <- setNames(
     list(quote(tdc(tcovariate))),
     covariate_variable_name
   )
+  } else
+  {
+
+    event_call <- setNames(
+      list(quote(tdc(tcovariate, covariate_value))),
+      covariate_variable_name
+    )
+
+
+  }
+
+
 
   result <- do.call(
     survival::tmerge,

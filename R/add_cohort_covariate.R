@@ -36,9 +36,10 @@
 #' }
 #'
 add_cohort_event <- function(USRDS_cohort,
-                             event_data_frame,
-                             event_date,
-                             event_variable_name) {
+                             covariate_data_frame,
+                             covariate_date,
+                             covariate_value=NULL,
+                             covariate_variable_name) {
 
   ## ---- Guards -------------------------------------------------------------
 
@@ -49,32 +50,32 @@ add_cohort_event <- function(USRDS_cohort,
 
   # Check ID exists in both data frames
   if (!"USRDS_ID" %in% names(USRDS_cohort) ||
-      !"USRDS_ID" %in% names(event_data_frame)) {
+      !"USRDS_ID" %in% names(covariate_data_frame)) {
     stop("Both data frames must contain 'USRDS_ID'", call. = FALSE)
   }
 
   # Validate event_variable_name
-  if (!is.character(event_variable_name) || length(event_variable_name) != 1) {
-    stop("event_variable_name must be a single character string", call. = FALSE)
+  if (!is.character(covariate_variable_name) || length(covariate_variable_name) != 1) {
+    stop("covariate_variable_name must be a single character string", call. = FALSE)
   }
 
-  if (event_variable_name %in% names(USRDS_cohort)) {
+  if (covariate_variable_name %in% names(USRDS_cohort)) {
     stop(
-      sprintf("Variable '%s' already exists in USRDS_cohort", event_variable_name),
+      sprintf("Variable '%s' already exists in USRDS_cohort", covariate_variable_name),
       call. = FALSE
     )
   }
 
-  # Validate event_date (must be a column name)
-  if (!is.character(event_date) || length(event_date) != 1) {
-    stop("event_date must be a single column name (character string)", call. = FALSE)
+  # Validate covariate_date (must be a column name)
+  if (!is.character(covariate_date) || length(covariate_date) != 1) {
+    stop("covariate_date must be a single column name (character string)", call. = FALSE)
   }
 
-  if (!event_date %in% names(event_data_frame)) {
+  if (!covariate_date %in% names(covariate_data_frame)) {
     stop(
       sprintf(
-        "Event date variable '%s' not found in event_data_frame",
-        event_date
+        "Covariate date variable '%s' not found in covariate_data_frame",
+        covariate_date
       ),
       call. = FALSE
     )
@@ -87,16 +88,16 @@ add_cohort_event <- function(USRDS_cohort,
 
   ## ---- Event time conversion ----------------------------------------------
 
-  event_temp_data_frame <- event_data_frame %>%
+  covariate_temp_data_frame <- covariate_data_frame %>%
     dplyr::mutate(
-      tevent = as.numeric(.data[[event_date]] - origin_date)
+      tcovariate = as.numeric(.data[[covariate_date]] - origin_date)
     )
 
   ## ---- tmerge --------------------------------------------------------------
 
   event_call <- setNames(
-    list(quote(cumevent(tevent))),
-    event_variable_name
+    list(quote(tdc(tcovariate))),
+    covariate_variable_name
   )
 
   result <- do.call(
@@ -104,7 +105,7 @@ add_cohort_event <- function(USRDS_cohort,
     c(
       list(
         USRDS_cohort,
-        event_temp_data_frame,
+        covariate_temp_data_frame,
         id = quote(USRDS_ID)
       ),
       event_call
@@ -118,11 +119,8 @@ add_cohort_event <- function(USRDS_cohort,
 
   #Restore cohort attribute
   attr(result, "cohort_type") <- "USRDS_cohort"
-  attr(result, "event_variables") <- c(event_variable_name, attr(result, "event_variables"))
+  attr(result, "covariate_variables") <- c(covariate_variable_name, attr(result, "covariate_variables"))
 
-
-  #Potentially replace cumulative sum of events with a 1/0 marker of whether event happened?
-  #cohort$event1<-ifelse(cohort$event1>0,1,0)
 
   return(result)
 }

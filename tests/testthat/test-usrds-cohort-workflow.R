@@ -75,7 +75,7 @@ test_that("USRDS cohort workflow supports chained tmerge operations", {
     covariate_day = as.Date(origin +
                               c(1827,1827,1827, 2192, 2192,2192,2192, 2557,2557,2557) +
                               c(-145, 10,40, 10,20,40,60,-3, 360, 370)),
-    MELD=c(10,30,20,24,23,12,35,3,55,33)
+    MELD=c(10,30,20,24,23,12,NA,3,55,33)
   )
 
   cohort<- add_cohort_covariate(

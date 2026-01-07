@@ -2,6 +2,8 @@
 
 ## All functions
 
+- [`add_cohort_covariate()`](https://vagishhemmige.github.io/usRds/reference/add_cohort_covariate.md)
+  : Add a covariate variable to a USRDS cohort
 - [`add_cohort_event()`](https://vagishhemmige.github.io/usRds/reference/add_cohort_event.md)
   : Add an event variable to a USRDS cohort
 - [`apply_srtr_varlabels()`](https://vagishhemmige.github.io/usRds/reference/apply_srtr_varlabels.md)

@@ -16,7 +16,8 @@ create_usrds_cohort(df, start_date, end_date)
   is a data frame used to initialize a USRDS data frame. Typically, this
   is a data frame created from the `PATIENTS` file, potentially merged
   with the `MEDEVID` file or other files with baseline variables which
-  are to be time-invariant
+  are to be time-invariant. `USRDS_ID` must be unique or the function
+  will error.
 
 - start_date:
 
@@ -30,9 +31,10 @@ create_usrds_cohort(df, start_date, end_date)
 
 ## Value
 
-A data frame with columns `cohort_start_date` and `cohort_end_date`
-added, which take values based on the `start_date` and `end_date` passed
-to the function.
+A data frame and tmerge class object with columns `cohort_start_date`
+and `cohort_stop_date` added, which take values based on the
+`start_date` and `end_date` passed to the function, as well as `tstart`
+and `tstop` helper numbers
 
 ## Examples
 

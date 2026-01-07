@@ -9,7 +9,7 @@ create_usrds_cohort(df, start_date, end_date)
 \arguments{
 \item{df}{is a data frame used to initialize a USRDS data frame.  Typically, this is a data frame created
 from the \code{PATIENTS} file, potentially merged with the \code{MEDEVID} file or other files with baseline
-variables which are to be time-invariant}
+variables which are to be time-invariant.  \code{USRDS_ID} must be unique or the function will error.}
 
 \item{start_date}{is a fixed data or a date variable in the \code{df} data frame specifying when each patient
 is considered to enter the cohort.}
@@ -18,8 +18,8 @@ is considered to enter the cohort.}
 is considered to exit the cohort.}
 }
 \value{
-A data frame with columns \code{cohort_start_date} and \code{cohort_end_date} added, which take values based
-on the \code{start_date} and \code{end_date} passed to the function.
+A data frame and tmerge class object with columns \code{cohort_start_date} and \code{cohort_stop_date} added, which take values based
+on the \code{start_date} and \code{end_date} passed to the function, as well as \code{tstart} and \code{tstop} helper numbers
 }
 \description{
 Initializes a cohort of USRDS patients.  Data set must have a variable named USRDS_ID.

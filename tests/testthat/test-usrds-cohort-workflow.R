@@ -56,6 +56,36 @@ test_that("USRDS cohort workflow supports chained tmerge operations", {
     event_variable_name = "event2"
   )
 
+  #Test covariates without explicit values
+  covariates1<-data.frame(
+    USRDS_ID= c(1,2,3),
+    covariate_day = as.Date(origin + c(1827, 2192, 2557) + c(125, 380, 10))
+  )
+
+  cohort<- add_cohort_covariate(
+    USRDS_cohort= cohort,
+    covariate_data_frame=covariates1,
+    covariate_date= "covariate_day",
+    covariate_variable_name = "covariate_variable_1"
+  )
+
+  #Test covariates without explicit values
+  covariates2<-data.frame(
+    USRDS_ID= c(1,1,1,2,2,2,2,3,3,3),
+    covariate_day = as.Date(origin +
+                              c(1827,1827,1827, 2192, 2192,2192,2192, 2557,2557,2557) +
+                              c(-145, 10,40, 10,20,40,60,-3, 360, 370)),
+    MELD=c(10,30,20,24,23,12,35,3,55,33)
+  )
+
+  cohort<- add_cohort_covariate(
+    USRDS_cohort= cohort,
+    covariate_data_frame=covariates2,
+    covariate_date= "covariate_day",
+    covariate_variable_name = "covariate_variable_2",
+    covariate_value="MELD"
+  )
+
   expect_true("event2" %in% names(cohort))
   expect_true(all(cohort$event2 >= 0))
 

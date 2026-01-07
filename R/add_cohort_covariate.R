@@ -35,7 +35,7 @@
 #' \dontrun{
 #' }
 #'
-add_cohort_event <- function(USRDS_cohort,
+add_cohort_covariate <- function(USRDS_cohort,
                              covariate_data_frame,
                              covariate_date,
                              covariate_value=NULL,
@@ -120,21 +120,27 @@ add_cohort_event <- function(USRDS_cohort,
   ## ---- tmerge --------------------------------------------------------------
 
 
-  if (is.null(covariate_value)){
-  event_call <- setNames(
-    list(quote(tdc(tcovariate))),
-    covariate_variable_name
-  )
-  } else
-  {
+  if (is.null(covariate_value)) {
 
     event_call <- setNames(
-      list(quote(tdc(tcovariate, covariate_value))),
+      list(quote(tdc(tcovariate))),
       covariate_variable_name
     )
 
+  } else {
 
+    event_call <- setNames(
+      list(
+        as.call(list(
+          quote(tdc),
+          quote(tcovariate),
+          as.name(covariate_value)
+        ))
+      ),
+      covariate_variable_name
+    )
   }
+
 
 
 

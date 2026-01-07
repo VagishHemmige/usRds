@@ -6,3 +6,12 @@ template:
       <meta name="google-site-verification" content="TBumihuxSFxK8muRvdo69ca7bmvzWmy-3OMfCZ2692A" />
   logo: man/figures/logo.png
   favicon: man/figures/logo.png
+articles:
+- title: Getting Started with the usRds Package
+  navbar: ~
+  contents:
+  - getting-started
+- title: Using usRds to access data within the USRDS file system
+  navbar: ~
+  contents:
+  - accessing-files

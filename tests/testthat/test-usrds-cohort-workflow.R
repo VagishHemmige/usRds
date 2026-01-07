@@ -5,7 +5,7 @@ test_that("USRDS cohort workflow supports chained tmerge operations", {
   df <- data.frame(
     USRDS_ID = c(1, 2, 3),
     start    = as.Date(c("2005-01-01", "2006-01-01", "2007-01-01")),
-    end      = as.Date(c("2010-01-01", "2011-01-01", "2012-01-01"))
+    end      = as.Date(c("2010-02-03", "2011-04-05", "2012-06-07"))
   )
 
   ## ---- Create cohort -----------------------------------------------------
@@ -85,6 +85,10 @@ test_that("USRDS cohort workflow supports chained tmerge operations", {
     covariate_variable_name = "covariate_variable_2",
     covariate_value="MELD"
   )
+
+
+  cohort<-cohort |>
+    finalize_usrds_cohort()
 
   expect_true("event2" %in% names(cohort))
   expect_true(all(cohort$event2 >= 0))

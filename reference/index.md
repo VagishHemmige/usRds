@@ -18,6 +18,8 @@
   : Initialize a cohort of USRDS patients
 - [`establish_dx_date()`](https://vagishhemmige.github.io/usRds/reference/establish_dx_date.md)
   : Establish date a diagnosis is made
+- [`finalize_usrds_cohort()`](https://vagishhemmige.github.io/usRds/reference/finalize_usrds_cohort.md)
+  : Finalize a USRDS cohort
 - [`get_IN_CLM_costs()`](https://vagishhemmige.github.io/usRds/reference/get_IN_CLM_costs.md)
   : Retrieve Institutional Claims
 - [`get_IN_HCPCS()`](https://vagishhemmige.github.io/usRds/reference/get_IN_HCPCS.md)

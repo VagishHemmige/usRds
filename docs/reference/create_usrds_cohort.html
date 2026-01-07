@@ -63,7 +63,7 @@
     <dl><dt>df</dt>
 <dd><p>is a data frame used to initialize a USRDS data frame.  Typically, this is a data frame created
 from the <code>PATIENTS</code> file, potentially merged with the <code>MEDEVID</code> file or other files with baseline
-variables which are to be time-invariant</p></dd>
+variables which are to be time-invariant.  <code>USRDS_ID</code> must be unique or the function will error.</p></dd>
 
 
 <dt>start_date</dt>
@@ -80,8 +80,8 @@ is considered to exit the cohort.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>A data frame with columns <code>cohort_start_date</code> and <code>cohort_end_date</code> added, which take values based
-on the <code>start_date</code> and <code>end_date</code> passed to the function.</p>
+<p>A data frame and tmerge class object with columns <code>cohort_start_date</code> and <code>cohort_stop_date</code> added, which take values based
+on the <code>start_date</code> and <code>end_date</code> passed to the function, as well as <code>tstart</code> and <code>tstop</code> helper numbers</p>
     </div>
 
     <div class="section level2">

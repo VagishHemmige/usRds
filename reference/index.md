@@ -44,3 +44,5 @@
   : Prorate costs by day
 - [`set_USRDS_wd()`](https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.md)
   : Set the USRDS working directory
+- [`verify_medicare_primary()`](https://vagishhemmige.github.io/usRds/reference/verify_medicare_primary.md)
+  : Verify that a patient has Medicare primary coverage

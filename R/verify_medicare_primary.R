@@ -20,6 +20,14 @@
 #'
 #' @examples
 #' \dontrun{
+#'
+#' test_df<-data.frame(
+#' USRDS_ID=c(30, 111112),
+#' initial_dates=as.Date(c("1994-01-01", "2019-01-01"))
+#' )
+#'
+#'verify_medicare_primary(df=test_df, index_date = "initial_dates", lookback_days = 365)
+#'
 #' }
 
 verify_medicare_primary<-function(df, index_date, lookback_days=365)
@@ -73,7 +81,18 @@ verify_medicare_primary<-function(df, index_date, lookback_days=365)
     )
   }
 
+  if (is.character(index_date)) {
+    if (any(is.na(df[[index_date]]))) {
+      rlang::warn(
+        paste0("`df$", index_date, "` contains missing values; ",
+               "these patients will be classified as FALSE.")
+      )
+    }
+  }
 
+#--------------------------------------------------------------------------------------------
+
+  # Now we begin the code which executes the purpose of the function
 
   #Convert index_date to something that can be used
   if (is.character(index_date) && length(index_date) == 1) {
@@ -84,16 +103,7 @@ verify_medicare_primary<-function(df, index_date, lookback_days=365)
   }
 
 
-  if (is.character(index_date)) {
-    if (any(is.na(df[[index_date]]))) {
-      rlang::warn(
-        paste0("`df$", index_date, "` contains missing values; ",
-               "these patients will be classified as FALSE.")
-      )
-    }
-  }
-
-
+#Define eligible payers
 eligible_payers <- c(
   "MEDICARE FFS PRIMARY PAY, FOR BOTH PART A AND PART B",
   "MEDICARE FFS PRIMARY PAY, FOR OTHER"
@@ -130,12 +140,13 @@ medicare_history<-load_usrds_file("payhist",
 #Join patient cohort to medicare history data
 patients_clean<-left_join(df,
                           medicare_history,
-                          join_by(USRDS_ID, between(index_date, BEGDATE, ENDDATE))
+                          join_by(USRDS_ID, between(.index_date, BEGDATE, ENDDATE))
 )
 
 #Filter by FFS coverage on day of claim through 365 days prior
 patients_clean<-patients_clean%>%
-  mutate(medicare_primary_TF=ifelse(!is.na(BEGDATE) & index_date-BEGDATE>=lookback_days),TRUE,FALSE)
+  mutate(medicare_primary_TF=ifelse(!is.na(BEGDATE) & .index_date-BEGDATE>=lookback_days,TRUE,FALSE))%>%
+  select(-.index_date)
 
 return(patients_clean)
 

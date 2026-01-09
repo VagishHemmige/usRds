@@ -4,8 +4,8 @@
 #' the name of a date variable in quotes, and a variable `lookback_days` that encodes how many days of Medicare
 #' coverage are necessary.
 #'
-#' It returns the same dataframe with a new variable `medicare_primary_yn` that takes the values "Yes"
-#' or "No".
+#' It returns the same dataframe with a new variable `medicare_primary_TF` that takes the values `TRUE`
+#' or `FALSE`.
 #'
 #' @param df is a data frame, presumably one with a single row per patient.  Data frame *must* contain
 #' a column named `USRDS_ID`.
@@ -14,7 +14,7 @@
 #'
 #' @param lookback_days is the number of days of Medicare as primary necessary.  Default value is 365.
 #'
-#' @return The original `df` data fame with the variable `medicare_primary_yn` added
+#' @return The original `df` data fame with the variable `medicare_primary_TF` added
 #'
 #' @export
 #'
@@ -25,12 +25,17 @@
 verify_medicare_primary<-function(df, index_date, lookback_days=365)
 {
 
+  #Verify that lookback_days is an integer greater than zero.
+
+
+
+
 eligible_payers <- c(
   "MEDICARE FFS PRIMARY PAY, FOR BOTH PART A AND PART B",
   "MEDICARE FFS PRIMARY PAY, FOR OTHER"
 )
 
-#Open medicare history file
+#Open Medicare history file, keep rows where the payer is Medicare primary, and sort by USRDS and date
 medicare_history<-load_usrds_file("payhist",
                                   usrds_ids = df$USRDS_ID)%>%
   filter(PAYER %in% eligible_payers) %>%
@@ -66,7 +71,7 @@ patients_clean<-left_join(df,
 
 #Filter by FFS coverage on day of claim through 365 days prior
 patients_clean<-patients_clean%>%
-  mutate(medicare_primary_yn=ifelse(!is.na(BEGDATE) & index_date-BEGDATE>=lookback_days),1,0)
+  mutate(medicare_primary_TF=ifelse(!is.na(BEGDATE) & index_date-BEGDATE>=lookback_days),TRUE,FALSE)
 
 return(patients_clean)
 

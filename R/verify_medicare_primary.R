@@ -25,9 +25,73 @@
 verify_medicare_primary<-function(df, index_date, lookback_days=365)
 {
 
+  #Error checking
+
+  #Check that df is an appropriate data frame
+  if (!inherits(df, "data.frame")) {
+    rlang::abort("`df` must be a data frame.")
+  }
+
+  if (nrow(df) == 0) {
+    rlang::abort("`df` must have at least one row.")
+  }
+
+  if (!"USRDS_ID" %in% names(df)) {
+    rlang::abort("`df` must contain a column named `USRDS_ID`.")
+  }
+
+  if (all(is.na(df$USRDS_ID))) {
+    rlang::abort("`df$USRDS_ID` cannot be all missing.")
+  }
+
+  #Confirm that index_date is of the right form
+  if (inherits(index_date, "Date")) {
+    # ok
+  } else if (is.character(index_date) && length(index_date) == 1) {
+    if (!index_date %in% names(df)) {
+      rlang::abort("`index_date` must be a Date or the name of a date column in `df`.")
+    }
+    if (!inherits(df[[index_date]], "Date")) {
+      rlang::abort(
+        paste0("`df$", index_date, "` must be of class Date.")
+      )
+    }
+  } else {
+    rlang::abort(
+      "`index_date` must be a Date or a single character string naming a Date column in `df`."
+    )
+  }
+
+
   #Verify that lookback_days is an integer greater than zero.
+  if (!is.numeric(lookback_days) ||
+      length(lookback_days) != 1 ||
+      lookback_days <= 0 ||
+      lookback_days %% 1 != 0) {
+    rlang::abort(
+      "`lookback_days` must be a single integer greater than 0."
+    )
+  }
 
 
+
+  #Convert index_date to something that can be used
+  if (is.character(index_date) && length(index_date) == 1) {
+    index_date_var <- rlang::sym(index_date)
+    df <- df %>% mutate(.index_date = !!index_date_var)
+  } else {
+    df <- df %>% mutate(.index_date = as.Date(index_date))
+  }
+
+
+  if (is.character(index_date)) {
+    if (any(is.na(df[[index_date]]))) {
+      rlang::warn(
+        paste0("`df$", index_date, "` contains missing values; ",
+               "these patients will be classified as FALSE.")
+      )
+    }
+  }
 
 
 eligible_payers <- c(

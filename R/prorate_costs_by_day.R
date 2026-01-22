@@ -30,7 +30,7 @@ prorate_costs_by_day <-function(cost_data_frame) {
 
   cost_data_frame %>%
     mutate(
-      claim_duration = as.integer(CLM_THRU - CLM_FROM) + 1
+      claim_duration = as.integer(as.Date(CLM_THRU) - as.Date(CLM_FROM)) + 1
     ) %>%
     uncount(claim_duration, .id = "day_index", .remove = FALSE) %>%
 

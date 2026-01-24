@@ -8,7 +8,12 @@ Medicare coverage are necessary.
 ## Usage
 
 ``` r
-verify_medicare_primary(df, index_date, lookback_days = 365)
+verify_medicare_primary(
+  df,
+  index_date,
+  lookback_days = 365,
+  medicare_coverage_df = NULL
+)
 ```
 
 ## Arguments
@@ -27,12 +32,21 @@ verify_medicare_primary(df, index_date, lookback_days = 365)
   is the number of days of Medicare as primary necessary. Default value
   is 365.
 
+- medicare_coverage_df:
+
+  is an optional parameter containing a df from the `payhist` file.
+
 ## Value
 
 The original `df` data fame with the variable `medicare_primary_TF`
 added
 
 ## Details
+
+An optional variable `medicare_coverage_df` allows for a df containing
+information from the `payhist` file to be passed to the function. If
+left NULL, then the function will load the data via the
+`load_usrds_file` function.
 
 It returns the same dataframe with a new variable `medicare_primary_TF`
 that takes the values `TRUE` or `FALSE`.

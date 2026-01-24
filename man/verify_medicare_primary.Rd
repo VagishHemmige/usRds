@@ -4,7 +4,12 @@
 \alias{verify_medicare_primary}
 \title{Verify that a patient has Medicare primary coverage}
 \usage{
-verify_medicare_primary(df, index_date, lookback_days = 365)
+verify_medicare_primary(
+  df,
+  index_date,
+  lookback_days = 365,
+  medicare_coverage_df = NULL
+)
 }
 \arguments{
 \item{df}{is a data frame, presumably one with a single row per patient.  Data frame \emph{must} contain
@@ -13,6 +18,8 @@ a column named \code{USRDS_ID}.}
 \item{index_date}{either a fixed date or the name of a date variable in quotes}
 
 \item{lookback_days}{is the number of days of Medicare as primary necessary.  Default value is 365.}
+
+\item{medicare_coverage_df}{is an optional parameter containing a df from the \code{payhist} file.}
 }
 \value{
 The original \code{df} data fame with the variable \code{medicare_primary_TF} added
@@ -23,6 +30,9 @@ the name of a date variable in quotes, and a variable \code{lookback_days} that 
 coverage are necessary.
 }
 \details{
+An optional variable \code{medicare_coverage_df} allows for a df containing information from the \code{payhist} file to be passed to the function.  If left
+NULL, then the function will load the data via the \code{load_usrds_file} function.
+
 It returns the same dataframe with a new variable \code{medicare_primary_TF} that takes the values \code{TRUE}
 or \code{FALSE}.
 }

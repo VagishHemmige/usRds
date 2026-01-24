@@ -12,7 +12,9 @@ verify_medicare_primary(
   df,
   index_date,
   lookback_days = 365,
-  medicare_coverage_df = NULL
+  medicare_coverage_df = NULL,
+  coverage_start_variable = NULL,
+  coverage_end_variable = NULL
 )
 ```
 
@@ -36,6 +38,18 @@ verify_medicare_primary(
 
   is an optional parameter containing a df from the `payhist` file.
 
+- coverage_start_variable:
+
+  is the name of the variable containing the start date of Medicare
+  primary coverage for the coverage spell containing the `index_date`.
+  The default value of NULL specifies no variable returned.
+
+- coverage_end_variable:
+
+  is the name of the variable containing the end date of Medicare
+  primary coverage for the coverage spell containing the `index_date`.
+  The default value of NULL specifies no variable returned.
+
 ## Value
 
 The original `df` data fame with the variable `medicare_primary_TF`
@@ -46,10 +60,17 @@ added
 An optional variable `medicare_coverage_df` allows for a df containing
 information from the `payhist` file to be passed to the function. If
 left NULL, then the function will load the data via the
-`load_usrds_file` function.
+`load_usrds_file` function, which can be very inefficient for multiple
+function calls.
 
 It returns the same dataframe with a new variable `medicare_primary_TF`
 that takes the values `TRUE` or `FALSE`.
+
+Optionally, the start dates and end dates of Medicare primary coverage
+for that coverage spell can also be returned by specifying names for the
+return variables in the `coverage_start_variable` and
+`coverage_end_variable` parameters. If unspecified, these parameters
+will not be returned.
 
 ## Examples
 

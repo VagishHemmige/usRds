@@ -117,6 +117,17 @@ verify_medicare_primary<-function(df, index_date, lookback_days=365, medicare_co
     }
   }
 
+  if (!is.null(medicare_coverage_df)) {
+    required_cols <- c("USRDS_ID", "PAYER", "BEGDATE", "ENDDATE")
+    missing <- setdiff(required_cols, names(medicare_coverage_df))
+    if (length(missing) > 0) {
+      rlang::abort(
+        paste0("`medicare_coverage_df` is missing required columns: ",
+               paste(missing, collapse = ", "))
+      )
+    }
+  }
+
 #--------------------------------------------------------------------------------------------
 
   # Now we begin the code which executes the purpose of the function
@@ -170,19 +181,21 @@ medicare_history<-medicare_history%>%
     ENDDATE = max(ENDDATE),
     .groups = "drop"
   )%>%
-  select(-group_id)
+  select(-group_id)%>%
+  rename(usrds_package_medicare_begdate = BEGDATE,
+         usrds_package_medicare_enddate = ENDDATE)
 
 #Join patient cohort to medicare history data
 patients_clean<-left_join(df,
                           medicare_history,
-                          join_by(USRDS_ID, between(.index_date, BEGDATE, ENDDATE))
+                          join_by(USRDS_ID, between(.index_date, usrds_package_medicare_begdate, usrds_package_medicare_enddate))
 )
 
 #Create variable that marks FFS coverage on day of claim through 365 days prior
 #Logic here depends strongly on nature of between join in dplyr
 patients_clean<-patients_clean%>%
-  mutate(medicare_primary_TF=ifelse(!is.na(BEGDATE) & .index_date-BEGDATE>=lookback_days,TRUE,FALSE))%>%
-  select(-.index_date, -BEGDATE, -ENDDATE)
+  mutate(medicare_primary_TF=ifelse(!is.na(usrds_package_medicare_begdate) & .index_date-usrds_package_medicare_begdate>=lookback_days,TRUE,FALSE))%>%
+  select(-.index_date, -usrds_package_medicare_begdate, -usrds_package_medicare_enddate)
 
 return(patients_clean)
 

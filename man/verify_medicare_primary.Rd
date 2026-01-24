@@ -8,7 +8,9 @@ verify_medicare_primary(
   df,
   index_date,
   lookback_days = 365,
-  medicare_coverage_df = NULL
+  medicare_coverage_df = NULL,
+  coverage_start_variable = NULL,
+  coverage_end_variable = NULL
 )
 }
 \arguments{
@@ -20,6 +22,12 @@ a column named \code{USRDS_ID}.}
 \item{lookback_days}{is the number of days of Medicare as primary necessary.  Default value is 365.}
 
 \item{medicare_coverage_df}{is an optional parameter containing a df from the \code{payhist} file.}
+
+\item{coverage_start_variable}{is the name of the variable containing the start date of Medicare primary coverage for the coverage spell containing the
+\code{index_date}.  The default value of NULL specifies no variable returned.}
+
+\item{coverage_end_variable}{is the name of the variable containing the end date of Medicare primary coverage for the coverage spell containing the
+\code{index_date}.  The default value of NULL specifies no variable returned.}
 }
 \value{
 The original \code{df} data fame with the variable \code{medicare_primary_TF} added
@@ -31,10 +39,13 @@ coverage are necessary.
 }
 \details{
 An optional variable \code{medicare_coverage_df} allows for a df containing information from the \code{payhist} file to be passed to the function.  If left
-NULL, then the function will load the data via the \code{load_usrds_file} function.
+NULL, then the function will load the data via the \code{load_usrds_file} function, which can be very inefficient for multiple function calls.
 
 It returns the same dataframe with a new variable \code{medicare_primary_TF} that takes the values \code{TRUE}
 or \code{FALSE}.
+
+Optionally, the start dates and end dates of Medicare primary coverage for that coverage spell can also be returned by specifying names for
+the return variables in the \code{coverage_start_variable} and \code{coverage_end_variable} parameters.  If unspecified, these parameters will not be returned.
 }
 \examples{
 \dontrun{

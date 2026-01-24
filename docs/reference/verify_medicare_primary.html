@@ -65,7 +65,9 @@ coverage are necessary.</p>
 <span>  <span class="va">df</span>,</span>
 <span>  <span class="va">index_date</span>,</span>
 <span>  lookback_days <span class="op">=</span> <span class="fl">365</span>,</span>
-<span>  medicare_coverage_df <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  medicare_coverage_df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  coverage_start_variable <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  coverage_end_variable <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -87,6 +89,16 @@ a column named <code>USRDS_ID</code>.</p></dd>
 <dt>medicare_coverage_df</dt>
 <dd><p>is an optional parameter containing a df from the <code>payhist</code> file.</p></dd>
 
+
+<dt>coverage_start_variable</dt>
+<dd><p>is the name of the variable containing the start date of Medicare primary coverage for the coverage spell containing the
+<code>index_date</code>.  The default value of NULL specifies no variable returned.</p></dd>
+
+
+<dt>coverage_end_variable</dt>
+<dd><p>is the name of the variable containing the end date of Medicare primary coverage for the coverage spell containing the
+<code>index_date</code>.  The default value of NULL specifies no variable returned.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -97,9 +109,11 @@ a column named <code>USRDS_ID</code>.</p></dd>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>An optional variable <code>medicare_coverage_df</code> allows for a df containing information from the <code>payhist</code> file to be passed to the function.  If left
-NULL, then the function will load the data via the <code>load_usrds_file</code> function.</p>
+NULL, then the function will load the data via the <code>load_usrds_file</code> function, which can be very inefficient for multiple function calls.</p>
 <p>It returns the same dataframe with a new variable <code>medicare_primary_TF</code> that takes the values <code>TRUE</code>
 or <code>FALSE</code>.</p>
+<p>Optionally, the start dates and end dates of Medicare primary coverage for that coverage spell can also be returned by specifying names for
+the return variables in the <code>coverage_start_variable</code> and <code>coverage_end_variable</code> parameters.  If unspecified, these parameters will not be returned.</p>
     </div>
 
     <div class="section level2">

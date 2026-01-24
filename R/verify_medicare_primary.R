@@ -225,8 +225,8 @@ patients_clean<-patients_clean%>%
   mutate(medicare_primary_TF=ifelse(!is.na(usrds_package_medicare_begdate) & .index_date-usrds_package_medicare_begdate>=lookback_days,TRUE,FALSE))%>%
 
   #Rename start and end variables for coverage to user specified variables if not null
-  { if (!is.null(coverage_start_variable)) dplyr::rename(.,!!rlang::sym(coverage_start_variable):=usrds_package_medicare_begdate) else . }%>%
-  { if (!is.null(coverage_end_variable)) dplyr::rename(.,!!rlang::sym(coverage_end_variable):=usrds_package_medicare_enddate) else . }
+  { if (!is.null(coverage_start_variable)) dplyr::mutate(.,!!rlang::sym(coverage_start_variable):=usrds_package_medicare_begdate) else . }%>%
+  { if (!is.null(coverage_end_variable)) dplyr::mutate(.,!!rlang::sym(coverage_end_variable):=usrds_package_medicare_enddate) else . }
 
 
 patients_clean<-patients_clean%>%

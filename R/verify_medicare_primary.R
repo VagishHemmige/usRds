@@ -148,7 +148,7 @@ verify_medicare_primary<-function(df, index_date, lookback_days=365, medicare_co
   }
 
   if (!is.null(coverage_end_variable)) {
-    if (!is.character(coverage_emd_variable) || length(coverage_end_variable)>1) {
+    if (!is.character(coverage_end_variable) || length(coverage_end_variable)>1) {
       rlang::abort("`coverage_end_variable` must be NULL or a single character string.")
     } else
       if (coverage_end_variable %in% names(df)){

@@ -32,6 +32,7 @@ prorate_costs_by_day <-function(cost_data_frame) {
     mutate(
       claim_duration = as.integer(as.Date(CLM_THRU) - as.Date(CLM_FROM)) + 1
     ) %>%
+    filter(!is.na(claim_duration), claim_duration > 0) %>%
     uncount(claim_duration, .id = "day_index", .remove = FALSE) %>%
 
     #Create a service date variable

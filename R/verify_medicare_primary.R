@@ -5,10 +5,13 @@
 #' coverage are necessary.
 #'
 #' An optional variable `medicare_coverage_df` allows for a df containing information from the `payhist` file to be passed to the function.  If left
-#' NULL, then the function will load the data via the `load_usrds_file` function.
+#' NULL, then the function will load the data via the `load_usrds_file` function, which can be very inefficient for multiple function calls.
 #'
 #' It returns the same dataframe with a new variable `medicare_primary_TF` that takes the values `TRUE`
 #' or `FALSE`.
+#'
+#' Optionally, the start dates and end dates of Medicare primary coverage for that coverage spell can also be returned by specifying names for
+#' the return variables in the `coverage_start_variable` and `coverage_end_variable` parameters.  If unspecified, these parameters will not be returned.
 #'
 #' @param df is a data frame, presumably one with a single row per patient.  Data frame *must* contain
 #' a column named `USRDS_ID`.
@@ -18,6 +21,12 @@
 #' @param lookback_days is the number of days of Medicare as primary necessary.  Default value is 365.
 #'
 #' @param medicare_coverage_df is an optional parameter containing a df from the `payhist` file.
+#'
+#' @param coverage_start_variable is the name of the variable containing the start date of Medicare primary coverage for the coverage spell containing the
+#' `index_date`.  The default value of NULL specifies no variable returned.
+#'
+#' @param coverage_end_variable is the name of the variable containing the end date of Medicare primary coverage for the coverage spell containing the
+#' `index_date`.  The default value of NULL specifies no variable returned.
 #'
 #' @return The original `df` data fame with the variable `medicare_primary_TF` added
 #'
@@ -35,7 +44,8 @@
 #'
 #' }
 
-verify_medicare_primary<-function(df, index_date, lookback_days=365, medicare_coverage_df=NULL)
+verify_medicare_primary<-function(df, index_date, lookback_days=365, medicare_coverage_df=NULL,
+                                  coverage_start_variable=NULL, coverage_end_variable=NULL)
 {
 
   #Error checking
@@ -128,6 +138,24 @@ verify_medicare_primary<-function(df, index_date, lookback_days=365, medicare_co
     }
   }
 
+  if (!is.null(coverage_start_variable)) {
+    if (!is.character(coverage_start_variable) || length(coverage_start_variable)>1) {
+      rlang::abort("`coverage_start_variable` must be NULL or a single character string.")
+    } else
+    if (coverage_start_variable %in% names(df)){
+      rlang::abort("Value of `coverage_start_variable` must not already be a variable in `df`.")
+    }
+  }
+
+  if (!is.null(coverage_end_variable)) {
+    if (!is.character(coverage_emd_variable) || length(coverage_end_variable)>1) {
+      rlang::abort("`coverage_end_variable` must be NULL or a single character string.")
+    } else
+      if (coverage_end_variable %in% names(df)){
+        rlang::abort("Value of `coverage_end_variable` must not already be a variable in `df`.")
+      }
+  }
+
 #--------------------------------------------------------------------------------------------
 
   # Now we begin the code which executes the purpose of the function
@@ -195,6 +223,13 @@ patients_clean<-left_join(df,
 #Logic here depends strongly on nature of between join in dplyr
 patients_clean<-patients_clean%>%
   mutate(medicare_primary_TF=ifelse(!is.na(usrds_package_medicare_begdate) & .index_date-usrds_package_medicare_begdate>=lookback_days,TRUE,FALSE))%>%
+
+  #Rename start and end variables for coverage to user specified variables if not null
+  { if (!is.null(coverage_start_variable)) dplyr::rename(.,!!rlang::sym(coverage_start_variable):=usrds_package_medicare_begdate) else . }%>%
+  { if (!is.null(coverage_end_variable)) dplyr::rename(.,!!rlang::sym(coverage_end_variable):=usrds_package_medicare_enddate) else . }
+
+
+patients_clean<-patients_clean%>%
   select(-.index_date, -usrds_package_medicare_begdate, -usrds_package_medicare_enddate)
 
 return(patients_clean)

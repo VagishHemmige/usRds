@@ -9,6 +9,7 @@ PS_HCPCS <- readxl::read_excel("data-raw/File lists for functions/PS_HCPCS.xlsx"
 PS_ICD<- readxl::read_excel("data-raw/File lists for functions/PS_ICD.xlsx")
 PS_REV_COSTS <- readxl::read_excel("data-raw/File lists for functions/PS_REV_COSTS.xlsx")
 PS_CLM_COSTS <- readxl::read_excel("data-raw/File lists for functions/PS_CLM_COSTS.xlsx")
+PDE <- readxl::read_excel("data-raw/File lists for functions/PDE.xlsx")
 
 #This code creates the code necessary in order for the labelling functions to work
 source("data-raw/sysdata-metadata_helpers.R")
@@ -34,8 +35,9 @@ usethis::use_data(IN_HCPCS,
                   IN_REV_COSTS,
                   PS_CLM_COSTS,
                   PS_REV_COSTS,
+                  PDE,
                   metadata_b,
                   metadata_c,
                   icd_reference,
-                  hcpcs_reference,
+             #    hcpcs_reference,
                   overwrite = TRUE, internal=TRUE)

@@ -75,7 +75,7 @@ adjust_costs_for_inflation <-function(cost_data_frame, baseline_month, baseline_
     )
 
   if (any(is.na(df$.cpi))) {
-    rlang::abort("Missing CPI values for some rows.")
+    rlang::warn("Missing CPI values for some rows.")
   }
 
   # inflate

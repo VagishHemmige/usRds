@@ -22,11 +22,19 @@ prorate_costs_by_day <-function(cost_data_frame) {
   #List potential variables which could be in a data frame
   cost_vars <- c(
     "PMTAMT",
+    "REVPMT",
     "ALOWCH",
     "SBMTCH",
     "CLM_TOT",
     "CLM_AMT",
-    "NCH_CLM_BENE_PMT_AMT"
+    "NCH_CLM_BENE_PMT_AMT",
+    "PMTAMT_ADJUSTED",
+    "REVPMT_ADJUSTED",
+    "ALOWCH_ADJUSTED",
+    "SBMTCH_ADJUSTED",
+    "CLM_TOT_ADJUSTED",
+    "CLM_AMT_ADJUSTED",
+    "NCH_CLM_BENE_PMT_AMT_ADJUSTED"
   )
 
   #Duplicate the data frame the appropriate number of times

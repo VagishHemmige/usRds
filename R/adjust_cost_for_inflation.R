@@ -28,13 +28,15 @@ adjust_costs_for_inflation <-function(cost_data_frame, baseline_month, baseline_
     "SBMTCH",
     "CLM_TOT",
     "CLM_AMT",
+    "REVPMT",
     "NCH_CLM_BENE_PMT_AMT",
     "PMTAMT_PRORATED",
     "ALOWCH_PRORATED",
     "SBMTCH_PRORATED",
     "CLM_TOT_PRORATED",
     "CLM_AMT_PRORATED",
-    "NCH_CLM_BENE_PMT_AMT_PRORATED"
+    "NCH_CLM_BENE_PMT_AMT_PRORATED",
+    "REVPMT_PRORATED"
   )
 
 

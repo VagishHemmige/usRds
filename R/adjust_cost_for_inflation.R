@@ -85,8 +85,6 @@ adjust_costs_for_inflation <-function(cost_data_frame, baseline_month, baseline_
         .names = "{.col}_ADJUSTED"
       )
     ) %>%
-    select(-.cpi, -.cpi_year, -.cpi_month)
-
-  return(df)
-
+    select(-.cpi, -.cpi_year, -.cpi_month)%>%
+    return()
 }

@@ -1,12 +1,14 @@
 #' Prorate costs by day
 #'
 #' Given a data frame of claims with cost data from claims which potentially span multiple days,
-#' this function will prorate the costs evenly over the duration of the claim
+#' this function will prorate the costs evenly over the duration of the claim.
 #'
+#' The original cost variables will be removed, and replaced by variables with the same name but with
+#' "_PRORATED" added to the variable na,e.
 #'
 #' @param df data frame of cost data created by a `get_*_*_*costs` function
 #'
-#' @return A data frame with costs prorated
+#' @return A data frame with costs prorated, with the original variable name changed.
 #' @export
 #'
 #' @examples
@@ -22,7 +24,8 @@ prorate_costs_by_day <-function(cost_data_frame) {
     "PMTAMT",
     "ALOWCH",
     "SBMTCH",
-    "CLM_PMT_AMT",
+    "CLM_TOT",
+    "CLM_AMT",
     "NCH_CLM_BENE_PMT_AMT"
   )
 

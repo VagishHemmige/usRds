@@ -2,6 +2,7 @@
 
 export(add_cohort_covariate)
 export(add_cohort_event)
+export(adjust_costs_for_inflation)
 export(apply_srtr_varlabels)
 export(apply_usrds_factors)
 export(apply_usrds_varlabels)

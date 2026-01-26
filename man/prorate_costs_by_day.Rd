@@ -7,7 +7,7 @@
 prorate_costs_by_day(cost_data_frame)
 }
 \arguments{
-\item{df}{data frame of cost data created by a \verb{get_*_*_*costs} function}
+\item{cost_data_frame}{data frame of cost data created by a \verb{get_*_*_*costs} function}
 }
 \value{
 A data frame with costs prorated, with the original variable name changed.

@@ -6,7 +6,7 @@
 #' The original cost variables will be removed, and replaced by variables with the same name but with
 #' "_PRORATED" added to the variable na,e.
 #'
-#' @param df data frame of cost data created by a `get_*_*_*costs` function
+#' @param cost_data_frame data frame of cost data created by a `get_*_*_*costs` function
 #'
 #' @return A data frame with costs prorated, with the original variable name changed.
 #' @export

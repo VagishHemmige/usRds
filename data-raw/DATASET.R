@@ -26,6 +26,9 @@ icd_reference <- .parse_icd_reference(
 #Extract HCPCS reference
 #hcpcs_reference <- readxl::read_excel("data-raw/hcpc2025_jul_anweb_v3/HCPC2025_JUL_ANWEB_v3.xlsx")
 
+#Extract medical inflation data from
+
+medical_cpi <- blscrapeR::bls_api("CUUR0000SAM", startyear = 2000, endyear = 2024)
 
 usethis::use_data(IN_HCPCS,
                   IN_ICD,
@@ -39,5 +42,6 @@ usethis::use_data(IN_HCPCS,
                   metadata_b,
                   metadata_c,
                   icd_reference,
+                  medical_cpi,
              #    hcpcs_reference,
                   overwrite = TRUE, internal=TRUE)

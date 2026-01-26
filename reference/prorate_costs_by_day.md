@@ -2,7 +2,7 @@
 
 Given a data frame of claims with cost data from claims which
 potentially span multiple days, this function will prorate the costs
-evenly over the duration of the claim
+evenly over the duration of the claim.
 
 ## Usage
 
@@ -18,7 +18,13 @@ prorate_costs_by_day(cost_data_frame)
 
 ## Value
 
-A data frame with costs prorated
+A data frame with costs prorated, with the original variable name
+changed.
+
+## Details
+
+The original cost variables will be removed, and replaced by variables
+with the same name but with "\_PRORATED" added to the variable na,e.
 
 ## Examples
 

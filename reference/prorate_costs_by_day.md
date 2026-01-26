@@ -12,7 +12,7 @@ prorate_costs_by_day(cost_data_frame)
 
 ## Arguments
 
-- df:
+- cost_data_frame:
 
   data frame of cost data created by a `get_*_*_*costs` function
 

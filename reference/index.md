@@ -6,6 +6,8 @@
   : Add a covariate variable to a USRDS cohort
 - [`add_cohort_event()`](https://vagishhemmige.github.io/usRds/reference/add_cohort_event.md)
   : Add an event variable to a USRDS cohort
+- [`adjust_costs_for_inflation()`](https://vagishhemmige.github.io/usRds/reference/adjust_costs_for_inflation.md)
+  : Adjust costs for inflation
 - [`apply_srtr_varlabels()`](https://vagishhemmige.github.io/usRds/reference/apply_srtr_varlabels.md)
   : Apply SRTR variable labels to a data frame
 - [`apply_usrds_factors()`](https://vagishhemmige.github.io/usRds/reference/apply_usrds_factors.md)

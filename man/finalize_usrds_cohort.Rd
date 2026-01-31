@@ -4,18 +4,28 @@
 \alias{finalize_usrds_cohort}
 \title{Finalize a USRDS cohort}
 \usage{
-finalize_usrds_cohort(USRDS_cohort)
+finalize_usrds_cohort(USRDS_cohort, baseline_date_variable = NULL)
 }
 \arguments{
-\item{USRDS_cohort}{is a USRDS cohort created using the \code{create_usrds_cohort()} function
-#'}
+\item{USRDS_cohort}{is a USRDS cohort created using the \code{create_usrds_cohort()} function}
+
+\item{baseline_date_variable, }{if not NULL, includes the name of the variable in \code{USRDS_cohort} that determines the t0 date for each row of
+the cohort}
 }
 \value{
 A data frame that is a USRDS cohort object
 }
 \description{
 This function accepts a data frame that is a USRDS longitudinal cohort, and returns the same object with the
-\code{tstart} and \code{tstop} variables shifted so that each patient's first observation has \code{tstart}=0.
+\code{tstart} and \code{tstop} variables shifted to an appropriate baseline t=0 as specified by \code{baseline_date_variable}.
+}
+\details{
+Of note,\code{baseline_date_variable} does NOT have to be constant within each patient.  If the baseline is the time since most recent transplant,
+for example, and a patient has multiple transplants within the \code{USRDS_cohort}, it may be appropriate for different observations periods for the
+same patient to use different baseline dates.
+
+If \code{baseline_date_variable} is unspecified or specified as NULL, its default value, a default baseline value will be calculated for each patient such that
+each patient's first observation has \code{tstart}=0.
 }
 \examples{
 \dontrun{

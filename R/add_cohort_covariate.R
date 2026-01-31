@@ -107,7 +107,7 @@ add_cohort_covariate <- function(USRDS_cohort,
 
   ## ---- Time setup ----------------------------------------------------------
 
-  origin_date <- as.Date("2000-01-01")
+  origin_date <- as.Date("1970-01-01")
 
 
   ## ---- Event time conversion ----------------------------------------------
@@ -157,8 +157,8 @@ add_cohort_covariate <- function(USRDS_cohort,
   )
 
   #Update cohort variables
-  result$cohort_start_date<-as.Date("2000-01-01")+result$tstart
-  result$cohort_stop_date<-as.Date("2000-01-01")+result$tstop
+  result$cohort_start_date<-origin_date + result$tstart
+  result$cohort_stop_date<-origin_date + result$tstop
 
 
   #Restore cohort attribute

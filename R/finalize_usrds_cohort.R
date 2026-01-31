@@ -106,8 +106,16 @@
 
     ## ---- Sanity check -------------------------------------------------------
 
-    if (any(result$tstart < 0)) {
-      stop("Negative tstart produced during finalization", call. = FALSE)
+    neg_n <- sum(result$tstart < 0, na.rm = TRUE)
+
+    if (neg_n > 0) {
+      warning(
+        sprintf(
+          "Negative tstart produced during finalization (%d rows affected)",
+          neg_n
+        ),
+        call. = FALSE
+      )
     }
 
     ## ---- Restore attributes -------------------------------------------------

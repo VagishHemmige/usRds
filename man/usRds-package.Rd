@@ -19,7 +19,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Vagish Hemmige \email{vahemmig@montefiore.org}
+\strong{Maintainer}: Vagish Hemmige \email{vagish.hemmige@gmail.com}
 
 Other contributors:
 \itemize{

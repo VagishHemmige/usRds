@@ -23,7 +23,7 @@ Useful links:
 
 Other contributors:
 \itemize{
-  \item Cervera Hernandez Miguel \email{Miguel.Cerverahernandez@SanfordHealth.org} [contributor]
+  \item Miguel Cervera Hernandez \email{Miguel.Cerverahernandez@SanfordHealth.org} [contributor]
 }
 
 }

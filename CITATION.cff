@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+title: "usRds: A Package to Automate Processing and Access to the USRDS"
+type: software
+authors:
+  - family-names: Hemmige
+    given-names: Vagish
+    orcid: "https://orcid.org/0009-0006-6346-1826"
+version: "0.1.0"
+license: MIT
+abstract: "Tools to simplify access to and processing of data from the United States Renal Data System (USRDS)."
+repository-code: "https://github.com/VagishHemmige/usRds"
+url: "https://vagishhemmige.github.io/usRds/"

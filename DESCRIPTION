@@ -4,7 +4,8 @@ Title: A Package to Automate Processing and Access to the USRDS
 Version: 0.1.0
 Authors@R: 
     c(
-        person("Vagish", "Hemmige", email = "vahemmig@montefiore.org", role = c("aut", "cre")),
+        person("Vagish", "Hemmige", email = "vagish.hemmige@gmail.com", role = c("aut", "cre"),
+               comment = c(ORCID = "0009-0006-6346-1826")),
         person("Cervera Hernandez", "Miguel", email = "Miguel.Cerverahernandez@SanfordHealth.org", role = "ctb")
     )
 Description: 

@@ -21,5 +21,5 @@ Useful links:
 
 Other contributors:
 
-- Cervera Hernandez Miguel <Miguel.Cerverahernandez@SanfordHealth.org>
+- Miguel Cervera Hernandez <Miguel.Cerverahernandez@SanfordHealth.org>
   \[contributor\]

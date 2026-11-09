@@ -6,7 +6,7 @@ Authors@R:
     c(
         person("Vagish", "Hemmige", email = "vagish.hemmige@gmail.com", role = c("aut", "cre"),
                comment = c(ORCID = "0009-0006-6346-1826")),
-        person("Cervera Hernandez", "Miguel", email = "Miguel.Cerverahernandez@SanfordHealth.org", role = "ctb")
+        person("Miguel", "Cervera Hernandez", email = "Miguel.Cerverahernandez@SanfordHealth.org", role = "ctb")
     )
 Description: 
     Provides tools to simplify access to and processing of data from the United States Renal Data System (USRDS). 

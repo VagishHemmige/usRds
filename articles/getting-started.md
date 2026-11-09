@@ -44,6 +44,7 @@ If you’d like to take advantage of these benefits, convert your SAS or
 CSV files to Parquet *before* setting the working directory:
 
 ``` r
+
 library(usRds)
 
 convert_USRDS_to_parquet(
@@ -74,12 +75,14 @@ This will:
 Once your data (in any format) is prepared, register the path with:
 
 ``` r
+
 set_USRDS_wd("/path/to/usrds_data")
 ```
 
 To make this setting persist across sessions:
 
 ``` r
+
 set_USRDS_wd("/path/to/usrds_data", permanent = TRUE)
 ```
 

@@ -1,10 +1,10 @@
-pandoc: 3.1.11
-pkgdown: 2.2.0
+pandoc: 3.8.3
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   accessing-files: accessing-files.html
   getting-started: getting-started.html
-last_built: 2026-01-31T19:38Z
+last_built: 2026-11-09T02:21Z
 urls:
   reference: https://vagishhemmige.github.io/usRds/reference
   article: https://vagishhemmige.github.io/usRds/articles

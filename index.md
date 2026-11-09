@@ -13,6 +13,7 @@ You will need to use the **set_USRDS_wd()** function to establish the
 directory where the USRDS files are stored:
 
 ``` r
+
 library(usRds)
 
 # Session only:
@@ -49,6 +50,7 @@ You can install the development version of usRds from
 [GitHub](https://github.com/) with:
 
 ``` r
+
 # install.packages("devtools")
 devtools::install_github("VagishHemmige/usRds")
 ```

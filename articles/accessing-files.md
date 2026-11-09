@@ -10,6 +10,7 @@ All examples assume that you have already set your working directory
 with:
 
 ``` r
+
 set_USRDS_wd("/path/to/usrds_data")
 ```
 
@@ -18,6 +19,7 @@ set_USRDS_wd("/path/to/usrds_data")
 You can load any recognized USRDS file using:
 
 ``` r
+
 df <- load_usrds_file(file_key = "PATIENTS", year = 2006)
 ```
 
@@ -48,6 +50,7 @@ from the USRDS Researcher’s Guide:
 These options help make the raw USRDS data easier to interpret.
 
 ``` r
+
 # Apply both value and variable labels
 df <- load_usrds_file("RXHIST", factor_labels = TRUE, var_labels = TRUE)
 ```
@@ -55,6 +58,7 @@ df <- load_usrds_file("RXHIST", factor_labels = TRUE, var_labels = TRUE)
 To see what files are available:
 
 ``` r
+
 list_available_usrds_files("IN")
 ```
 
@@ -90,6 +94,7 @@ All of the `get_*()` functions share the following arguments:
 ### Examples
 
 ``` r
+
 # Example: Extract ICD-9 codes from institutional claims
 dx <- get_IN_ICD(icd_codes = c("042", "V08"), years = 2006:2007)
 

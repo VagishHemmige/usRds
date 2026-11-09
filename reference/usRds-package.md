@@ -17,7 +17,7 @@ Useful links:
 
 ## Author
 
-**Maintainer**: Vagish Hemmige <vahemmig@montefiore.org>
+**Maintainer**: Vagish Hemmige <vagish.hemmige@gmail.com>
 
 Other contributors:
 

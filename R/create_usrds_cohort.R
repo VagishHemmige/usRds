@@ -46,8 +46,8 @@ create_usrds_cohort <- function(df, start_date, end_date) {
 
   USRDS_temp_cohort <- USRDS_temp_cohort %>%
     dplyr::mutate(
-      tstart = as.numeric(cohort_start_date - origin_date),
-      tstop  = as.numeric(cohort_stop_date  - origin_date)
+      tstart = as.numeric(.data$cohort_start_date - .env$origin_date),
+      tstop  = as.numeric(.data$cohort_stop_date  - .env$origin_date)
     )
 
   return_df <- survival::tmerge(

@@ -14,21 +14,29 @@
     return(as.Date(x))
   }
 
-  # Column name (symbol or string)
-  col <- tryCatch(
-    {
-      df[[rlang::as_string(rlang::ensym(x))]]
-    },
-    error = function(e) {
-      stop(
-        sprintf(
-          "`%s` must be a Date or the name of a date column in `df`",
-          arg_name
-        ),
-        call. = FALSE
-      )
-    }
-  )
+  # Column name, given as a string
+  if (!is.character(x) || length(x) != 1 || is.na(x)) {
+    stop(
+      sprintf(
+        "`%s` must be a Date or the name of a date column in `df`",
+        arg_name
+      ),
+      call. = FALSE
+    )
+  }
+
+  if (!x %in% names(df)) {
+    stop(
+      sprintf(
+        "Column '%s' named in `%s` is not in `df`",
+        x,
+        arg_name
+      ),
+      call. = FALSE
+    )
+  }
+
+  col <- df[[x]]
 
   if (!inherits(col, c("Date", "POSIXct", "POSIXt"))) {
     stop(

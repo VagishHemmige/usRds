@@ -85,10 +85,10 @@
 
     if (is.null(baseline_date_variable)){
     result<-USRDS_cohort |>
-      dplyr::group_by(USRDS_ID) |>
+      dplyr::group_by(.data$USRDS_ID) |>
       dplyr::mutate(
-        .t0 = min(tstart)) |>
-      ungroup()
+        .t0 = min(.data$tstart)) |>
+      dplyr::ungroup()
     } else
     {
       result<-USRDS_cohort |>
@@ -99,10 +99,10 @@
 
     result <- result |>
       dplyr::mutate(
-        tstart = tstart - .t0,
-        tstop  = tstop  - .t0
+        tstart = .data$tstart - .data$.t0,
+        tstop  = .data$tstop  - .data$.t0
       ) |>
-      dplyr::select(-.t0)
+      dplyr::select(-".t0")
 
     ## ---- Sanity check -------------------------------------------------------
 

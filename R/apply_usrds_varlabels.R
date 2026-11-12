@@ -18,18 +18,14 @@
 #' labelled::var_label(df$CDEATH)
 #' }
 apply_usrds_varlabels <- function(df, file_key, verbose = FALSE) {
-  if (!exists("metadata_b", envir = .GlobalEnv)) {
-    stop("metadata_b must exist in the global environment or namespace.")
-  }
-
   df_names_upper <- toupper(names(df))
 
   vars_to_label <- metadata_b |>
-    dplyr::filter(file == toupper(file_key)) |>
+    dplyr::filter(.data$file == toupper(.env$file_key)) |>
     dplyr::mutate(
-      variable_upper = toupper(variable)
+      variable_upper = toupper(.data$variable)
     ) |>
-    dplyr::filter(variable_upper %in% df_names_upper)
+    dplyr::filter(.data$variable_upper %in% .env$df_names_upper)
 
   if (nrow(vars_to_label) == 0) {
     if (verbose) message("No variable labels applied for ", file_key)

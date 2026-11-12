@@ -34,13 +34,13 @@ apply_usrds_factors <- function(df, file_key, verbose = FALSE) {
 
   # Find variables in Appendix B that are formatted as coded (e.g., $FORMAT.)
   vars_to_code <- metadata_b |>
-    dplyr::filter(file == toupper(file_key), grepl("\\.$", format)) |>
+    dplyr::filter(.data$file == toupper(.env$file_key), grepl("\\.$", .data$format)) |>
     dplyr::mutate(
-      format_clean = gsub("^\\$|\\.", "", format),
-      variable_upper = toupper(variable)
+      format_clean = gsub("^\\$|\\.", "", .data$format),
+      variable_upper = toupper(.data$variable)
     ) |>
-    dplyr::filter(!format_clean %in% .known_nonfactor_formats()) |>
-    dplyr::filter(variable_upper %in% df_names_upper)
+    dplyr::filter(!.data$format_clean %in% .known_nonfactor_formats()) |>
+    dplyr::filter(.data$variable_upper %in% .env$df_names_upper)
 
   if (nrow(vars_to_code) == 0) {
     if (verbose) message("No variables to label for ", file_key)

@@ -1,3 +1,12 @@
+#' Make CODE and DIAG character, if present
+#' @noRd
+.codes_as_character <- function(df) {
+  for (v in intersect(c("CODE", "DIAG"), names(df))) {
+    df[[v]] <- as.character(df[[v]])
+  }
+  df
+}
+
 #' @keywords internal
 .parquetize_usrds_file <- function(input_path, output_path, overwrite = FALSE) {
   if (!file.exists(input_path)) stop(paste("❌ Input file does not exist:", input_path))
@@ -35,20 +44,14 @@
     df <- tryCatch({
       arrow::read_csv_arrow(input_path, as_data_frame = TRUE) %>%
         dplyr::rename_with(toupper) %>%
-        dplyr::mutate(
-          CODE = if ("CODE" %in% names(.)) as.character(CODE) else NULL,
-          DIAG = if ("DIAG" %in% names(.)) as.character(DIAG) else NULL
-        )
+        .codes_as_character()
 
     }, error = function(e) {
       message(paste("⚠️  Arrow failed. Falling back to readr::read_csv for:", basename(input_path)))
       tryCatch({
         readr::read_csv(input_path, show_col_types = FALSE) %>%
           dplyr::rename_with(toupper) %>%
-          dplyr::mutate(
-            CODE = if ("CODE" %in% names(.)) as.character(CODE) else NULL,
-            DIAG = if ("DIAG" %in% names(.)) as.character(DIAG) else NULL
-          )
+          .codes_as_character()
 
       }, error = function(e2) {
         message(paste("❌ Fallback also failed:", basename(input_path), "Error:", e2$message))
@@ -64,7 +67,7 @@
       message(paste("📆 Parsing dates:", paste(date_cols, collapse = ", ")))
       df <- dplyr::mutate(df, dplyr::across(
         dplyr::all_of(date_cols),
-        ~ as.Date(lubridate::parse_date_time(., orders = c("d%b%y", "d%b%Y")))      ))
+        ~ as.Date(lubridate::parse_date_time(.x, orders = c("d%b%y", "d%b%Y")))      ))
     }
 
     arrow::write_parquet(df, output_path)
@@ -96,10 +99,10 @@ convert_usrds_to_parquet <- function(source_dir, target_dir, overwrite = FALSE) 
     input_path = file_list,
     ext = tolower(tools::file_ext(file_list))
   ) %>%
-    dplyr::filter(ext %in% c("csv", "sas7bdat")) %>%
+    dplyr::filter(.data$ext %in% c("csv", "sas7bdat")) %>%
     dplyr::mutate(
-      relative_path = fs::path_rel(input_path, start = source_dir),
-      output_path = fs::path(target_dir, fs::path_ext_set(relative_path, "parquet"))
+      relative_path = fs::path_rel(.data$input_path, start = .env$source_dir),
+      output_path = fs::path(.env$target_dir, fs::path_ext_set(.data$relative_path, "parquet"))
     )
 
   purrr::walk2(

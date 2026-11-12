@@ -5,6 +5,8 @@ utils::globalVariables(c(".data", ".env"))
 
 #' @noRd
 .onLoad <- function(libname, pkgname) {
-  try(.map_USRDS_files(), silent = TRUE)
+  if (nzchar(Sys.getenv("USRDS_WD"))) {
+    try(.map_USRDS_files(), silent = TRUE)
+  }
   options(arrow.skip_nul = TRUE)
 }

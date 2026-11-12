@@ -88,15 +88,18 @@
 #'
 #' @examples
 #' \dontrun{
-#' # Get all Cryptococcosis-related diagnosis claims from 2013–2018
-#' cryptococcus_icd <- c("1175", "B45")
+#' # Codes are matched exactly, so list every billable code (#3):
+#' # ICD-9 117.5 and ICD-10-CM B45.0-B45.3, B45.7-B45.9, without periods
+#' cryptococcus_icd <- c(
+#'   "1175", "B450", "B451", "B452", "B453", "B457", "B458", "B459"
+#' )
 #' result <- get_PS_ICD(icd_codes = cryptococcus_icd, years = 2013:2018)
 #'
-#' # Return all diagnosis claims for selected patients in 2016–2017
+#' # Return all diagnosis claims for selected patients in 2016-2017
 #' result_all <- get_PS_ICD(
 #'   icd_codes = NULL,
 #'   years = c(2016, 2017),
-#'   usrds_ids = c(100012345, 100078901)
+#'   usrds_ids = c(1, 2)
 #' )
 #' }
 
@@ -108,7 +111,7 @@ get_PS_ICD <- function(icd_codes = NULL, years, usrds_ids = NULL) {
   )
 
   if (is.null(icd_codes)) {
-    message("ℹ️  No ICD codes specified — returning all diagnosis claims.")
+    message("No ICD codes specified; returning all diagnosis claims.")
   }
 
   .usrds_env$file_list |>

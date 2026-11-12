@@ -19,3 +19,12 @@ test_that(".map_USRDS_files() lists USRDS files by folder, root, suffix and year
   expect_equal(result$Year, c(NA, 2010))
   expect_equal(result$file_directory, c("Core", "PS"))
 })
+
+test_that(".onLoad() is silent when USRDS_WD is not set", {
+  withr::local_envvar(USRDS_WD = NA)
+  withr::local_options(arrow.skip_nul = getOption("arrow.skip_nul"))
+  old <- .usrds_env$file_list
+  withr::defer(.usrds_env$file_list <- old)
+
+  expect_silent(.onLoad(NULL, "usRds"))
+})

@@ -1,6 +1,9 @@
 #' Apply SRTR variable labels to a data frame
 #'
-#' Adds descriptive variable labels to a dataset using the SRTR SAF data dictionary.
+#' Adds descriptive variable labels to a dataset using the SRTR SAF data
+#' dictionary from the 'sRtr' package, which must be installed. 'sRtr' also
+#' has its own `sRtr::apply_srtr_varlabels()`, which can infer the dataset
+#' from a file loaded with `sRtr::load_srtr_file()`.
 #'
 #' @param df A data frame from a SAF file (e.g., CAND_KIPA, TX_KI).
 #' @param dataset_key Character. The dataset name used in the SRTR dictionary (e.g., "CAND_KIPA").
@@ -9,24 +12,21 @@
 #' @return A data frame with variable labels added (invisible via print, viewable via `labelled::var_label()`).
 #' @export
 #'
-#'
-#' @examples
-#' \dontrun{
-#' df <- read.csv("CAND_KIPA.parquet")
-#' df <- apply_srtr_varlabels(df, dataset_key = "CAND_KIPA", verbose = TRUE)
-#' labelled::var_label(df$ABO)
-#' }
+#' @examplesIf rlang::is_installed("sRtr")
+#' df <- data.frame(CAN_ABO = c("A", "O"))
+#' df <- apply_srtr_varlabels(df, dataset_key = "CAND_KIPA")
+#' labelled::var_label(df$CAN_ABO)
 apply_srtr_varlabels <- function(df, dataset_key, verbose = FALSE) {
-  dictionary <- srtrDataDict::dictionary
+  dictionary <- .srtr_dictionary()
 
   df_names_upper <- toupper(names(df))
 
   vars_to_label <- dictionary |>
-    dplyr::filter(Dataset == dataset_key) |>
+    dplyr::filter(.data$Dataset == .env$dataset_key) |>
     dplyr::mutate(
-      variable_upper = toupper(Variable)
+      variable_upper = toupper(.data$Variable)
     ) |>
-    dplyr::filter(variable_upper %in% df_names_upper)
+    dplyr::filter(.data$variable_upper %in% .env$df_names_upper)
 
   if (nrow(vars_to_label) == 0) {
     if (verbose) {
@@ -48,4 +48,25 @@ apply_srtr_varlabels <- function(df, dataset_key, verbose = FALSE) {
   }
 
   return(df)
+}
+
+#' Is the sRtr package installed?
+#' @noRd
+.srtr_available <- function() {
+  requireNamespace("sRtr", quietly = TRUE)
+}
+
+#' The SRTR data dictionary from sRtr, or an error saying how to install it
+#' @noRd
+.srtr_dictionary <- function() {
+  if (!.srtr_available()) {
+    rlang::abort(
+      c(
+        "Labelling SRTR data needs the sRtr package, which is not installed.",
+        i = "Install it with `pak::pak(\"VagishHemmige/sRtr\")`."
+      ),
+      class = "usRds_error_missing_srtr"
+    )
+  }
+  sRtr::dictionary
 }

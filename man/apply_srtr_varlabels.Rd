@@ -17,12 +17,15 @@ apply_srtr_varlabels(df, dataset_key, verbose = FALSE)
 A data frame with variable labels added (invisible via print, viewable via \code{labelled::var_label()}).
 }
 \description{
-Adds descriptive variable labels to a dataset using the SRTR SAF data dictionary.
+Adds descriptive variable labels to a dataset using the SRTR SAF data
+dictionary from the 'sRtr' package, which must be installed. 'sRtr' also
+has its own \code{sRtr::apply_srtr_varlabels()}, which can infer the dataset
+from a file loaded with \code{sRtr::load_srtr_file()}.
 }
 \examples{
-\dontrun{
-df <- read.csv("CAND_KIPA.parquet")
-df <- apply_srtr_varlabels(df, dataset_key = "CAND_KIPA", verbose = TRUE)
-labelled::var_label(df$ABO)
-}
+\dontshow{if (rlang::is_installed("sRtr")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+df <- data.frame(CAN_ABO = c("A", "O"))
+df <- apply_srtr_varlabels(df, dataset_key = "CAND_KIPA")
+labelled::var_label(df$CAN_ABO)
+\dontshow{\}) # examplesIf}
 }

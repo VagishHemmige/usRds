@@ -36,7 +36,7 @@
 #' df <- load_usrds_file("PATIENTS", col_select = c("USRDS_ID", "CDEATH"))
 #'
 #' # Filter to a subset of USRDS_IDs
-#' df <- load_usrds_file("RXHIST", usrds_ids = c("100000123", "100000456"))
+#' df <- load_usrds_file("RXHIST", usrds_ids = c(1, 2))
 #' }
 load_usrds_file <- function(
   file_key,

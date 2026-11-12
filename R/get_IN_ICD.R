@@ -69,14 +69,17 @@
 #'
 #' @examples
 #' \dontrun{
-#' # ICD-9 and ICD-10 codes for Cryptococcosis (no periods)
-#' cryptococcus_icd <- c("1175", "B45")
+#' # Codes are matched exactly, so list every billable code (#3):
+#' # ICD-9 117.5 and ICD-10-CM B45.0-B45.3, B45.7-B45.9, without periods
+#' cryptococcus_icd <- c(
+#'   "1175", "B450", "B451", "B452", "B453", "B457", "B458", "B459"
+#' )
 #'
 #' # Retrieve claims for all patients in selected years
 #' result <- get_IN_ICD(icd_codes = cryptococcus_icd, years = 2013:2018)
 #'
 #' # Retrieve all diagnosis claims for selected patients
-#' result_all <- get_IN_ICD(icd_codes = NULL, years = 2015, usrds_ids = c(100000001, 100000002))
+#' result_all <- get_IN_ICD(icd_codes = NULL, years = 2015, usrds_ids = c(1, 2))
 #' }
 get_IN_ICD <- function(icd_codes = NULL, years, usrds_ids = NULL) {
   .check_valid_years(
@@ -87,7 +90,7 @@ get_IN_ICD <- function(icd_codes = NULL, years, usrds_ids = NULL) {
 
   if (is.null(icd_codes)) {
     message(
-      "ℹ️  No ICD codes specified — returning all institutional diagnosis claims."
+      "No ICD codes specified; returning all institutional diagnosis claims."
     )
   }
 

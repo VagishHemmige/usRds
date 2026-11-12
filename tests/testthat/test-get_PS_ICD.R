@@ -8,10 +8,14 @@
 #   3. Filtering by USRDS_ID subset
 #   4. Compatibility with .usrds_env and year checking
 
-test_that("get_PS_ICD() returns expected structure with ICD codes", {
-  skip_if_not(.usrds_env$initialized, "USRDS environment not initialized")
+# Needs real USRDS files; skips the whole file otherwise.
+skip_if_not_live()
 
-  result <- get_PS_ICD(icd_codes = c("1175", "B45"), years = 2006)
+test_that("get_PS_ICD() returns expected structure with ICD codes", {
+  cryptococcus_icd <- c(
+    "1175", "B450", "B451", "B452", "B453", "B457", "B458", "B459"
+  )
+  result <- get_PS_ICD(icd_codes = cryptococcus_icd, years = 2006)
 
   expect_s3_class(result, "data.frame")
   expect_true(all(
@@ -24,8 +28,6 @@ test_that("get_PS_ICD() returns expected structure with ICD codes", {
 })
 
 test_that("get_PS_ICD() returns all claims when icd_codes = NULL", {
-  skip_if_not(.usrds_env$initialized, "USRDS environment not initialized")
-
   result_all <- get_PS_ICD(icd_codes = NULL, years = 2006)
 
   expect_s3_class(result_all, "data.frame")
@@ -36,8 +38,6 @@ test_that("get_PS_ICD() returns all claims when icd_codes = NULL", {
 })
 
 test_that("get_PS_ICD() correctly filters to specific USRDS_IDs", {
-  skip_if_not(.usrds_env$initialized, "USRDS environment not initialized")
-
   full_result <- get_PS_ICD(icd_codes = NULL, years = 2006)
   unique_ids <- unique(full_result$USRDS_ID)
 
@@ -131,9 +131,7 @@ if (FALSE) {
   }
 
   test_that("All PS ICD codes for selected years are found in ICD reference list", {
-    skip_if_not(.usrds_env$initialized, "USRDS environment not initialized")
-
-    expect_true(
+      expect_true(
       exists("icd_reference"),
       info = "icd_reference not found in test environment"
     )

@@ -45,7 +45,7 @@ If you'd like to take advantage of these benefits, convert your SAS or CSV files
 ```r
 library(usRds)
 
-convert_USRDS_to_parquet(
+convert_usrds_to_parquet(
   file_key = "IN",
   years = 2006:2012,
   overwrite = FALSE
@@ -89,7 +89,7 @@ This working directory is used by all downstream functions to locate USRDS files
 
 To begin using `usRds`:
 
-1. **(Optional)** Convert raw files to Parquet using `convert_USRDS_to_parquet()`
+1. **(Optional)** Convert raw files to Parquet using `convert_usrds_to_parquet()`
 2. **Set the working directory** with `set_USRDS_wd()`
 3. Proceed to the next vignette for filtering and extracting claims data with `get_*()` functions.
 

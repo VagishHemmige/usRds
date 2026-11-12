@@ -2,29 +2,15 @@
 # Tests for get_IN_ICD() function, including year validation, ICD filtering,
 # optional USRDS_ID restriction, and structural expectations.
 
-# ---- Setup ----
-test_that("setup: environment is initialized", {
-  skip_if_not(
-    isTRUE(.usrds_env$initialized),
-    "USRDS environment not initialized — skipping tests."
-  )
-})
+# Needs real USRDS files; skips the whole file otherwise.
+skip_if_not_live()
 
 # ---- Constants ----
-icd_test <- c(
-  "B45",
-  "B450",
-  "B451",
-  "B452",
-  "B453",
-  "B454",
-  "B458",
-  "B459",
-  "1175"
-) # ICD-9 and ICD-10 for Cryptococcosis
+# ICD-9 117.5 and ICD-10-CM B45.0-B45.3, B45.7-B45.9 (cryptococcosis)
+icd_test <- c("1175", "B450", "B451", "B452", "B453", "B457", "B458", "B459")
 valid_year <- 2006
 invalid_years <- c(2005, 2017)
-test_ids <- c(45269, 36590) # unlikely matches, used to test ID filter logic
+test_ids <- c(1, 2) # obviously fake; tests the filter, not matches
 
 # ---- Test: Out-of-range years should error ----
 test_that("get_IN_ICD fails for out-of-range years", {

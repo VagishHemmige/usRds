@@ -10,11 +10,11 @@
 #' @keywords internal
 .parquetize_usrds_file <- function(input_path, output_path, overwrite = FALSE) {
   if (!file.exists(input_path)) {
-    stop(paste("❌ Input file does not exist:", input_path))
+    stop(paste("Input file does not exist:", input_path))
   }
 
   if (file.exists(output_path) && !overwrite) {
-    message(paste("✅ Output already exists:", output_path))
+    message(paste("Output already exists:", output_path))
     return(invisible(output_path))
   }
 
@@ -24,9 +24,9 @@
   if (file_ext == "sas7bdat") {
     temp_dir <- paste0(output_path, "_chunks")
 
-    # 🔥 Cleanup stale chunk folder if it exists
+    # Cleanup stale chunk folder if it exists
     if (dir.exists(temp_dir)) {
-      message("⚠️  Stale chunk folder found. Cleaning up:", temp_dir)
+      message("Stale chunk folder found. Cleaning up:", temp_dir)
       fs::dir_delete(temp_dir)
     }
 
@@ -38,7 +38,7 @@
     ds <- arrow::open_dataset(temp_dir)
     arrow::write_parquet(ds, output_path)
     fs::dir_delete(temp_dir)
-    message(paste("✅ Converted SAS to flat Parquet:", basename(input_path)))
+    message(paste("Converted SAS to flat Parquet:", basename(input_path)))
     return(invisible(output_path))
   }
 
@@ -51,7 +51,7 @@
       },
       error = function(e) {
         message(paste(
-          "⚠️  Arrow failed. Falling back to readr::read_csv for:",
+          "Arrow failed. Falling back to readr::read_csv for:",
           basename(input_path)
         ))
         tryCatch(
@@ -62,7 +62,7 @@
           },
           error = function(e2) {
             message(paste(
-              "❌ Fallback also failed:",
+              "Fallback also failed:",
               basename(input_path),
               "Error:",
               e2$message
@@ -80,7 +80,7 @@
     known_date_fields <- c("CLM_FROM", "CLM_THRU", "REV_DT", "SRVC_DT")
     date_cols <- intersect(names(df), known_date_fields)
     if (length(date_cols) > 0) {
-      message(paste("📆 Parsing dates:", paste(date_cols, collapse = ", ")))
+      message(paste("Parsing dates:", paste(date_cols, collapse = ", ")))
       df <- dplyr::mutate(
         df,
         dplyr::across(
@@ -94,11 +94,11 @@
     }
 
     arrow::write_parquet(df, output_path)
-    message(paste("✅ Converted CSV using Arrow:", basename(input_path)))
+    message(paste("Converted CSV using Arrow:", basename(input_path)))
     return(invisible(output_path))
   }
 
-  stop(paste("❌ Unsupported file extension:", file_ext))
+  stop(paste("Unsupported file extension:", file_ext))
 }
 
 #' Convert all USRDS raw files in a directory to Parquet

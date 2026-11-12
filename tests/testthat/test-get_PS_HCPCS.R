@@ -1,16 +1,11 @@
-# ---- Setup ----
-test_that("setup: environment is initialized", {
-  skip_if_not(
-    isTRUE(.usrds_env$initialized),
-    "USRDS environment not initialized — skipping tests."
-  )
-})
+# Needs real USRDS files; skips the whole file otherwise.
+skip_if_not_live()
 
 # ---- Constants ----
 hcpcs_test <- "81003" # Example HCPCS code: Urinalysis, automated
 valid_year <- 2006
 invalid_years <- c(2005, 2017)
-test_ids <- c(1726, 2516705) # unlikely to match but valid format
+test_ids <- c(1, 2) # obviously fake; tests the filter, not matches
 
 # ---- Test: Out-of-range years should error ----
 test_that("get_PS_HCPCS fails for out-of-range years", {

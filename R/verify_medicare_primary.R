@@ -127,8 +127,9 @@ verify_medicare_primary<-function(df, index_date, lookback_days=365, medicare_co
     missing_ids <- setdiff(df$USRDS_ID, medicare_coverage_df$USRDS_ID)
 
     if (length(missing_ids) > 0) {
-      rlang::warn(glue::glue(
-        "{length(missing_ids)} USRDS_ID(s) in `df` are not present in `medicare_coverage_df`."
+      rlang::warn(paste0(
+        length(missing_ids),
+        " USRDS_ID(s) in `df` are not present in `medicare_coverage_df`."
       ))
     }
   }
@@ -172,10 +173,9 @@ verify_medicare_primary<-function(df, index_date, lookback_days=365, medicare_co
 
   #Convert index_date if necessary to something that can be used
   if (is.character(index_date) && length(index_date) == 1) {
-    index_date_var <- rlang::sym(index_date)
-    df <- df %>% mutate(.index_date = !!index_date_var)
+    df <- df %>% dplyr::mutate(.index_date = .data[[index_date]])
   } else {
-    df <- df %>% mutate(.index_date = as.Date(index_date))
+    df <- df %>% dplyr::mutate(.index_date = as.Date(.env$index_date))
   }
 
 
@@ -199,33 +199,33 @@ if (cache==TRUE && exists("medicare_history", envir = .usrds_env, inherits = FAL
       medicare_history<-medicare_coverage_df}
 
   medicare_history<-medicare_history%>%
-    filter(PAYER %in% eligible_payers) %>%
-    select(USRDS_ID, BEGDATE, ENDDATE)%>%
-    arrange(USRDS_ID, BEGDATE)%>%
+    dplyr::filter(.data$PAYER %in% .env$eligible_payers) %>%
+    dplyr::select("USRDS_ID", "BEGDATE", "ENDDATE")%>%
+    dplyr::arrange(.data$USRDS_ID, .data$BEGDATE)%>%
 
     #Combine lines where there is no gap between the lines and they are the same patient
-    group_by(USRDS_ID) %>%
-    arrange(BEGDATE, .by_group = TRUE) %>%
-    mutate(
-      prev_end = lag(ENDDATE),
+    dplyr::group_by(.data$USRDS_ID) %>%
+    dplyr::arrange(.data$BEGDATE, .by_group = TRUE) %>%
+    dplyr::mutate(
+      prev_end = dplyr::lag(.data$ENDDATE),
 
       # start a new group if there is a gap
-      new_group = if_else(
-        is.na(prev_end) | BEGDATE > prev_end + days(1),
+      new_group = dplyr::if_else(
+        is.na(.data$prev_end) | .data$BEGDATE > .data$prev_end + lubridate::days(1),
         1L,
         0L
         ),
-      group_id = cumsum(new_group)
+      group_id = cumsum(.data$new_group)
       ) %>%
-    group_by(USRDS_ID, group_id) %>%
-    summarise(
-      BEGDATE = min(BEGDATE),
-      ENDDATE = max(ENDDATE),
+    dplyr::group_by(.data$USRDS_ID, .data$group_id) %>%
+    dplyr::summarise(
+      BEGDATE = min(.data$BEGDATE),
+      ENDDATE = max(.data$ENDDATE),
       .groups = "drop"
       )%>%
-    select(-group_id)%>%
-    rename(usrds_package_medicare_begdate = BEGDATE,
-           usrds_package_medicare_enddate = ENDDATE)
+    dplyr::select(-"group_id")%>%
+    dplyr::rename(usrds_package_medicare_begdate = "BEGDATE",
+           usrds_package_medicare_enddate = "ENDDATE")
 
 }
 
@@ -236,23 +236,27 @@ if (cache==TRUE && !exists("medicare_history", envir = .usrds_env, inherits = FA
 }
 
 #Join patient cohort to medicare history data
-patients_clean<-left_join(df,
+patients_clean<-dplyr::left_join(df,
                           medicare_history,
-                          join_by(USRDS_ID, between(.index_date, usrds_package_medicare_begdate, usrds_package_medicare_enddate))
+                          dplyr::join_by(USRDS_ID, dplyr::between(.index_date, usrds_package_medicare_begdate, usrds_package_medicare_enddate))
 )
 
 #Create variable that marks FFS coverage on day of claim through 365 days prior
 #Logic here depends strongly on nature of between join in dplyr
 patients_clean<-patients_clean%>%
-  mutate(medicare_primary_TF=ifelse(!is.na(usrds_package_medicare_begdate) & .index_date-usrds_package_medicare_begdate>=lookback_days,TRUE,FALSE))%>%
+  dplyr::mutate(medicare_primary_TF=ifelse(!is.na(.data$usrds_package_medicare_begdate) & .data$.index_date-.data$usrds_package_medicare_begdate>=.env$lookback_days,TRUE,FALSE))
 
-  #Rename start and end variables for coverage to user specified variables if not null
-  { if (!is.null(coverage_start_variable)) dplyr::mutate(.,!!rlang::sym(coverage_start_variable):=usrds_package_medicare_begdate) else . }%>%
-  { if (!is.null(coverage_end_variable)) dplyr::mutate(.,!!rlang::sym(coverage_end_variable):=usrds_package_medicare_enddate) else . }
+#Copy start and end variables for coverage to user specified variables if not null
+if (!is.null(coverage_start_variable)) {
+  patients_clean[[coverage_start_variable]] <- patients_clean$usrds_package_medicare_begdate
+}
+if (!is.null(coverage_end_variable)) {
+  patients_clean[[coverage_end_variable]] <- patients_clean$usrds_package_medicare_enddate
+}
 
 
 patients_clean<-patients_clean%>%
-  select(-.index_date, -usrds_package_medicare_begdate, -usrds_package_medicare_enddate)
+  dplyr::select(-".index_date", -"usrds_package_medicare_begdate", -"usrds_package_medicare_enddate")
 
 return(patients_clean)
 

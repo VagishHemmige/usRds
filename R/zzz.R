@@ -1,12 +1,7 @@
-# Suppress NOTE about unbound global vars (e.g., tidyverse pipelines)
-utils::globalVariables(c(
-  "%>%", "filter", "mutate", "select", "rename_with", "read_csv",
-  "tibble", "inner_join", "case_when", "pmap", "bind_rows", "separate",
-  "str_detect", "str_extract", "dmy", "all_of",
-  "CLM_FROM", "CLM_THRU", "DIAG", "CODE", "HCPCS", "SPCLTY", "USRDS_ID", "Year",
-  ".USRDS_wd", ".File_List_clean", ".File_List_csv_clean", ".File_List_csv_raw",
-  ".File_List_sas_clean", ".File_List_sas_raw", "file_path", "file_name", "file_root"
-))
+# Names that neither pkg:: nor .data$/strings can express. Keep this list
+# short: anything else should use pkg::fn(), .data$col or a string.
+# dplyr's data-mask pronouns, used without importing them from rlang.
+utils::globalVariables(c(".data", ".env"))
 
 #' @noRd
 .onLoad <- function(libname, pkgname) {

@@ -23,107 +23,105 @@
 #' \dontrun{
 #' }
 
+finalize_usrds_cohort <- function(USRDS_cohort, baseline_date_variable = NULL) {
+  ## ---- Guards -------------------------------------------------------------
 
+  if (
+    !identical(attr(USRDS_cohort, "cohort_type", exact = TRUE), "USRDS_cohort")
+  ) {
+    stop("USRDS_cohort must be a USRDS cohort object", call. = FALSE)
+  }
 
-  finalize_usrds_cohort <- function(USRDS_cohort, baseline_date_variable=NULL) {
+  if (!all(c("USRDS_ID", "tstart", "tstop") %in% names(USRDS_cohort))) {
+    stop("USRDS_cohort must contain USRDS_ID, tstart, and tstop", call. = FALSE)
+  }
 
-
-    ## ---- Guards -------------------------------------------------------------
-
-    if (!identical(attr(USRDS_cohort, "cohort_type", exact = TRUE), "USRDS_cohort")) {
-      stop("USRDS_cohort must be a USRDS cohort object", call. = FALSE)
-    }
-
-    if (!all(c("USRDS_ID", "tstart", "tstop") %in% names(USRDS_cohort))) {
-      stop("USRDS_cohort must contain USRDS_ID, tstart, and tstop", call. = FALSE)
-    }
-
-
-    #Validate baseline_date_variable
-    if (!is.null(baseline_date_variable)) {
-
-      ## 1. Must be a single character string
-      if (!is.character(baseline_date_variable) ||
-          length(baseline_date_variable) != 1) {
-        stop("`baseline_date_variable` must be a single character string naming a column.")
-      }
-
-      ## 2. Must exist in the cohort
-      if (!baseline_date_variable %in% names(USRDS_cohort)) {
-        stop(
-          sprintf(
-            "Baseline date variable '%s' not found in USRDS_cohort.",
-            baseline_date_variable
-          )
-        )
-      }
-
-      ## 3. Must be a Date or date-time
-      x <- USRDS_cohort[[baseline_date_variable]]
-
-      if (!inherits(x, c("Date", "POSIXct", "POSIXt"))) {
-        stop(
-          sprintf(
-            "Baseline date variable '%s' must be of class Date or POSIXct.",
-            baseline_date_variable
-          )
-        )
-      }
-
-      ## Optional but highly recommended: no missing values
-      if (anyNA(x)) {
-        stop(
-          sprintf(
-            "Baseline date variable '%s' contains missing values.",
-            baseline_date_variable
-          )
-        )
-      }
-    }
-
-    ## ---- Shift time to patient-specific t0 ----------------------------------
-
-    if (is.null(baseline_date_variable)){
-    result<-USRDS_cohort |>
-      dplyr::group_by(USRDS_ID) |>
-      dplyr::mutate(
-        .t0 = min(tstart)) |>
-      ungroup()
-    } else
-    {
-      result<-USRDS_cohort |>
-        dplyr::mutate(
-          .t0 = as.numeric(as.Date(.data[[baseline_date_variable]])))
-    }
-
-
-    result <- result |>
-      dplyr::mutate(
-        tstart = tstart - .t0,
-        tstop  = tstop  - .t0
-      ) |>
-      dplyr::select(-.t0)
-
-    ## ---- Sanity check -------------------------------------------------------
-
-    neg_n <- sum(result$tstart < 0, na.rm = TRUE)
-
-    if (neg_n > 0) {
-      warning(
-        sprintf(
-          "Negative tstart produced during finalization (%d rows affected)",
-          neg_n
-        ),
-        call. = FALSE
+  #Validate baseline_date_variable
+  if (!is.null(baseline_date_variable)) {
+    ## 1. Must be a single character string
+    if (
+      !is.character(baseline_date_variable) ||
+        length(baseline_date_variable) != 1
+    ) {
+      stop(
+        "`baseline_date_variable` must be a single character string naming a column."
       )
     }
 
-    ## ---- Restore attributes -------------------------------------------------
+    ## 2. Must exist in the cohort
+    if (!baseline_date_variable %in% names(USRDS_cohort)) {
+      stop(
+        sprintf(
+          "Baseline date variable '%s' not found in USRDS_cohort.",
+          baseline_date_variable
+        )
+      )
+    }
 
-    attr(result, "cohort_type") <- "USRDS_cohort"
-    attr(result, "finalized") <- TRUE
+    ## 3. Must be a Date or date-time
+    x <- USRDS_cohort[[baseline_date_variable]]
 
-    return(result)
+    if (!inherits(x, c("Date", "POSIXct", "POSIXt"))) {
+      stop(
+        sprintf(
+          "Baseline date variable '%s' must be of class Date or POSIXct.",
+          baseline_date_variable
+        )
+      )
+    }
+
+    ## Optional but highly recommended: no missing values
+    if (anyNA(x)) {
+      stop(
+        sprintf(
+          "Baseline date variable '%s' contains missing values.",
+          baseline_date_variable
+        )
+      )
+    }
   }
 
+  ## ---- Shift time to patient-specific t0 ----------------------------------
 
+  if (is.null(baseline_date_variable)) {
+    result <- USRDS_cohort |>
+      dplyr::group_by(.data$USRDS_ID) |>
+      dplyr::mutate(
+        .t0 = min(.data$tstart)
+      ) |>
+      dplyr::ungroup()
+  } else {
+    result <- USRDS_cohort |>
+      dplyr::mutate(
+        .t0 = as.numeric(as.Date(.data[[baseline_date_variable]]))
+      )
+  }
+
+  result <- result |>
+    dplyr::mutate(
+      tstart = .data$tstart - .data$.t0,
+      tstop = .data$tstop - .data$.t0
+    ) |>
+    dplyr::select(-".t0")
+
+  ## ---- Sanity check -------------------------------------------------------
+
+  neg_n <- sum(result$tstart < 0, na.rm = TRUE)
+
+  if (neg_n > 0) {
+    warning(
+      sprintf(
+        "Negative tstart produced during finalization (%d rows affected)",
+        neg_n
+      ),
+      call. = FALSE
+    )
+  }
+
+  ## ---- Restore attributes -------------------------------------------------
+
+  attr(result, "cohort_type") <- "USRDS_cohort"
+  attr(result, "finalized") <- TRUE
+
+  return(result)
+}

@@ -38,12 +38,14 @@
 #' # Filter to a subset of USRDS_IDs
 #' df <- load_usrds_file("RXHIST", usrds_ids = c("100000123", "100000456"))
 #' }
-load_usrds_file <- function(file_key,
-                            factor_labels = TRUE,
-                            var_labels = FALSE,
-                            usrds_ids = NULL,
-                            col_select = NULL,
-                            ...) {
+load_usrds_file <- function(
+  file_key,
+  factor_labels = TRUE,
+  var_labels = FALSE,
+  usrds_ids = NULL,
+  col_select = NULL,
+  ...
+) {
   # ---- Ensure file registry is initialized ----
   if (is.null(.usrds_env$file_list)) {
     stop("File list not initialized.")
@@ -82,7 +84,11 @@ load_usrds_file <- function(file_key,
         arrow::read_parquet(full_path, ...)
       } else {
         dummy <- arrow::open_dataset(full_path)$head(1) |> as.data.frame()
-        selected_names <- tidyselect::eval_select(rlang::enquo(col_select), dummy) |> names()
+        selected_names <- tidyselect::eval_select(
+          rlang::enquo(col_select),
+          dummy
+        ) |>
+          names()
         arrow::read_parquet(full_path, columns = selected_names, ...)
       }
     },

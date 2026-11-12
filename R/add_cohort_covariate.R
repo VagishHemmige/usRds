@@ -35,40 +35,57 @@
 #' \dontrun{
 #' }
 #'
-add_cohort_covariate <- function(USRDS_cohort,
-                             covariate_data_frame,
-                             covariate_date,
-                             covariate_value=NULL,
-                             covariate_variable_name) {
-
+add_cohort_covariate <- function(
+  USRDS_cohort,
+  covariate_data_frame,
+  covariate_date,
+  covariate_value = NULL,
+  covariate_variable_name
+) {
   ## ---- Guards -------------------------------------------------------------
 
   # Confirm USRDS cohort
-  if (!identical(attr(USRDS_cohort, "cohort_type", exact = TRUE), "USRDS_cohort")) {
+  if (
+    !identical(attr(USRDS_cohort, "cohort_type", exact = TRUE), "USRDS_cohort")
+  ) {
     stop("USRDS_cohort must be a USRDS cohort object", call. = FALSE)
   }
 
   # Check ID exists in both data frames
-  if (!"USRDS_ID" %in% names(USRDS_cohort) ||
-      !"USRDS_ID" %in% names(covariate_data_frame)) {
+  if (
+    !"USRDS_ID" %in% names(USRDS_cohort) ||
+      !"USRDS_ID" %in% names(covariate_data_frame)
+  ) {
     stop("Both data frames must contain 'USRDS_ID'", call. = FALSE)
   }
 
   # Validate event_variable_name
-  if (!is.character(covariate_variable_name) || length(covariate_variable_name) != 1) {
-    stop("covariate_variable_name must be a single character string", call. = FALSE)
+  if (
+    !is.character(covariate_variable_name) ||
+      length(covariate_variable_name) != 1
+  ) {
+    stop(
+      "covariate_variable_name must be a single character string",
+      call. = FALSE
+    )
   }
 
   if (covariate_variable_name %in% names(USRDS_cohort)) {
     stop(
-      sprintf("Variable '%s' already exists in USRDS_cohort", covariate_variable_name),
+      sprintf(
+        "Variable '%s' already exists in USRDS_cohort",
+        covariate_variable_name
+      ),
       call. = FALSE
     )
   }
 
   # Validate covariate_date (must be a column name)
   if (!is.character(covariate_date) || length(covariate_date) != 1) {
-    stop("covariate_date must be a single column name (character string)", call. = FALSE)
+    stop(
+      "covariate_date must be a single column name (character string)",
+      call. = FALSE
+    )
   }
 
   if (!covariate_date %in% names(covariate_data_frame)) {
@@ -82,7 +99,6 @@ add_cohort_covariate <- function(USRDS_cohort,
   }
 
   if (!is.null(covariate_value)) {
-
     # Must be a single character string
     if (!is.character(covariate_value) || length(covariate_value) != 1) {
       stop(
@@ -103,33 +119,26 @@ add_cohort_covariate <- function(USRDS_cohort,
     }
   }
 
-
-
   ## ---- Time setup ----------------------------------------------------------
 
   origin_date <- as.Date("1970-01-01")
 
-
   ## ---- Event time conversion ----------------------------------------------
 
-  covariate_temp_data_frame <- covariate_data_frame %>%
+  covariate_temp_data_frame <- covariate_data_frame |>
     dplyr::mutate(
-      tcovariate = as.numeric(.data[[covariate_date]] - origin_date)
+      tcovariate = as.numeric(.data[[covariate_date]] - .env$origin_date)
     )
 
   ## ---- tmerge --------------------------------------------------------------
 
-
   if (is.null(covariate_value)) {
-
-    event_call <- setNames(
+    event_call <- stats::setNames(
       list(quote(tdc(tcovariate))),
       covariate_variable_name
     )
-
   } else {
-
-    event_call <- setNames(
+    event_call <- stats::setNames(
       list(
         as.call(list(
           quote(tdc),
@@ -140,9 +149,6 @@ add_cohort_covariate <- function(USRDS_cohort,
       covariate_variable_name
     )
   }
-
-
-
 
   result <- do.call(
     survival::tmerge,
@@ -157,15 +163,15 @@ add_cohort_covariate <- function(USRDS_cohort,
   )
 
   #Update cohort variables
-  result$cohort_start_date<-origin_date + result$tstart
-  result$cohort_stop_date<-origin_date + result$tstop
-
+  result$cohort_start_date <- origin_date + result$tstart
+  result$cohort_stop_date <- origin_date + result$tstop
 
   #Restore cohort attribute
   attr(result, "cohort_type") <- "USRDS_cohort"
-  attr(result, "covariate_variables") <- c(covariate_variable_name, attr(result, "covariate_variables"))
-
+  attr(result, "covariate_variables") <- c(
+    covariate_variable_name,
+    attr(result, "covariate_variables")
+  )
 
   return(result)
 }
-

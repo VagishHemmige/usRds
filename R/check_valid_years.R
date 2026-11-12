@@ -20,9 +20,9 @@
   }
 
   # Extract the list of available years from file_list for the specified file_roots
-  available_years <- .usrds_env$file_list %>%
-    dplyr::filter(file_root %in% file_keys) %>%
-    dplyr::pull(Year) %>%
+  available_years <- .usrds_env$file_list |>
+    dplyr::filter(.data$file_root %in% .env$file_keys) |>
+    dplyr::pull("Year") |>
     unique()
 
   # Identify which requested years are not available
@@ -30,8 +30,12 @@
 
   # If any are invalid, stop with a message
   if (length(invalid_years) > 0) {
-    stop("The following years are not available for ", label, ": ",
-         paste(invalid_years, collapse = ", "))
+    stop(
+      "The following years are not available for ",
+      label,
+      ": ",
+      paste(invalid_years, collapse = ", ")
+    )
   }
 
   invisible(NULL)

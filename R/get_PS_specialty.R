@@ -1,46 +1,41 @@
-.load_individual_file_PS_specialty<-function(file_path,file_root,file_suffix,Year,file_directory,specialtycodelist,
-                                            variablelist)
-{
-  print(file_path)
-  print(file_root)
-  print(file_suffix)
-  print(Year)
-  print(file_directory)
-  print(specialtycodelist)
-
-
-  if( file_suffix=="csv")
-  {
-    temp<-read_csv(file_path)%>%
-      rename_with(toupper)%>%
-      filter(SPCLTY %in% specialtycodelist)%>%
-      select(all_of(variablelist))%>%
-      mutate(CLM_FROM=dmy(CLM_FROM))
+.load_individual_file_PS_specialty <- function(
+  file_path,
+  file_root,
+  file_suffix,
+  Year,
+  file_directory,
+  specialtycodelist,
+  variablelist
+) {
+  if (file_suffix == "csv") {
+    temp <- readr::read_csv(file_path) |>
+      dplyr::rename_with(toupper) |>
+      dplyr::filter(.data$SPCLTY %in% .env$specialtycodelist) |>
+      dplyr::select(dplyr::all_of(variablelist)) |>
+      dplyr::mutate(CLM_FROM = lubridate::dmy(.data$CLM_FROM))
     return(temp)
   }
 
-  if( file_suffix=="sas7bdat")
-  {
-    temp<-haven::read_sas(file_path, col_select=variablelist)%>%
-      rename_with(toupper)%>%
-      filter(SPCLTY %in% specialtycodelist)%>%
-      return(temp)
+  if (file_suffix == "sas7bdat") {
+    temp <- haven::read_sas(
+      file_path,
+      col_select = dplyr::all_of(variablelist)
+    ) |>
+      dplyr::rename_with(toupper) |>
+      dplyr::filter(.data$SPCLTY %in% .env$specialtycodelist)
+    return(temp)
   }
 
-
-  if( file_suffix=="parquet")
-  {
-    temp<-arrow::read_parquet(file_path)%>%
-      rename_with(toupper)%>%
-      select(all_of(variablelist))%>%
-      filter(SPCLTY %in% specialtycodelist)%>%
-      mutate(CLM_FROM=as_date(CLM_FROM))%>%
+  if (file_suffix == "parquet") {
+    temp <- arrow::read_parquet(file_path) |>
+      dplyr::rename_with(toupper) |>
+      dplyr::select(dplyr::all_of(variablelist)) |>
+      dplyr::filter(.data$SPCLTY %in% .env$specialtycodelist) |>
+      dplyr::mutate(CLM_FROM = lubridate::as_date(.data$CLM_FROM)) |>
       arrow::collect()
     return(temp)
   }
-
 }
-
 
 
 #' Extract PS specialty claims
@@ -56,32 +51,35 @@
 #' @return A tibble with filtered and selected PS HCPCS data.
 #' @export
 
+get_PS_specialty <- function(
+  specialtycodelist,
+  yearlist,
+  DIAG = FALSE,
+  HCPCS = FALSE,
+  PLCSRV = FALSE
+) {
+  variablelist <- c("USRDS_ID", "CLM_FROM", "SPCLTY")
 
-get_PS_specialty<-function(specialtycodelist,yearlist, DIAG=FALSE, HCPCS=FALSE, PLCSRV=FALSE) {
-
-  variablelist<-c("USRDS_ID","CLM_FROM","SPCLTY")
-
-  if( DIAG==TRUE)
-  {
-    variablelist<-c(variablelist, "DIAG")
+  if (DIAG == TRUE) {
+    variablelist <- c(variablelist, "DIAG")
   }
 
-  if( HCPCS==TRUE)
-  {
-    variablelist<-c(variablelist, "HCPCS")
+  if (HCPCS == TRUE) {
+    variablelist <- c(variablelist, "HCPCS")
   }
 
-  if( PLCSRV==TRUE)
-  {
-    variablelist<-c(variablelist, "PLCSRV")
+  if (PLCSRV == TRUE) {
+    variablelist <- c(variablelist, "PLCSRV")
   }
 
-
-  .usrds_env$file_list%>%
-    inner_join(PS_HCPCS) %>%
-    filter(Year %in% yearlist)%>%
-    select(-file_name)%>%
-    pmap(.load_individual_file_PS_specialty,specialtycodelist, variablelist)%>%
-    bind_rows()%>%
-    return()
+  .usrds_env$file_list |>
+    dplyr::inner_join(PS_HCPCS, by = c("file_root", "Year")) |>
+    dplyr::filter(.data$Year %in% .env$yearlist) |>
+    dplyr::select(-"file_name") |>
+    purrr::pmap(
+      .load_individual_file_PS_specialty,
+      specialtycodelist = specialtycodelist,
+      variablelist = variablelist
+    ) |>
+    dplyr::bind_rows()
 }

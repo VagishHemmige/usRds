@@ -67,10 +67,10 @@ adjust_costs_for_inflation <-function(cost_data_frame, baseline_month, baseline_
 
   # attach CPI per row
   df <- df %>%
-    left_join(
+    dplyr::left_join(
       medical_cpi %>%
-        select(year, periodName, value) %>%
-        rename(.cpi = value),
+        dplyr::select("year", "periodName", "value") %>%
+        dplyr::rename(.cpi = "value"),
       by = c(".cpi_year" = "year", ".cpi_month" = "periodName")
     )
 
@@ -80,13 +80,13 @@ adjust_costs_for_inflation <-function(cost_data_frame, baseline_month, baseline_
 
   # inflate
   df %>%
-    mutate(
-      across(
-        any_of(cost_vars),
-        ~ .x * (baseline_index / .data$.cpi),
+    dplyr::mutate(
+      dplyr::across(
+        dplyr::any_of(cost_vars),
+        ~ .x * (.env$baseline_index / .data$.cpi),
         .names = "{.col}_ADJUSTED"
       )
     ) %>%
-    select(-.cpi, -.cpi_year, -.cpi_month)%>%
+    dplyr::select(-".cpi", -".cpi_year", -".cpi_month")%>%
     return()
 }

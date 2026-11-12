@@ -75,12 +75,12 @@ add_cohort_event <- function(USRDS_cohort,
 
   event_temp_data_frame <- event_data_frame %>%
     dplyr::mutate(
-      tevent = as.numeric(.data[[event_date]] - origin_date)
+      tevent = as.numeric(.data[[event_date]] - .env$origin_date)
     )
 
   ## ---- tmerge --------------------------------------------------------------
 
-  event_call <- setNames(
+  event_call <- stats::setNames(
     list(quote(cumevent(tevent))),
     event_variable_name
   )

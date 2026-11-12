@@ -21,8 +21,8 @@
 
   # Extract the list of available years from file_list for the specified file_roots
   available_years <- .usrds_env$file_list %>%
-    dplyr::filter(file_root %in% file_keys) %>%
-    dplyr::pull(Year) %>%
+    dplyr::filter(.data$file_root %in% .env$file_keys) %>%
+    dplyr::pull("Year") %>%
     unique()
 
   # Identify which requested years are not available

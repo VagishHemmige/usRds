@@ -114,7 +114,7 @@ add_cohort_covariate <- function(USRDS_cohort,
 
   covariate_temp_data_frame <- covariate_data_frame %>%
     dplyr::mutate(
-      tcovariate = as.numeric(.data[[covariate_date]] - origin_date)
+      tcovariate = as.numeric(.data[[covariate_date]] - .env$origin_date)
     )
 
   ## ---- tmerge --------------------------------------------------------------
@@ -122,14 +122,14 @@ add_cohort_covariate <- function(USRDS_cohort,
 
   if (is.null(covariate_value)) {
 
-    event_call <- setNames(
+    event_call <- stats::setNames(
       list(quote(tdc(tcovariate))),
       covariate_variable_name
     )
 
   } else {
 
-    event_call <- setNames(
+    event_call <- stats::setNames(
       list(
         as.call(list(
           quote(tdc),

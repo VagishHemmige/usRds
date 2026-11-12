@@ -16,23 +16,23 @@
     arrow::read_parquet(file_path) |>
       dplyr::rename_with(toupper) |>
       dplyr::select(dplyr::all_of(variablelist)) |>
-      (\(df) if (!is.null(usrds_ids)) dplyr::filter(df, USRDS_ID %in% usrds_ids) else df)() |>
-      dplyr::mutate(CLM_FROM = lubridate::as_date(CLM_FROM)) |>
-      dplyr::mutate(CLM_THRU = lubridate::as_date(CLM_THRU)) |>
+      .filter_in("USRDS_ID", usrds_ids) |>
+      dplyr::mutate(CLM_FROM = lubridate::as_date(.data$CLM_FROM)) |>
+      dplyr::mutate(CLM_THRU = lubridate::as_date(.data$CLM_THRU)) |>
       dplyr::collect()
 
   } else if (file_suffix == "csv") {
     readr::read_csv(file_path, show_col_types = FALSE) |>
       dplyr::rename_with(toupper) |>
-      (\(df) if (!is.null(usrds_ids)) dplyr::filter(df, USRDS_ID %in% usrds_ids) else df)() |>
+      .filter_in("USRDS_ID", usrds_ids) |>
       dplyr::select(dplyr::all_of(variablelist)) |>
-      dplyr::mutate(CLM_FROM = suppressWarnings(lubridate::dmy(CLM_FROM))) |>
-      dplyr::mutate(CLM_THRU = suppressWarnings(lubridate::dmy(CLM_THRU)))
+      dplyr::mutate(CLM_FROM = suppressWarnings(lubridate::dmy(.data$CLM_FROM))) |>
+      dplyr::mutate(CLM_THRU = suppressWarnings(lubridate::dmy(.data$CLM_THRU)))
 
   } else if (file_suffix == "sas7bdat") {
     haven::read_sas(file_path, col_select = variablelist) |>
       dplyr::rename_with(toupper) |>
-      (\(df) if (!is.null(usrds_ids)) dplyr::filter(df, USRDS_ID %in% usrds_ids) else df)()
+      .filter_in("USRDS_ID", usrds_ids)
 
   } else {
     stop("Unsupported file type: ", file_suffix)
@@ -73,18 +73,18 @@ get_PS_REV_costs <- function(years,
 
   .usrds_env$file_list |>
     dplyr::inner_join(PS_REV_COSTS, by = c("file_root", "Year")) |>
-    dplyr::filter(Year %in% years) |>
-    dplyr::select(-file_name) |>
+    dplyr::filter(.data$Year %in% .env$years) |>
+    dplyr::select(-"file_name") |>
     purrr::pmap(.f = function(...) {
       .load_individual_file_PS_REV_costs(...,
                                      variablelist = variablelist,
                                      usrds_ids = usrds_ids)
     }) |>
     dplyr::bind_rows()%>%
-    (\(df) if (remove_missing_values==TRUE) dplyr::filter(df, !is.na(PMTAMT)) else df)()%>%
+    (\(df) if (remove_missing_values==TRUE) dplyr::filter(df, !is.na(.data$PMTAMT)) else df)()%>%
     dplyr::mutate(
       HCFASAF = factor(
-        HCFASAF,
+        .data$HCFASAF,
         levels = c("I", "M", "O", "D", "N", "H", "S", "Q", "P"),
         labels = c(
           "Inpatient",

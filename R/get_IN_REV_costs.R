@@ -6,9 +6,15 @@
 #' If `usrds_ids` is `NULL`, all codes are returned.
 #'
 #' @noRd
-.load_individual_file_IN_REV_costs <- function(file_path, file_root, file_suffix, Year,
-                                           file_directory, variablelist,
-                                           usrds_ids = NULL) {
+.load_individual_file_IN_REV_costs <- function(
+  file_path,
+  file_root,
+  file_suffix,
+  Year,
+  file_directory,
+  variablelist,
+  usrds_ids = NULL
+) {
   message("Reading file: ", file_path)
 
   if (file_suffix == "parquet") {
@@ -18,25 +24,21 @@
       .filter_in("USRDS_ID", usrds_ids) |>
       dplyr::mutate(CLM_FROM = lubridate::as_date(.data$CLM_FROM)) |>
       dplyr::collect()
-
   } else if (file_suffix == "csv") {
     readr::read_csv(file_path, show_col_types = FALSE) |>
       dplyr::rename_with(toupper) |>
       .filter_in("USRDS_ID", usrds_ids) |>
       dplyr::select(dplyr::any_of(variablelist)) |>
       dplyr::mutate(CLM_FROM = suppressWarnings(lubridate::dmy(.data$CLM_FROM)))
-
   } else if (file_suffix == "sas7bdat") {
     haven::read_sas(file_path) |>
       dplyr::rename_with(toupper) |>
       dplyr::select(dplyr::any_of(variablelist)) |>
       .filter_in("USRDS_ID", usrds_ids)
-
   } else {
     stop("Unsupported file type: ", file_suffix)
   }
 }
-
 
 
 #' Retrieve Institutional costs Claims
@@ -70,11 +72,13 @@ get_IN_REV_costs <- function(years, usrds_ids = NULL) {
     dplyr::filter(.data$Year %in% .env$years) |>
     dplyr::select(-"file_name") |>
     purrr::pmap(.f = function(...) {
-      .load_individual_file_IN_REV_costs(...,
-                                     variablelist = variablelist,
-                                     usrds_ids = usrds_ids)
+      .load_individual_file_IN_REV_costs(
+        ...,
+        variablelist = variablelist,
+        usrds_ids = usrds_ids
+      )
     }) |>
-    dplyr::bind_rows()%>%
+    dplyr::bind_rows() %>%
     dplyr::mutate(
       HCFASAF = factor(
         .data$HCFASAF,

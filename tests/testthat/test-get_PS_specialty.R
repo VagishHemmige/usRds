@@ -27,7 +27,11 @@ local_ps_csv <- function(env = parent.frame()) {
 test_that("get_PS_specialty() keeps claims with the requested specialty codes", {
   local_ps_csv()
 
-  result <- get_PS_specialty(specialtycodelist = 33, yearlist = 2010, HCPCS = TRUE)
+  result <- get_PS_specialty(
+    specialtycodelist = 33,
+    yearlist = 2010,
+    HCPCS = TRUE
+  )
 
   expect_equal(result$USRDS_ID, c(1, 3))
   expect_equal(result$CLM_FROM, as.Date(c("2010-01-01", "2010-03-01")))
@@ -38,7 +42,10 @@ test_that("get_PS_specialty() does not print file details", {
   local_ps_csv()
 
   expect_no_match(
-    paste(capture.output(get_PS_specialty(33, 2010), type = "output"), collapse = "\n"),
+    paste(
+      capture.output(get_PS_specialty(33, 2010), type = "output"),
+      collapse = "\n"
+    ),
     "ps2010a"
   )
 })

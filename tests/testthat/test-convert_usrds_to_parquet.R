@@ -7,7 +7,11 @@ test_that("convert_usrds_to_parquet() maps each CSV and SAS file to a Parquet pa
   file.create(file.path(source_dir, "readme.txt"))
   calls <- character()
   local_mocked_bindings(
-    .parquetize_usrds_file = function(input_path, output_path, overwrite = FALSE) {
+    .parquetize_usrds_file = function(
+      input_path,
+      output_path,
+      overwrite = FALSE
+    ) {
       calls <<- c(calls, as.character(output_path))
       invisible(output_path)
     }

@@ -19,8 +19,11 @@
 #' }
 #'
 
-adjust_costs_for_inflation <-function(cost_data_frame, baseline_month, baseline_year) {
-
+adjust_costs_for_inflation <- function(
+  cost_data_frame,
+  baseline_month,
+  baseline_year
+) {
   #List potential variables which could be in a data frame
   cost_vars <- c(
     "PMTAMT",
@@ -39,30 +42,29 @@ adjust_costs_for_inflation <-function(cost_data_frame, baseline_month, baseline_
     "REVPMT_PRORATED"
   )
 
-
   #Error checking
-  baseline_year<-as.integer(baseline_year)
-  if (!baseline_year %in% medical_cpi$year)
-  {
+  baseline_year <- as.integer(baseline_year)
+  if (!baseline_year %in% medical_cpi$year) {
     rlang::abort("`baseline_year` provided must be 2006-2025")
   }
 
-  if (!baseline_month %in% medical_cpi$periodName)
-  {
+  if (!baseline_month %in% medical_cpi$periodName) {
     rlang::abort("`baseline_month` provided must be full name of month.")
   }
 
-  baseline_index <- medical_cpi$value[medical_cpi$year == baseline_year & medical_cpi$periodName == baseline_month]
+  baseline_index <- medical_cpi$value[
+    medical_cpi$year == baseline_year & medical_cpi$periodName == baseline_month
+  ]
   stopifnot(length(baseline_index) == 1)
-
-
 
   df <- cost_data_frame %>%
     dplyr::mutate(
-      .cpi_year  = lubridate::year(.data$CLM_FROM),
-      .cpi_month = as.character(lubridate::month(.data$CLM_FROM,
-                                                 label = TRUE,
-                                                 abbr = FALSE))
+      .cpi_year = lubridate::year(.data$CLM_FROM),
+      .cpi_month = as.character(lubridate::month(
+        .data$CLM_FROM,
+        label = TRUE,
+        abbr = FALSE
+      ))
     )
 
   # attach CPI per row
@@ -87,6 +89,6 @@ adjust_costs_for_inflation <-function(cost_data_frame, baseline_month, baseline_
         .names = "{.col}_ADJUSTED"
       )
     ) %>%
-    dplyr::select(-".cpi", -".cpi_year", -".cpi_month")%>%
+    dplyr::select(-".cpi", -".cpi_year", -".cpi_month") %>%
     return()
 }

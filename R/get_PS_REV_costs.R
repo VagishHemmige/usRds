@@ -7,9 +7,15 @@
 #' If `USRDS_IDs` is `NULL`, all costs for all patients are returned.
 #'
 #' @noRd
-.load_individual_file_PS_REV_costs <- function(file_path, file_root, file_suffix, Year,
-                                           file_directory, variablelist,
-                                           usrds_ids = NULL) {
+.load_individual_file_PS_REV_costs <- function(
+  file_path,
+  file_root,
+  file_suffix,
+  Year,
+  file_directory,
+  variablelist,
+  usrds_ids = NULL
+) {
   message("Reading file: ", file_path)
 
   if (file_suffix == "parquet") {
@@ -20,26 +26,23 @@
       dplyr::mutate(CLM_FROM = lubridate::as_date(.data$CLM_FROM)) |>
       dplyr::mutate(CLM_THRU = lubridate::as_date(.data$CLM_THRU)) |>
       dplyr::collect()
-
   } else if (file_suffix == "csv") {
     readr::read_csv(file_path, show_col_types = FALSE) |>
       dplyr::rename_with(toupper) |>
       .filter_in("USRDS_ID", usrds_ids) |>
       dplyr::select(dplyr::all_of(variablelist)) |>
-      dplyr::mutate(CLM_FROM = suppressWarnings(lubridate::dmy(.data$CLM_FROM))) |>
+      dplyr::mutate(
+        CLM_FROM = suppressWarnings(lubridate::dmy(.data$CLM_FROM))
+      ) |>
       dplyr::mutate(CLM_THRU = suppressWarnings(lubridate::dmy(.data$CLM_THRU)))
-
   } else if (file_suffix == "sas7bdat") {
     haven::read_sas(file_path, col_select = variablelist) |>
       dplyr::rename_with(toupper) |>
       .filter_in("USRDS_ID", usrds_ids)
-
   } else {
     stop("Unsupported file type: ", file_suffix)
   }
 }
-
-
 
 
 #' Retrieve line item costs from Physician/Supplier claims
@@ -60,10 +63,20 @@
 #' get_PS_REV_costs(years = 2006:2008, usrds_ids=1:1000)
 #' get_PS_REV_costs(years = 2006:2008, usrds_ids=2000:4100)
 #' }
-get_PS_REV_costs <- function(years,
-                             usrds_ids = NULL,
-                             remove_missing_values=TRUE) {
-  variablelist <- c("USRDS_ID", "HCFASAF", "CLM_FROM", "CLM_THRU", "SBMTCH", "ALOWCH", "PMTAMT")
+get_PS_REV_costs <- function(
+  years,
+  usrds_ids = NULL,
+  remove_missing_values = TRUE
+) {
+  variablelist <- c(
+    "USRDS_ID",
+    "HCFASAF",
+    "CLM_FROM",
+    "CLM_THRU",
+    "SBMTCH",
+    "ALOWCH",
+    "PMTAMT"
+  )
 
   .check_valid_years(
     years = years,
@@ -76,12 +89,20 @@ get_PS_REV_costs <- function(years,
     dplyr::filter(.data$Year %in% .env$years) |>
     dplyr::select(-"file_name") |>
     purrr::pmap(.f = function(...) {
-      .load_individual_file_PS_REV_costs(...,
-                                     variablelist = variablelist,
-                                     usrds_ids = usrds_ids)
+      .load_individual_file_PS_REV_costs(
+        ...,
+        variablelist = variablelist,
+        usrds_ids = usrds_ids
+      )
     }) |>
-    dplyr::bind_rows()%>%
-    (\(df) if (remove_missing_values==TRUE) dplyr::filter(df, !is.na(.data$PMTAMT)) else df)()%>%
+    dplyr::bind_rows() %>%
+    (\(df) {
+      if (remove_missing_values == TRUE) {
+        dplyr::filter(df, !is.na(.data$PMTAMT))
+      } else {
+        df
+      }
+    })() %>%
     dplyr::mutate(
       HCFASAF = factor(
         .data$HCFASAF,
@@ -98,7 +119,7 @@ get_PS_REV_costs <- function(years,
           "Physician/Supplier"
         )
       )
-    )%>%
+    ) %>%
     labelled::set_variable_labels(
       USRDS_ID = "USRDS patient ID number",
       HCFASAF = "HCFA SAF source of this bill",

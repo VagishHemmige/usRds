@@ -7,10 +7,10 @@ test_that("setup: environment is initialized", {
 })
 
 # ---- Constants ----
-hcpcs_test <- "81003"  # Example HCPCS code: Urinalysis, automated
+hcpcs_test <- "81003" # Example HCPCS code: Urinalysis, automated
 valid_year <- 2006
 invalid_years <- c(2005, 2017)
-test_ids <- c(1726, 2516705)  # unlikely to match but valid format
+test_ids <- c(1726, 2516705) # unlikely to match but valid format
 
 # ---- Test: Out-of-range years should error ----
 test_that("get_PS_HCPCS fails for out-of-range years", {
@@ -31,7 +31,10 @@ test_that("get_PS_HCPCS succeeds silently for in-range year", {
 
 # ---- Test: Output structure is correct ----
 test_that("get_PS_HCPCS returns expected columns", {
-  result <- suppressMessages(get_PS_HCPCS(hcpcs_codes = hcpcs_test, years = valid_year))
+  result <- suppressMessages(get_PS_HCPCS(
+    hcpcs_codes = hcpcs_test,
+    years = valid_year
+  ))
 
   expect_s3_class(result, "data.frame")
   expect_true(all(c("USRDS_ID", "CLM_FROM", "HCPCS") %in% names(result)))
@@ -40,7 +43,11 @@ test_that("get_PS_HCPCS returns expected columns", {
 # ---- Test: Optional USRDS_ID filter returns valid structure ----
 test_that("get_PS_HCPCS supports filtering by USRDS_IDs", {
   result <- suppressMessages(
-    get_PS_HCPCS(hcpcs_codes = hcpcs_test, years = valid_year, usrds_ids = test_ids)
+    get_PS_HCPCS(
+      hcpcs_codes = hcpcs_test,
+      years = valid_year,
+      usrds_ids = test_ids
+    )
   )
 
   expect_s3_class(result, "data.frame")
@@ -48,16 +55,23 @@ test_that("get_PS_HCPCS supports filtering by USRDS_IDs", {
 })
 
 test_that("get_PS_HCPCS works when hcpcs_codes = NULL", {
-  result <- suppressMessages(get_PS_HCPCS(hcpcs_codes = NULL, years = valid_year))
+  result <- suppressMessages(get_PS_HCPCS(
+    hcpcs_codes = NULL,
+    years = valid_year
+  ))
 
   expect_s3_class(result, "data.frame")
   expect_true(all(c("USRDS_ID", "CLM_FROM", "HCPCS") %in% names(result)))
-  expect_gt(nrow(result), 0)  # No `info` arg — just bare assertion
+  expect_gt(nrow(result), 0) # No `info` arg — just bare assertion
 })
 
 test_that("get_PS_HCPCS filters by both HCPCS and USRDS_ID", {
   result <- suppressMessages(
-    get_PS_HCPCS(hcpcs_codes = hcpcs_test, years = valid_year, usrds_ids = test_ids)
+    get_PS_HCPCS(
+      hcpcs_codes = hcpcs_test,
+      years = valid_year,
+      usrds_ids = test_ids
+    )
   )
 
   expect_s3_class(result, "data.frame")

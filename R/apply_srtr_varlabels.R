@@ -29,7 +29,9 @@ apply_srtr_varlabels <- function(df, dataset_key, verbose = FALSE) {
     dplyr::filter(variable_upper %in% df_names_upper)
 
   if (nrow(vars_to_label) == 0) {
-    if (verbose) message("No variable labels applied for ", dataset_key)
+    if (verbose) {
+      message("No variable labels applied for ", dataset_key)
+    }
     return(df)
   }
 

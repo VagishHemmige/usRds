@@ -7,8 +7,15 @@
 #' For CSV and SAS files, filtering occurs after reading into memory.
 #'
 #' @noRd
-.load_individual_file_PS_ICD <- function(file_path, file_root, file_suffix, Year,
-                                         file_directory, icd_codes = NULL, usrds_ids = NULL) {
+.load_individual_file_PS_ICD <- function(
+  file_path,
+  file_root,
+  file_suffix,
+  Year,
+  file_directory,
+  icd_codes = NULL,
+  usrds_ids = NULL
+) {
   message("Reading file: ", file_path)
 
   if (file_suffix == "parquet") {
@@ -22,7 +29,6 @@
         CLM_FROM = as.Date(.data$CLM_FROM),
         CLM_THRU = as.Date(.data$CLM_THRU)
       )
-
   } else if (file_suffix == "csv") {
     temp <- readr::read_csv(file_path, show_col_types = FALSE) %>%
       dplyr::rename_with(toupper) %>%
@@ -33,18 +39,15 @@
       .filter_in("DIAG", icd_codes) %>%
       .filter_in("USRDS_ID", usrds_ids) %>%
       dplyr::select("USRDS_ID", "DIAG", "CLM_FROM", "CLM_THRU", "HCFASAF")
-
   } else if (file_suffix == "sas7bdat") {
-    temp <- haven::read_sas(file_path, col_select = c("USRDS_ID",
-                                                      "CLM_FROM",
-                                                      "DIAG",
-                                                      "CLM_THRU",
-                                                      "HCFASAF")) %>%
+    temp <- haven::read_sas(
+      file_path,
+      col_select = c("USRDS_ID", "CLM_FROM", "DIAG", "CLM_THRU", "HCFASAF")
+    ) %>%
       dplyr::rename_with(toupper) %>%
       .filter_in("DIAG", icd_codes) %>%
       .filter_in("USRDS_ID", usrds_ids) %>%
       dplyr::select("USRDS_ID", "DIAG", "CLM_FROM", "CLM_THRU")
-
   } else {
     stop("Unsupported file type: ", file_suffix)
   }
@@ -113,11 +116,13 @@ get_PS_ICD <- function(icd_codes = NULL, years, usrds_ids = NULL) {
     dplyr::filter(.data$Year %in% .env$years) %>%
     dplyr::select(-"file_name") %>%
     purrr::pmap(.f = function(...) {
-      .load_individual_file_PS_ICD(...,
-                                   icd_codes = icd_codes,
-                                   usrds_ids = usrds_ids)
+      .load_individual_file_PS_ICD(
+        ...,
+        icd_codes = icd_codes,
+        usrds_ids = usrds_ids
+      )
     }) %>%
-    dplyr::bind_rows()%>%
+    dplyr::bind_rows() %>%
     dplyr::mutate(
       HCFASAF = factor(
         .data$HCFASAF,
@@ -134,12 +139,12 @@ get_PS_ICD <- function(icd_codes = NULL, years, usrds_ids = NULL) {
           "Physician/Supplier"
         )
       )
-    )%>%
+    ) %>%
     labelled::set_variable_labels(
       USRDS_ID = "USRDS patient ID number",
       HCFASAF = "HCFA SAF source of this bill",
       CLM_FROM = "From date of service",
       CLM_THRU = "Thru date of service",
-      DIAG= "ICD code"
+      DIAG = "ICD code"
     )
 }

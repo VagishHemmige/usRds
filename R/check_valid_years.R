@@ -30,8 +30,12 @@
 
   # If any are invalid, stop with a message
   if (length(invalid_years) > 0) {
-    stop("The following years are not available for ", label, ": ",
-         paste(invalid_years, collapse = ", "))
+    stop(
+      "The following years are not available for ",
+      label,
+      ": ",
+      paste(invalid_years, collapse = ", ")
+    )
   }
 
   invisible(NULL)

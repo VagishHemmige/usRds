@@ -17,8 +17,7 @@
 #' }
 #'
 
-prorate_costs_by_day <-function(cost_data_frame) {
-
+prorate_costs_by_day <- function(cost_data_frame) {
   #List potential variables which could be in a data frame
   cost_vars <- c(
     "PMTAMT",
@@ -41,7 +40,10 @@ prorate_costs_by_day <-function(cost_data_frame) {
 
   cost_data_frame %>%
     dplyr::mutate(
-      claim_duration = as.integer(as.Date(.data$CLM_THRU) - as.Date(.data$CLM_FROM)) + 1
+      claim_duration = as.integer(
+        as.Date(.data$CLM_THRU) - as.Date(.data$CLM_FROM)
+      ) +
+        1
     ) %>%
     dplyr::filter(!is.na(.data$claim_duration), .data$claim_duration > 0) %>%
     tidyr::uncount(.data$claim_duration, .id = "day_index", .remove = FALSE) %>%
@@ -57,9 +59,9 @@ prorate_costs_by_day <-function(cost_data_frame) {
         dplyr::any_of(cost_vars),
         ~ .x / .data$claim_duration,
         .names = "{.col}_PRORATED"
-      ))%>%
+      )
+    ) %>%
 
     #Remove unnecessary variables
     dplyr::select(-"day_index", -"claim_duration", -dplyr::any_of(cost_vars))
-
 }

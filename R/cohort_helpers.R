@@ -8,7 +8,6 @@
 #' @noRd
 
 .resolve_date <- function(df, x, arg_name) {
-
   # Fixed Date
   if (inherits(x, c("Date", "POSIXct", "POSIXt"))) {
     return(as.Date(x))

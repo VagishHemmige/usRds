@@ -1,11 +1,10 @@
 test_that("USRDS cohort workflow supports chained tmerge operations", {
-
   ## ---- Baseline data -----------------------------------------------------
 
   df <- data.frame(
     USRDS_ID = c(1, 2, 3),
-    start    = as.Date(c("2005-01-01", "2006-01-01", "2007-01-01")),
-    end      = as.Date(c("2010-02-03", "2011-04-05", "2012-06-07"))
+    start = as.Date(c("2005-01-01", "2006-01-01", "2007-01-01")),
+    end = as.Date(c("2010-02-03", "2011-04-05", "2012-06-07"))
   )
 
   ## ---- Create cohort -----------------------------------------------------
@@ -13,7 +12,7 @@ test_that("USRDS cohort workflow supports chained tmerge operations", {
   cohort <- create_usrds_cohort(
     df = df,
     start_date = "start",
-    end_date   = "end"
+    end_date = "end"
   )
 
   ## ---- Cohort invariants -------------------------------------------------
@@ -29,7 +28,7 @@ test_that("USRDS cohort workflow supports chained tmerge operations", {
 
   events1 <- data.frame(
     USRDS_ID = c(1, 1, 3),
-    event_day = origin + cohort$tstart[c(1,1, 3)] + c(100, 150, 200)
+    event_day = origin + cohort$tstart[c(1, 1, 3)] + c(100, 150, 200)
   )
 
   cohort <- add_cohort_event(
@@ -57,37 +56,38 @@ test_that("USRDS cohort workflow supports chained tmerge operations", {
   )
 
   #Test covariates without explicit values
-  covariates1<-data.frame(
-    USRDS_ID= c(1,2,3),
+  covariates1 <- data.frame(
+    USRDS_ID = c(1, 2, 3),
     covariate_day = as.Date(origin + c(1827, 2192, 2557) + c(125, 380, 10))
   )
 
-  cohort<- add_cohort_covariate(
-    USRDS_cohort= cohort,
-    covariate_data_frame=covariates1,
-    covariate_date= "covariate_day",
+  cohort <- add_cohort_covariate(
+    USRDS_cohort = cohort,
+    covariate_data_frame = covariates1,
+    covariate_date = "covariate_day",
     covariate_variable_name = "covariate_variable_1"
   )
 
   #Test covariates without explicit values
-  covariates2<-data.frame(
-    USRDS_ID= c(1,1,1,2,2,2,2,3,3,3),
-    covariate_day = as.Date(origin +
-                              c(1827,1827,1827, 2192, 2192,2192,2192, 2557,2557,2557) +
-                              c(-145, 10,40, 10,20,40,60,-3, 360, 370)),
-    MELD=c(10,30,20,24,23,12,NA,3,55,33)
+  covariates2 <- data.frame(
+    USRDS_ID = c(1, 1, 1, 2, 2, 2, 2, 3, 3, 3),
+    covariate_day = as.Date(
+      origin +
+        c(1827, 1827, 1827, 2192, 2192, 2192, 2192, 2557, 2557, 2557) +
+        c(-145, 10, 40, 10, 20, 40, 60, -3, 360, 370)
+    ),
+    MELD = c(10, 30, 20, 24, 23, 12, NA, 3, 55, 33)
   )
 
-  cohort<- add_cohort_covariate(
-    USRDS_cohort= cohort,
-    covariate_data_frame=covariates2,
-    covariate_date= "covariate_day",
+  cohort <- add_cohort_covariate(
+    USRDS_cohort = cohort,
+    covariate_data_frame = covariates2,
+    covariate_date = "covariate_day",
     covariate_variable_name = "covariate_variable_2",
-    covariate_value="MELD"
+    covariate_value = "MELD"
   )
 
-
-  cohort<-cohort |>
+  cohort <- cohort |>
     finalize_usrds_cohort()
 
   expect_true("event2" %in% names(cohort))
@@ -97,5 +97,4 @@ test_that("USRDS cohort workflow supports chained tmerge operations", {
 
   expect_true(all(cohort$tstop > cohort$tstart))
   expect_identical(attr(cohort, "cohort_type"), "USRDS_cohort")
-
 })

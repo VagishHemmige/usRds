@@ -1,8 +1,18 @@
 test_that("establish_dx_date() needs one inpatient claim or two other claims", {
   claims <- data.frame(
     USRDS_ID = c(1, 2, 2, 3),
-    CLM_FROM = as.Date(c("2010-03-01", "2010-02-01", "2010-01-01", "2010-01-01")),
-    HCFASAF = c("Inpatient", "Physician/Supplier", "Physician/Supplier", "Physician/Supplier")
+    CLM_FROM = as.Date(c(
+      "2010-03-01",
+      "2010-02-01",
+      "2010-01-01",
+      "2010-01-01"
+    )),
+    HCFASAF = c(
+      "Inpatient",
+      "Physician/Supplier",
+      "Physician/Supplier",
+      "Physician/Supplier"
+    )
   )
 
   result <- establish_dx_date(claims)

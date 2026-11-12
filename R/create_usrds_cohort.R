@@ -1,4 +1,3 @@
-
 #' Initialize a cohort of USRDS patients
 #'
 #' Initializes a cohort of USRDS patients.  Data set must have a variable named USRDS_ID.
@@ -23,23 +22,25 @@
 #' }
 
 create_usrds_cohort <- function(df, start_date, end_date) {
-
   #Error check
   if (!"USRDS_ID" %in% names(df)) {
     stop("Data set must have a variable named 'USRDS_ID'", call. = FALSE)
   }
 
   if (anyDuplicated(df$USRDS_ID) > 0) {
-    stop("USRDS_ID must be unique in df for cohort initialization", call. = FALSE)
+    stop(
+      "USRDS_ID must be unique in df for cohort initialization",
+      call. = FALSE
+    )
   }
 
   start_vec <- .resolve_date(df, start_date, "start_date")
-  end_vec   <- .resolve_date(df, end_date,   "end_date")
+  end_vec <- .resolve_date(df, end_date, "end_date")
 
   USRDS_temp_cohort <- df %>%
     dplyr::mutate(
       cohort_start_date = start_vec,
-      cohort_stop_date   = end_vec
+      cohort_stop_date = end_vec
     )
 
   origin_date <- as.Date("1970-01-01")
@@ -47,7 +48,7 @@ create_usrds_cohort <- function(df, start_date, end_date) {
   USRDS_temp_cohort <- USRDS_temp_cohort %>%
     dplyr::mutate(
       tstart = as.numeric(.data$cohort_start_date - .env$origin_date),
-      tstop  = as.numeric(.data$cohort_stop_date  - .env$origin_date)
+      tstop = as.numeric(.data$cohort_stop_date - .env$origin_date)
     )
 
   # tmerge() evaluates id, tstart and tstop in the data itself; passing the
@@ -60,7 +61,7 @@ create_usrds_cohort <- function(df, start_date, end_date) {
       data2 = USRDS_temp_cohort,
       id = quote(USRDS_ID),
       tstart = quote(tstart),
-      tstop  = quote(tstop)
+      tstop = quote(tstop)
     )
   )
 

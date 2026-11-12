@@ -16,5 +16,8 @@ test_that("add_cohort_event() ignores an event data column named origin_date", {
 
   result <- add_cohort_event(cohort, events, "event_date", "hospitalized")
 
-  expect_equal(result$tstop[result$hospitalized == 1], as.numeric(as.Date("2010-06-01")))
+  expect_equal(
+    result$tstop[result$hospitalized == 1],
+    as.numeric(as.Date("2010-06-01"))
+  )
 })

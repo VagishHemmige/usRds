@@ -7,13 +7,19 @@
 #' If `hcpcs_codes` is `NULL`, all codes are returned.
 #'
 #' @noRd
-.load_individual_file_PS_HCPCS <- function(file_path, file_root, file_suffix, Year,
-                                           file_directory, hcpcs_codes, variablelist,
-                                           usrds_ids = NULL) {
+.load_individual_file_PS_HCPCS <- function(
+  file_path,
+  file_root,
+  file_suffix,
+  Year,
+  file_directory,
+  hcpcs_codes,
+  variablelist,
+  usrds_ids = NULL
+) {
   message("Reading file: ", file_path)
 
   if (file_suffix == "parquet") {
-
     arrow::read_parquet(file_path) |>
       dplyr::rename_with(toupper) |>
       dplyr::select(dplyr::all_of(variablelist)) |>
@@ -21,7 +27,6 @@
       .filter_in("USRDS_ID", usrds_ids) |>
       dplyr::mutate(CLM_FROM = lubridate::as_date(.data$CLM_FROM)) |>
       dplyr::collect()
-
   } else if (file_suffix == "csv") {
     readr::read_csv(file_path, show_col_types = FALSE) |>
       dplyr::rename_with(toupper) |>
@@ -29,19 +34,15 @@
       .filter_in("USRDS_ID", usrds_ids) |>
       dplyr::select(dplyr::all_of(variablelist)) |>
       dplyr::mutate(CLM_FROM = suppressWarnings(lubridate::dmy(.data$CLM_FROM)))
-
   } else if (file_suffix == "sas7bdat") {
     haven::read_sas(file_path, col_select = variablelist) |>
       dplyr::rename_with(toupper) |>
       .filter_in("HCPCS", hcpcs_codes) |>
       .filter_in("USRDS_ID", usrds_ids)
-
   } else {
     stop("Unsupported file type: ", file_suffix)
   }
 }
-
-
 
 
 #' Retrieve HCPCS codes from Physician/Supplier claims
@@ -77,12 +78,14 @@ get_PS_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
     dplyr::filter(.data$Year %in% .env$years) |>
     dplyr::select(-"file_name") |>
     purrr::pmap(.f = function(...) {
-      .load_individual_file_PS_HCPCS(...,
-                                     hcpcs_codes = hcpcs_codes,
-                                     variablelist = variablelist,
-                                     usrds_ids = usrds_ids)
+      .load_individual_file_PS_HCPCS(
+        ...,
+        hcpcs_codes = hcpcs_codes,
+        variablelist = variablelist,
+        usrds_ids = usrds_ids
+      )
     }) |>
-    dplyr::bind_rows()%>%
+    dplyr::bind_rows() %>%
     dplyr::mutate(
       HCFASAF = factor(
         .data$HCFASAF,
@@ -99,11 +102,11 @@ get_PS_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
           "Physician/Supplier"
         )
       )
-    )%>%
+    ) %>%
     labelled::set_variable_labels(
       USRDS_ID = "USRDS patient ID number",
       HCFASAF = "HCFA SAF source of this bill",
       CLM_FROM = "From date of service",
-      HCPCS= "HCPCS code"
+      HCPCS = "HCPCS code"
     )
 }

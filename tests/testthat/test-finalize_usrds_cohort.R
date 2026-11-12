@@ -13,4 +13,3 @@ test_that("finalize_usrds_cohort() shifts time to each patient's first tstart", 
   expect_false(".t0" %in% names(result))
   expect_false(dplyr::is_grouped_df(result))
 })
-

@@ -20,17 +20,20 @@
 #' df <- load_usrds_file("PATIENTS", factor_labels = TRUE)
 #' }
 apply_usrds_factors <- function(df, file_key, verbose = FALSE) {
-#  if (!exists("metadata_b", envir = .GlobalEnv) ||
-#      !exists("metadata_c", envir = .GlobalEnv)) {
-#    stop("metadata_b and metadata_c must exist in the global environment or namespace.")
-#  }
+  #  if (!exists("metadata_b", envir = .GlobalEnv) ||
+  #      !exists("metadata_c", envir = .GlobalEnv)) {
+  #    stop("metadata_b and metadata_c must exist in the global environment or namespace.")
+  #  }
 
   # Normalize column names
   df_names_upper <- toupper(names(df))
 
   # Find variables in Appendix B that are formatted as coded (e.g., $FORMAT.)
   vars_to_code <- metadata_b |>
-    dplyr::filter(.data$file == toupper(.env$file_key), grepl("\\.$", .data$format)) |>
+    dplyr::filter(
+      .data$file == toupper(.env$file_key),
+      grepl("\\.$", .data$format)
+    ) |>
     dplyr::mutate(
       format_clean = gsub("^\\$|\\.", "", .data$format),
       variable_upper = toupper(.data$variable)
@@ -39,7 +42,9 @@ apply_usrds_factors <- function(df, file_key, verbose = FALSE) {
     dplyr::filter(.data$variable_upper %in% .env$df_names_upper)
 
   if (nrow(vars_to_code) == 0) {
-    if (verbose) message("No variables to label for ", file_key)
+    if (verbose) {
+      message("No variables to label for ", file_key)
+    }
     return(df)
   }
 
@@ -53,9 +58,11 @@ apply_usrds_factors <- function(df, file_key, verbose = FALSE) {
       code_map <- metadata_c[[fmt]]
       code_vec <- stats::setNames(code_map$description, code_map$value)
 
-      df[[var_match]] <- factor(as.character(df[[var_match]]),
-                                levels = names(code_vec),
-                                labels = code_vec)
+      df[[var_match]] <- factor(
+        as.character(df[[var_match]]),
+        levels = names(code_vec),
+        labels = code_vec
+      )
 
       if (verbose) {
         message("Labeled variable: ", var_match, " with format: ", fmt)

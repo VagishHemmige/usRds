@@ -27,7 +27,9 @@ apply_usrds_varlabels <- function(df, file_key, verbose = FALSE) {
     dplyr::filter(.data$variable_upper %in% .env$df_names_upper)
 
   if (nrow(vars_to_label) == 0) {
-    if (verbose) message("No variable labels applied for ", file_key)
+    if (verbose) {
+      message("No variable labels applied for ", file_key)
+    }
     return(df)
   }
 

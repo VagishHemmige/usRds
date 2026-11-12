@@ -21,21 +21,26 @@
 #' \dontrun{
 #' }
 
-add_cohort_event <- function(USRDS_cohort,
-                             event_data_frame,
-                             event_date,
-                             event_variable_name) {
-
+add_cohort_event <- function(
+  USRDS_cohort,
+  event_data_frame,
+  event_date,
+  event_variable_name
+) {
   ## ---- Guards -------------------------------------------------------------
 
   # Confirm USRDS cohort
-  if (!identical(attr(USRDS_cohort, "cohort_type", exact = TRUE), "USRDS_cohort")) {
+  if (
+    !identical(attr(USRDS_cohort, "cohort_type", exact = TRUE), "USRDS_cohort")
+  ) {
     stop("USRDS_cohort must be a USRDS cohort object", call. = FALSE)
   }
 
   # Check ID exists in both data frames
-  if (!"USRDS_ID" %in% names(USRDS_cohort) ||
-      !"USRDS_ID" %in% names(event_data_frame)) {
+  if (
+    !"USRDS_ID" %in% names(USRDS_cohort) ||
+      !"USRDS_ID" %in% names(event_data_frame)
+  ) {
     stop("Both data frames must contain 'USRDS_ID'", call. = FALSE)
   }
 
@@ -46,14 +51,20 @@ add_cohort_event <- function(USRDS_cohort,
 
   if (event_variable_name %in% names(USRDS_cohort)) {
     stop(
-      sprintf("Variable '%s' already exists in USRDS_cohort", event_variable_name),
+      sprintf(
+        "Variable '%s' already exists in USRDS_cohort",
+        event_variable_name
+      ),
       call. = FALSE
     )
   }
 
   # Validate event_date (must be a column name)
   if (!is.character(event_date) || length(event_date) != 1) {
-    stop("event_date must be a single column name (character string)", call. = FALSE)
+    stop(
+      "event_date must be a single column name (character string)",
+      call. = FALSE
+    )
   }
 
   if (!event_date %in% names(event_data_frame)) {
@@ -69,7 +80,6 @@ add_cohort_event <- function(USRDS_cohort,
   ## ---- Time setup ----------------------------------------------------------
 
   origin_date <- as.Date("1970-01-01")
-
 
   ## ---- Event time conversion ----------------------------------------------
 
@@ -98,14 +108,15 @@ add_cohort_event <- function(USRDS_cohort,
   )
 
   #Update cohort variables
-  result$cohort_start_date<-origin_date+result$tstart
-  result$cohort_stop_date<-origin_date+result$tstop
-
+  result$cohort_start_date <- origin_date + result$tstart
+  result$cohort_stop_date <- origin_date + result$tstop
 
   #Restore cohort attribute
   attr(result, "cohort_type") <- "USRDS_cohort"
-  attr(result, "event_variables") <- c(event_variable_name, attr(result, "event_variables"))
-
+  attr(result, "event_variables") <- c(
+    event_variable_name,
+    attr(result, "event_variables")
+  )
 
   #Potentially replace cumulative sum of events with a 1/0 marker of whether event happened?
   #cohort$event1<-ifelse(cohort$event1>0,1,0)

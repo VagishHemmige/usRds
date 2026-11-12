@@ -83,7 +83,7 @@ add_cohort_event <- function(
 
   ## ---- Event time conversion ----------------------------------------------
 
-  event_temp_data_frame <- event_data_frame %>%
+  event_temp_data_frame <- event_data_frame |>
     dplyr::mutate(
       tevent = as.numeric(.data[[event_date]] - .env$origin_date)
     )

@@ -45,8 +45,8 @@
   if (file_ext == "csv") {
     df <- tryCatch(
       {
-        arrow::read_csv_arrow(input_path, as_data_frame = TRUE) %>%
-          dplyr::rename_with(toupper) %>%
+        arrow::read_csv_arrow(input_path, as_data_frame = TRUE) |>
+          dplyr::rename_with(toupper) |>
           .codes_as_character()
       },
       error = function(e) {
@@ -56,8 +56,8 @@
         ))
         tryCatch(
           {
-            readr::read_csv(input_path, show_col_types = FALSE) %>%
-              dplyr::rename_with(toupper) %>%
+            readr::read_csv(input_path, show_col_types = FALSE) |>
+              dplyr::rename_with(toupper) |>
               .codes_as_character()
           },
           error = function(e2) {
@@ -125,8 +125,8 @@ convert_usrds_to_parquet <- function(
   file_df <- tibble::tibble(
     input_path = file_list,
     ext = tolower(tools::file_ext(file_list))
-  ) %>%
-    dplyr::filter(.data$ext %in% c("csv", "sas7bdat")) %>%
+  ) |>
+    dplyr::filter(.data$ext %in% c("csv", "sas7bdat")) |>
     dplyr::mutate(
       relative_path = fs::path_rel(.data$input_path, start = .env$source_dir),
       output_path = fs::path(

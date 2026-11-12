@@ -85,7 +85,7 @@ get_PS_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
         usrds_ids = usrds_ids
       )
     }) |>
-    dplyr::bind_rows() %>%
+    dplyr::bind_rows() |>
     dplyr::mutate(
       HCFASAF = factor(
         .data$HCFASAF,
@@ -102,7 +102,7 @@ get_PS_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
           "Physician/Supplier"
         )
       )
-    ) %>%
+    ) |>
     labelled::set_variable_labels(
       USRDS_ID = "USRDS patient ID number",
       HCFASAF = "HCFA SAF source of this bill",

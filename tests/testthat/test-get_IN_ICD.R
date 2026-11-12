@@ -108,45 +108,27 @@ if (FALSE) {
     message("Reading file: ", file_path)
 
     if (file_suffix == "parquet") {
-      temp <- arrow::read_parquet(file_path) %>%
-        dplyr::rename_with(toupper) %>%
-        dplyr::filter(!CODE %in% icd_codes) %>%
-        {
-          if (!is.null(usrds_ids)) {
-            dplyr::filter(., USRDS_ID %in% usrds_ids)
-          } else {
-            .
-          }
-        } %>%
-        dplyr::select(USRDS_ID, CODE, CLM_FROM) %>%
+      temp <- arrow::read_parquet(file_path) |>
+        dplyr::rename_with(toupper) |>
+        dplyr::filter(!CODE %in% icd_codes) |>
+        .filter_in("USRDS_ID", usrds_ids) |>
+        dplyr::select(USRDS_ID, CODE, CLM_FROM) |>
         dplyr::collect()
     } else if (file_suffix == "csv") {
-      temp <- readr::read_csv(file_path, show_col_types = FALSE) %>%
-        dplyr::rename_with(toupper) %>%
-        dplyr::mutate(CLM_FROM = suppressWarnings(lubridate::dmy(CLM_FROM))) %>%
-        dplyr::filter(!CODE %in% icd_codes) %>%
-        {
-          if (!is.null(usrds_ids)) {
-            dplyr::filter(., USRDS_ID %in% usrds_ids)
-          } else {
-            .
-          }
-        } %>%
+      temp <- readr::read_csv(file_path, show_col_types = FALSE) |>
+        dplyr::rename_with(toupper) |>
+        dplyr::mutate(CLM_FROM = suppressWarnings(lubridate::dmy(CLM_FROM))) |>
+        dplyr::filter(!CODE %in% icd_codes) |>
+        .filter_in("USRDS_ID", usrds_ids) |>
         dplyr::select(USRDS_ID, CODE, CLM_FROM)
     } else if (file_suffix == "sas7bdat") {
       temp <- haven::read_sas(
         file_path,
         col_select = c("USRDS_ID", "CLM_FROM", "CODE")
-      ) %>%
-        dplyr::rename_with(toupper) %>%
-        dplyr::filter(!CODE %in% icd_codes) %>%
-        {
-          if (!is.null(usrds_ids)) {
-            dplyr::filter(., USRDS_ID %in% usrds_ids)
-          } else {
-            .
-          }
-        } %>%
+      ) |>
+        dplyr::rename_with(toupper) |>
+        dplyr::filter(!CODE %in% icd_codes) |>
+        .filter_in("USRDS_ID", usrds_ids) |>
         dplyr::select(USRDS_ID, CODE, CLM_FROM)
     } else {
       stop("Unsupported file type: ", file_suffix)
@@ -163,17 +145,17 @@ if (FALSE) {
       label = "Institutional ICD files"
     )
 
-    .usrds_env$file_list %>%
-      dplyr::inner_join(IN_ICD, by = c("file_root", "Year")) %>%
-      dplyr::filter(Year %in% years) %>%
-      dplyr::select(-file_name) %>%
+    .usrds_env$file_list |>
+      dplyr::inner_join(IN_ICD, by = c("file_root", "Year")) |>
+      dplyr::filter(Year %in% years) |>
+      dplyr::select(-file_name) |>
       purrr::pmap(.f = function(...) {
         .load_individual_file_IN_notin_ICD(
           ...,
           icd_codes = icd_codes,
           usrds_ids = usrds_ids
         )
-      }) %>%
+      }) |>
       dplyr::bind_rows()
   }
 
@@ -193,8 +175,8 @@ if (FALSE) {
     unmatched_codes <- get_IN_notin_ICD(
       icd_codes = icd_reference$code,
       years = valid_year
-    ) %>%
-      dplyr::pull(CODE) %>%
+    ) |>
+      dplyr::pull(CODE) |>
       unique()
 
     expect_length(

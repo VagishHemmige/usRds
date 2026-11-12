@@ -85,7 +85,7 @@ get_IN_CLM_costs <- function(years, usrds_ids = NULL) {
         usrds_ids = usrds_ids
       )
     }) |>
-    dplyr::bind_rows() %>%
+    dplyr::bind_rows() |>
     dplyr::mutate(
       HCFASAF = factor(
         .data$HCFASAF,

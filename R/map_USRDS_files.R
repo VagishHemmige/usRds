@@ -31,11 +31,11 @@
       pattern = pattern,
       recursive = TRUE
     )
-    tibble::tibble(file_path = raw_files) %>%
+    tibble::tibble(file_path = raw_files) |>
       dplyr::filter(stringr::str_detect(
         .data$file_path,
         paste(USRDS_directories, collapse = "|")
-      )) %>%
+      )) |>
       dplyr::mutate(
         file_name = fs::path_file(.data$file_path),
         file_path = file.path(.env$USRDS_wd, .data$file_path)
@@ -46,13 +46,13 @@
     list_and_clean("csv$"),
     list_and_clean("sas7bdat$"),
     list_and_clean("parquet$")
-  ) %>%
+  ) |>
     tidyr::separate(
       "file_name",
       c("file_root", "file_suffix"),
       sep = "\\.(?=[^.]+$)",
       remove = FALSE
-    ) %>%
+    ) |>
     dplyr::mutate(
       Year = stringr::str_extract(.data$file_root, "20[0-9]{2}"),
       Year = as.numeric(.data$Year),

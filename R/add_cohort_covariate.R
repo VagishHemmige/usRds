@@ -125,7 +125,7 @@ add_cohort_covariate <- function(
 
   ## ---- Event time conversion ----------------------------------------------
 
-  covariate_temp_data_frame <- covariate_data_frame %>%
+  covariate_temp_data_frame <- covariate_data_frame |>
     dplyr::mutate(
       tcovariate = as.numeric(.data[[covariate_date]] - .env$origin_date)
     )

@@ -37,7 +37,7 @@ create_usrds_cohort <- function(df, start_date, end_date) {
   start_vec <- .resolve_date(df, start_date, "start_date")
   end_vec <- .resolve_date(df, end_date, "end_date")
 
-  USRDS_temp_cohort <- df %>%
+  USRDS_temp_cohort <- df |>
     dplyr::mutate(
       cohort_start_date = start_vec,
       cohort_stop_date = end_vec
@@ -45,7 +45,7 @@ create_usrds_cohort <- function(df, start_date, end_date) {
 
   origin_date <- as.Date("1970-01-01")
 
-  USRDS_temp_cohort <- USRDS_temp_cohort %>%
+  USRDS_temp_cohort <- USRDS_temp_cohort |>
     dplyr::mutate(
       tstart = as.numeric(.data$cohort_start_date - .env$origin_date),
       tstop = as.numeric(.data$cohort_stop_date - .env$origin_date)

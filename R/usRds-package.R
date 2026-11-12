@@ -2,6 +2,6 @@
 "_PACKAGE"
 
 ## usethis namespace: start
-#' @importFrom dplyr %>%
+#' @importFrom dplyr |>
 ## usethis namespace: end
 NULL

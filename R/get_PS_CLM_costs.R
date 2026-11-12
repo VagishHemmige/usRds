@@ -102,8 +102,8 @@ get_PS_CLM_costs <- function(
         usrds_ids = usrds_ids
       )
     }) |>
-    dplyr::bind_rows() %>%
-    #   (\(df) if (remove_missing_values==TRUE) dplyr::filter(df, !is.na(PMTAMT)) else df)()%>%
+    dplyr::bind_rows() |>
+    #   (\(df) if (remove_missing_values==TRUE) dplyr::filter(df, !is.na(PMTAMT)) else df)()|>
     dplyr::mutate(
       HCFASAF = factor(
         .data$HCFASAF,
@@ -120,7 +120,7 @@ get_PS_CLM_costs <- function(
           "Physician/Supplier"
         )
       )
-    ) %>%
+    ) |>
     labelled::set_variable_labels(
       USRDS_ID = "USRDS patient ID number",
       HCFASAF = "HCFA SAF source of this bill",

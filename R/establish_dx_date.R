@@ -22,15 +22,15 @@
 #' }
 
 establish_dx_date <- function(df, diagnosis_established = "diagnosis") {
-  df %>%
-    dplyr::arrange(.data$USRDS_ID, .data$CLM_FROM) %>%
-    dplyr::mutate(claim_value = ifelse(.data$HCFASAF == "Inpatient", 2, 1)) %>%
-    dplyr::group_by(.data$USRDS_ID) %>%
-    dplyr::mutate(cum_sum_claims = cumsum(.data$claim_value)) %>%
-    dplyr::filter(.data$cum_sum_claims > 1) %>%
-    dplyr::slice(1) %>%
-    dplyr::ungroup() %>%
-    dplyr::select(-"cum_sum_claims", -"claim_value") %>%
+  df |>
+    dplyr::arrange(.data$USRDS_ID, .data$CLM_FROM) |>
+    dplyr::mutate(claim_value = ifelse(.data$HCFASAF == "Inpatient", 2, 1)) |>
+    dplyr::group_by(.data$USRDS_ID) |>
+    dplyr::mutate(cum_sum_claims = cumsum(.data$claim_value)) |>
+    dplyr::filter(.data$cum_sum_claims > 1) |>
+    dplyr::slice(1) |>
+    dplyr::ungroup() |>
+    dplyr::select(-"cum_sum_claims", -"claim_value") |>
     dplyr::transmute(
       USRDS_ID = .data$USRDS_ID,
       diagnosis = .env$diagnosis_established,

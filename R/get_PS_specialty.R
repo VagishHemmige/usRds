@@ -8,10 +8,10 @@
   variablelist
 ) {
   if (file_suffix == "csv") {
-    temp <- readr::read_csv(file_path) %>%
-      dplyr::rename_with(toupper) %>%
-      dplyr::filter(.data$SPCLTY %in% .env$specialtycodelist) %>%
-      dplyr::select(dplyr::all_of(variablelist)) %>%
+    temp <- readr::read_csv(file_path) |>
+      dplyr::rename_with(toupper) |>
+      dplyr::filter(.data$SPCLTY %in% .env$specialtycodelist) |>
+      dplyr::select(dplyr::all_of(variablelist)) |>
       dplyr::mutate(CLM_FROM = lubridate::dmy(.data$CLM_FROM))
     return(temp)
   }
@@ -20,18 +20,18 @@
     temp <- haven::read_sas(
       file_path,
       col_select = dplyr::all_of(variablelist)
-    ) %>%
-      dplyr::rename_with(toupper) %>%
+    ) |>
+      dplyr::rename_with(toupper) |>
       dplyr::filter(.data$SPCLTY %in% .env$specialtycodelist)
     return(temp)
   }
 
   if (file_suffix == "parquet") {
-    temp <- arrow::read_parquet(file_path) %>%
-      dplyr::rename_with(toupper) %>%
-      dplyr::select(dplyr::all_of(variablelist)) %>%
-      dplyr::filter(.data$SPCLTY %in% .env$specialtycodelist) %>%
-      dplyr::mutate(CLM_FROM = lubridate::as_date(.data$CLM_FROM)) %>%
+    temp <- arrow::read_parquet(file_path) |>
+      dplyr::rename_with(toupper) |>
+      dplyr::select(dplyr::all_of(variablelist)) |>
+      dplyr::filter(.data$SPCLTY %in% .env$specialtycodelist) |>
+      dplyr::mutate(CLM_FROM = lubridate::as_date(.data$CLM_FROM)) |>
       arrow::collect()
     return(temp)
   }
@@ -72,15 +72,14 @@ get_PS_specialty <- function(
     variablelist <- c(variablelist, "PLCSRV")
   }
 
-  .usrds_env$file_list %>%
-    dplyr::inner_join(PS_HCPCS, by = c("file_root", "Year")) %>%
-    dplyr::filter(.data$Year %in% .env$yearlist) %>%
-    dplyr::select(-"file_name") %>%
+  .usrds_env$file_list |>
+    dplyr::inner_join(PS_HCPCS, by = c("file_root", "Year")) |>
+    dplyr::filter(.data$Year %in% .env$yearlist) |>
+    dplyr::select(-"file_name") |>
     purrr::pmap(
       .load_individual_file_PS_specialty,
       specialtycodelist = specialtycodelist,
       variablelist = variablelist
-    ) %>%
-    dplyr::bind_rows() %>%
-    return()
+    ) |>
+    dplyr::bind_rows()
 }

@@ -57,7 +57,7 @@ adjust_costs_for_inflation <- function(
   ]
   stopifnot(length(baseline_index) == 1)
 
-  df <- cost_data_frame %>%
+  df <- cost_data_frame |>
     dplyr::mutate(
       .cpi_year = lubridate::year(.data$CLM_FROM),
       .cpi_month = as.character(lubridate::month(
@@ -68,10 +68,10 @@ adjust_costs_for_inflation <- function(
     )
 
   # attach CPI per row
-  df <- df %>%
+  df <- df |>
     dplyr::left_join(
-      medical_cpi %>%
-        dplyr::select("year", "periodName", "value") %>%
+      medical_cpi |>
+        dplyr::select("year", "periodName", "value") |>
         dplyr::rename(.cpi = "value"),
       by = c(".cpi_year" = "year", ".cpi_month" = "periodName")
     )
@@ -81,14 +81,13 @@ adjust_costs_for_inflation <- function(
   }
 
   # inflate
-  df %>%
+  df |>
     dplyr::mutate(
       dplyr::across(
         dplyr::any_of(cost_vars),
         ~ .x * (.env$baseline_index / .data$.cpi),
         .names = "{.col}_ADJUSTED"
       )
-    ) %>%
-    dplyr::select(-".cpi", -".cpi_year", -".cpi_month") %>%
-    return()
+    ) |>
+    dplyr::select(-".cpi", -".cpi_year", -".cpi_month")
 }

@@ -14,10 +14,6 @@
 #' @return A data frame with factor variables applied where applicable.
 #' @export
 #'
-#' @importFrom labelled var_label var_label
-#' @importFrom rlang enquo
-#' @importFrom tidyselect eval_select
-#' @importFrom tibble tibble
 #'
 #' @examples
 #' \dontrun{

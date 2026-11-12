@@ -36,7 +36,8 @@ Imports:
     rlang,
     tibble,
     tidyselect,
-    survival
+    survival,
+    stats
 Suggests: 
     knitr,
     rmarkdown,

@@ -9,7 +9,6 @@
 #' @return A data frame with variable labels added (invisible via print, viewable via `labelled::var_label()`).
 #' @export
 #'
-#' @importFrom labelled var_label var_label<-
 #'
 #' @examples
 #' \dontrun{

@@ -23,6 +23,7 @@
 #' @importFrom purrr pmap
 #' @importFrom readr read_csv
 #' @importFrom readr read_fwf
+#' @importFrom rlang .data
 #' @importFrom stringr str_detect
 #' @importFrom stringr str_extract
 #' @importFrom tidyr separate

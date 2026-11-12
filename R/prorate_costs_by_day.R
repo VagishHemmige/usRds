@@ -40,26 +40,26 @@ prorate_costs_by_day <-function(cost_data_frame) {
   #Duplicate the data frame the appropriate number of times
 
   cost_data_frame %>%
-    mutate(
-      claim_duration = as.integer(as.Date(CLM_THRU) - as.Date(CLM_FROM)) + 1
+    dplyr::mutate(
+      claim_duration = as.integer(as.Date(.data$CLM_THRU) - as.Date(.data$CLM_FROM)) + 1
     ) %>%
-    filter(!is.na(claim_duration), claim_duration > 0) %>%
-    uncount(claim_duration, .id = "day_index", .remove = FALSE) %>%
+    dplyr::filter(!is.na(.data$claim_duration), .data$claim_duration > 0) %>%
+    tidyr::uncount(.data$claim_duration, .id = "day_index", .remove = FALSE) %>%
 
     #Create a service date variable
-    mutate(
-      service_date = CLM_FROM + day_index - 1
+    dplyr::mutate(
+      service_date = .data$CLM_FROM + .data$day_index - 1
     ) %>%
 
     #Prorate costs
-    mutate(
-      across(
-        any_of(cost_vars),
-        ~ .x / claim_duration,
+    dplyr::mutate(
+      dplyr::across(
+        dplyr::any_of(cost_vars),
+        ~ .x / .data$claim_duration,
         .names = "{.col}_PRORATED"
       ))%>%
 
     #Remove unnecessary variables
-    select(-day_index, -claim_duration, -any_of(cost_vars))
+    dplyr::select(-"day_index", -"claim_duration", -dplyr::any_of(cost_vars))
 
 }

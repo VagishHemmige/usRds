@@ -238,7 +238,7 @@ if (cache==TRUE && !exists("medicare_history", envir = .usrds_env, inherits = FA
 #Join patient cohort to medicare history data
 patients_clean<-dplyr::left_join(df,
                           medicare_history,
-                          dplyr::join_by(USRDS_ID, dplyr::between(.index_date, usrds_package_medicare_begdate, usrds_package_medicare_enddate))
+                          dplyr::join_by("USRDS_ID", dplyr::between(".index_date", "usrds_package_medicare_begdate", "usrds_package_medicare_enddate"))
 )
 
 #Create variable that marks FFS coverage on day of claim through 365 days prior

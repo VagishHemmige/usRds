@@ -50,12 +50,18 @@ create_usrds_cohort <- function(df, start_date, end_date) {
       tstop  = as.numeric(.data$cohort_stop_date  - .env$origin_date)
     )
 
-  return_df <- survival::tmerge(
-    data1 = USRDS_temp_cohort,
-    data2 = USRDS_temp_cohort,
-    id = USRDS_ID,
-    tstart = tstart,
-    tstop  = tstop
+  # tmerge() evaluates id, tstart and tstop in the data itself; passing the
+  # symbols with quote() via do.call() (as add_cohort_event() does) keeps
+  # them out of globalVariables().
+  return_df <- do.call(
+    survival::tmerge,
+    list(
+      data1 = USRDS_temp_cohort,
+      data2 = USRDS_temp_cohort,
+      id = quote(USRDS_ID),
+      tstart = quote(tstart),
+      tstop  = quote(tstop)
+    )
   )
 
   attr(return_df, "cohort_type") <- "USRDS_cohort"

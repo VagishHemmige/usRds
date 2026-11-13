@@ -4,7 +4,7 @@
       result <- .map_USRDS_files()
     Message
       v Mapped 1 USRDS file: 1 CSV.
-      i 2 files with names usRds does not recognise were set aside, for example 'my_cohort.csv' and 'results2020.parquet'.
+      i 2 files with names usRds does not recognise were set aside, for example 'my_cohort.csv' and 'results2020.parquet'. List them with `usRds::usrds_files("unrecognised")`.
 
 # .map_USRDS_files() stops when one file has two copies in the same format
 
@@ -36,7 +36,7 @@
     Message
       v Mapped 1 USRDS file: 1 Parquet.
       i 2 other copies in another format were set aside. Format order: "parquet", "sas7bdat", and "csv".
-      ! 1 file has duplicate copies in a format that is not being read, for example 'patients.sas7bdat'. They are ignored now, but would stop mapping if that format were read.
+      ! 1 file has duplicate copies in a format that is not being read, for example 'patients.sas7bdat'. They are ignored now, but would stop mapping if that format were read. List them with `usRds::usrds_files("unread_duplicates")`.
 
 # .map_USRDS_files() stops when no USRDS files are found
 
@@ -58,7 +58,7 @@
       Warning:
       Some years have only part of their USRDS file group.
       ! 2007: missing det2007c, det2007d, det2007e, det2007f, det2007g, det2007h and 5 more (read by get_IN_HCPCS(), get_IN_ICD(), get_IN_REV_costs())
-      i Claims, diagnoses and costs for these years would be incomplete. Add the missing files, then run `set_USRDS_wd()` again.
+      i Claims, diagnoses and costs for these years would be incomplete. Add the missing files, then run `set_USRDS_wd()` again. List them with `usRds::usrds_files("incomplete")`.
 
 # .map_USRDS_files() reports what it found
 

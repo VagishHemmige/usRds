@@ -41,6 +41,7 @@
   .usrds_env$unrecognised <- NULL
   .usrds_env$duplicates <- NULL
   .usrds_env$unread_duplicates <- NULL
+  .usrds_env$medicare_history <- NULL
 
   USRDS_wd <- Sys.getenv("USRDS_WD")
   if (USRDS_wd == "") {
@@ -343,7 +344,8 @@
       bullets,
       "!" = "{nrow(unread)} file{?s} {?has/have} duplicate copies in a format
              that is not being read, for example {.file {shown}}. They are
-             ignored now, but would stop mapping if that format were read."
+             ignored now, but would stop mapping if that format were read.
+             List them with {.run usRds::usrds_files(\"unread_duplicates\")}."
     )
   }
   if (nrow(unrecognised) > 0) {
@@ -352,7 +354,8 @@
       bullets,
       "i" = "{nrow(unrecognised)} file{?s} with {?a name/names} usRds does
              not recognise {?was/were} set aside, for example
-             {.file {shown}}."
+             {.file {shown}}. List them with
+             {.run usRds::usrds_files(\"unrecognised\")}."
     )
   }
   cli::cli_inform(bullets)
@@ -391,7 +394,8 @@
     "Some years have only part of their USRDS file group.",
     rlang::set_names(lines, rep("!", length(lines))),
     "i" = "Claims, diagnoses and costs for these years would be incomplete.
-           Add the missing files, then run {.code set_USRDS_wd()} again."
+           Add the missing files, then run {.code set_USRDS_wd()} again.
+           List them with {.run usRds::usrds_files(\"incomplete\")}."
   )
   if (on_incomplete == "error") {
     cli::cli_abort(bullets, class = "usrds_incomplete_files", call = NULL)

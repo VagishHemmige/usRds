@@ -32,7 +32,10 @@
 #' `index_date`.  The default value of NULL specifies no variable returned.
 #'
 #' @param cache whether or not to cache, or use a previously cached version, of the medicare coverage data frame.  This can save substantial amounts of
-#' time in a loop.
+#' time in a loop. The cache is used only when it was built from the same
+#' USRDS folder and covers every patient in `df`; otherwise `payhist` is read
+#' again and the cache replaced. It is cleared whenever the files are mapped
+#' again with [set_USRDS_wd()]. Ignored when `medicare_coverage_df` is given.
 #'
 #' @return The original `df` data fame with the variable `medicare_primary_TF` added
 #'
@@ -217,19 +220,17 @@ verify_medicare_primary <- function(
 
   #Open Medicare history file, keep rows where the payer is Medicare primary, and sort by USRDS and date
 
-  if (
-    cache == TRUE &&
-      exists("medicare_history", envir = .usrds_env, inherits = FALSE)
-  ) {
-    medicare_history <- .usrds_env$medicare_history
+  usrds_ids <- unique(df$USRDS_ID)
+  use_cache <- cache && is.null(medicare_coverage_df)
+
+  if (use_cache && .medicare_cache_covers(usrds_ids)) {
+    medicare_history <- .usrds_env$medicare_history$data
   } else {
     if (is.null(medicare_coverage_df)) {
-      medicare_history <- load_usrds_file("payhist", usrds_ids = df$USRDS_ID)
-    } else {
-      medicare_history <- medicare_coverage_df
+      medicare_coverage_df <- load_usrds_file("payhist", usrds_ids = usrds_ids)
     }
 
-    medicare_history <- medicare_history |>
+    medicare_history <- medicare_coverage_df |>
       dplyr::filter(.data$PAYER %in% .env$eligible_payers) |>
       dplyr::select("USRDS_ID", "BEGDATE", "ENDDATE") |>
       dplyr::arrange(.data$USRDS_ID, .data$BEGDATE) |>
@@ -260,14 +261,17 @@ verify_medicare_primary <- function(
         usrds_package_medicare_begdate = "BEGDATE",
         usrds_package_medicare_enddate = "ENDDATE"
       )
-  }
 
-  if (
-    cache == TRUE &&
-      !exists("medicare_history", envir = .usrds_env, inherits = FALSE)
-  ) {
-    .usrds_env$medicare_history <- medicare_history
-    rlang::inform("Current Medicare coverage df being cached for future use...")
+    if (use_cache) {
+      .usrds_env$medicare_history <- list(
+        data = medicare_history,
+        usrds_ids = usrds_ids,
+        usrds_wd = Sys.getenv("USRDS_WD")
+      )
+      cli::cli_inform(
+        "Medicare coverage cached for {length(usrds_ids)} patient{?s}."
+      )
+    }
   }
 
   #Join patient cohort to medicare history data
@@ -317,4 +321,13 @@ verify_medicare_primary <- function(
     )
 
   return(patients_clean)
+}
+
+# TRUE when the cached Medicare coverage was built from the current USRDS
+# folder and includes every patient in `usrds_ids`.
+.medicare_cache_covers <- function(usrds_ids) {
+  cached <- .usrds_env$medicare_history
+  is.list(cached) &&
+    identical(cached$usrds_wd, Sys.getenv("USRDS_WD")) &&
+    all(usrds_ids %in% cached$usrds_ids)
 }

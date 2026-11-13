@@ -58,6 +58,7 @@ get_PS_specialty <- function(
   HCPCS = FALSE,
   PLCSRV = FALSE
 ) {
+  .local_arrow_options()
   variablelist <- c("USRDS_ID", "CLM_FROM", "SPCLTY")
 
   if (DIAG == TRUE) {

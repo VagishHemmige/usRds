@@ -59,6 +59,7 @@
 #' }
 
 get_IN_CLM_costs <- function(years, usrds_ids = NULL) {
+  .local_arrow_options()
   variablelist <- c(
     "USRDS_ID",
     "CLM_FROM",

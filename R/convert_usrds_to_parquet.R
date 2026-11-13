@@ -117,6 +117,7 @@ convert_usrds_to_parquet <- function(
   target_dir,
   overwrite = FALSE
 ) {
+  .local_arrow_options()
   if (!dir.exists(source_dir)) {
     stop(paste("Source directory does not exist:", source_dir))
   }

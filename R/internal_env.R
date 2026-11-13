@@ -4,5 +4,5 @@
 #' such as the file list loaded from `map_USRDS_files()`. It is not
 #' exported and should not be accessed directly by users.
 #'
-#' @keywords internal
+#' @noRd
 .usrds_env <- new.env(parent = emptyenv())

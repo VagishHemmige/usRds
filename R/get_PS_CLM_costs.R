@@ -71,6 +71,7 @@ get_PS_CLM_costs <- function(
   usrds_ids = NULL,
   remove_missing_values = TRUE
 ) {
+  .local_arrow_options()
   variablelist <- c(
     "USRDS_ID",
     "HCFASAF",

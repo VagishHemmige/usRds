@@ -143,6 +143,46 @@ test_that(".map_USRDS_files() stops when one file has two copies in the same for
   })
 })
 
+test_that(".map_USRDS_files() lists each duplicated file on its own line", {
+  local_usrds_dir(c(
+    "5) ESRD Institution/inc2010a.csv",
+    "backups/inc2010a.csv",
+    "backups/2019/inc2010a.csv",
+    "ESRD Core/patients.sas7bdat",
+    "old/patients.SAS7BDAT"
+  ))
+
+  expect_snapshot(.map_USRDS_files(quiet = TRUE), error = TRUE, transform = function(x) {
+    gsub(Sys.getenv("USRDS_WD"), "<USRDS_WD>", x, fixed = TRUE)
+  })
+  expect_equal(.usrds_env$duplicates$file_name, c("inc2010a.csv", "patients.sas7bdat"))
+})
+
+test_that(".map_USRDS_files() only reports duplicates in a format it will not read", {
+  local_usrds_dir(c(
+    "ESRD Core/patients.parquet",
+    "ESRD Core/patients.sas7bdat",
+    "old/patients.sas7bdat"
+  ))
+
+  expect_snapshot(result <- .map_USRDS_files())
+  expect_equal(result$file_name, "patients.parquet")
+  expect_equal(.usrds_env$unread_duplicates$file_name, "patients.sas7bdat")
+})
+
+test_that(".map_USRDS_files() stops on duplicates once their format is read", {
+  local_usrds_dir(c(
+    "ESRD Core/patients.parquet",
+    "ESRD Core/patients.sas7bdat",
+    "old/patients.sas7bdat"
+  ))
+
+  expect_error(
+    .map_USRDS_files(format_preference = c("sas7bdat", "parquet"), quiet = TRUE),
+    class = "usrds_duplicate_files"
+  )
+})
+
 test_that(".map_USRDS_files() clears the previous map when mapping fails", {
   dir <- local_usrds_dir("ESRD Core/patients.csv")
   .map_USRDS_files(quiet = TRUE)

@@ -39,6 +39,8 @@
   .usrds_env$file_inventory <- NULL
   .usrds_env$incomplete <- NULL
   .usrds_env$unrecognised <- NULL
+  .usrds_env$duplicates <- NULL
+  .usrds_env$unread_duplicates <- NULL
 
   USRDS_wd <- Sys.getenv("USRDS_WD")
   if (USRDS_wd == "") {
@@ -93,12 +95,23 @@
     cli::cli_abort(bullets)
   }
 
-  .check_same_format_copies(inventory)
-
   ranked <- inventory |>
     dplyr::mutate(
       .rank = match(.data$file_suffix, .env$format_preference)
+    ) |>
+    dplyr::mutate(
+      .read = !is.na(.data$.rank) &
+        .data$.rank == suppressWarnings(min(.data$.rank, na.rm = TRUE)),
+      .by = c("file_root", "Year")
     )
+
+  # Copies of a file in the format that will be read are an error; copies
+  # in a format that will not be read are only reported.
+  .check_same_format_copies(ranked[ranked$.read, ], usrds_wd = USRDS_wd)
+  .usrds_env$unread_duplicates <- .same_format_copies(
+    ranked[!ranked$.read, ],
+    usrds_wd = USRDS_wd
+  )
   file_list <- ranked |>
     dplyr::filter(!is.na(.data$.rank)) |>
     dplyr::arrange(.data$.rank) |>
@@ -222,29 +235,60 @@
   out
 }
 
-.check_same_format_copies <- function(inventory, call = rlang::caller_env()) {
-  copies <- inventory |>
+.same_format_copies <- function(inventory, usrds_wd) {
+  inventory |>
+    dplyr::mutate(
+      relative_path = substring(.data$file_path, nchar(.env$usrds_wd) + 2)
+    ) |>
     dplyr::group_by(
       .data$file_root,
       .data$Year,
       .data$file_suffix
     ) |>
     dplyr::filter(dplyr::n() > 1) |>
-    dplyr::ungroup()
+    dplyr::summarise(
+      file_name = .data$file_name[1],
+      paths = list(sort(.data$relative_path)),
+      .groups = "drop"
+    ) |>
+    dplyr::arrange(.data$file_name)
+}
+
+.check_same_format_copies <- function(
+  inventory,
+  usrds_wd = Sys.getenv("USRDS_WD"),
+  call = rlang::caller_env()
+) {
+  copies <- .same_format_copies(inventory, usrds_wd)
+  .usrds_env$duplicates <- copies
   if (nrow(copies) == 0) {
     return(invisible())
   }
-  n_files <- nrow(dplyr::distinct(copies, .data$file_root, .data$file_suffix))
-  paths <- copies$file_path
-  cli::cli_abort(
-    c(
-      "{n_files} file{?s} {?has/have} more than one copy in the same format.",
-      "x" = "{.file {paths}}",
-      "i" = "Keep one copy of each, or move the others outside
-             {.envvar USRDS_WD}, then run {.code set_USRDS_wd()} again."
-    ),
-    call = call
+  shown <- utils::head(copies, 10)
+  lines <- paste0(
+    shown$file_name,
+    " (",
+    lengths(shown$paths),
+    " copies): ",
+    vapply(shown$paths, paste, character(1), collapse = "; ")
   )
+  lines <- gsub("}", "}}", gsub("{", "{{", lines, fixed = TRUE), fixed = TRUE)
+  n_more <- nrow(copies) - nrow(shown)
+  bullets <- c(
+    "{nrow(copies)} USRDS file{?s} {?has/have} more than one copy in the
+     same format, so {?its/their} claims would be read more than once.",
+    rlang::set_names(lines, rep("x", length(lines)))
+  )
+  if (n_more > 0) {
+    bullets <- c(bullets, "x" = "... and {n_more} more.")
+  }
+  bullets <- c(
+    bullets,
+    "i" = "Paths are relative to {.file {usrds_wd}}.",
+    "i" = "Keep one copy of each file under {.envvar USRDS_WD} (move backups
+           elsewhere), then run {.code set_USRDS_wd()} again."
+  )
+  cli::cli_abort(bullets, class = "usrds_duplicate_files", call = call)
 }
 
 .find_incomplete_groups <- function(file_list) {
@@ -290,6 +334,16 @@
       bullets,
       "i" = "{n_other} other cop{?y/ies} in another format {?was/were} set
              aside. Format order: {.val {format_preference}}."
+    )
+  }
+  unread <- .usrds_env$unread_duplicates
+  if (!is.null(unread) && nrow(unread) > 0) {
+    shown <- utils::head(unread$file_name, 5)
+    bullets <- c(
+      bullets,
+      "!" = "{nrow(unread)} file{?s} {?has/have} duplicate copies in a format
+             that is not being read, for example {.file {shown}}. They are
+             ignored now, but would stop mapping if that format were read."
     )
   }
   if (nrow(unrecognised) > 0) {

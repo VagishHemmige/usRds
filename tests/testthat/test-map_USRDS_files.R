@@ -277,9 +277,37 @@ test_that(".check_valid_years() explains when no files have been mapped", {
   )
 })
 
+test_that(".map_USRDS_files() clears the cached Medicare coverage", {
+  local_usrds_dir("ESRD Core/patients.csv")
+  .usrds_env$medicare_history <- list(data = data.frame(), usrds_ids = 1)
+
+  .map_USRDS_files(quiet = TRUE)
+
+  expect_null(.usrds_env$medicare_history)
+})
+
+test_that(".onLoad() leaves Arrow's options alone", {
+  withr::local_envvar(USRDS_WD = NA)
+  withr::local_options(arrow.skip_nul = NULL)
+
+  .onLoad(NULL, "usRds")
+
+  expect_null(getOption("arrow.skip_nul"))
+})
+
+test_that(".local_arrow_options() sets arrow.skip_nul only until the caller exits", {
+  withr::local_options(arrow.skip_nul = NULL)
+  reader <- function() {
+    .local_arrow_options()
+    getOption("arrow.skip_nul")
+  }
+
+  expect_true(reader())
+  expect_null(getOption("arrow.skip_nul"))
+})
+
 test_that(".onLoad() is silent when USRDS_WD is not set", {
   withr::local_envvar(USRDS_WD = NA)
-  withr::local_options(arrow.skip_nul = getOption("arrow.skip_nul"))
   old <- .usrds_env$file_list
   withr::defer(.usrds_env$file_list <- old)
 
@@ -288,7 +316,6 @@ test_that(".onLoad() is silent when USRDS_WD is not set", {
 
 test_that(".onLoad() is silent when the USRDS folder has an incomplete group", {
   local_usrds_dir("5) ESRD Institution/det2007a.sas7bdat")
-  withr::local_options(arrow.skip_nul = getOption("arrow.skip_nul"))
 
   expect_silent(.onLoad(NULL, "usRds"))
   expect_equal(.usrds_env$file_list$file_root, "det2007a")

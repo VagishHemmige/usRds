@@ -46,6 +46,7 @@ load_usrds_file <- function(
   col_select = NULL,
   ...
 ) {
+  .local_arrow_options()
   # ---- Ensure file registry is initialized ----
   if (is.null(.usrds_env$file_list)) {
     cli::cli_abort(c(

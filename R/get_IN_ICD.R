@@ -82,6 +82,7 @@
 #' result_all <- get_IN_ICD(icd_codes = NULL, years = 2015, usrds_ids = c(1, 2))
 #' }
 get_IN_ICD <- function(icd_codes = NULL, years, usrds_ids = NULL) {
+  .local_arrow_options()
   .check_valid_years(
     years = years,
     file_keys = IN_ICD$file_root,

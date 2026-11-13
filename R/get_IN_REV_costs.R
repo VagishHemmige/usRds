@@ -59,6 +59,7 @@
 #' get_IN_REV_costs(years = 2012:2016, usrds_ids=1:1000)
 #' }
 get_IN_REV_costs <- function(years, usrds_ids = NULL) {
+  .local_arrow_options()
   variablelist <- c("USRDS_ID", "CLM_FROM", "REV_CH", "REVPMT", "HCFASAF")
 
   .check_valid_years(

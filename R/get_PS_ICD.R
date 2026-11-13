@@ -104,6 +104,7 @@
 #' }
 
 get_PS_ICD <- function(icd_codes = NULL, years, usrds_ids = NULL) {
+  .local_arrow_options()
   .check_valid_years(
     years = years,
     file_keys = PS_ICD$file_root,

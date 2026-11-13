@@ -8,5 +8,17 @@ utils::globalVariables(c(".data", ".env"))
   if (nzchar(Sys.getenv("USRDS_WD"))) {
     try(.map_USRDS_files(quiet = TRUE), silent = TRUE)
   }
-  options(arrow.skip_nul = TRUE)
+}
+
+# Sets arrow.skip_nul = TRUE until the calling function exits, so strings
+# with embedded nul characters do not stop a read. Scoped so loading usRds
+# does not change Arrow's behaviour elsewhere in the session.
+.local_arrow_options <- function(.local_envir = parent.frame()) {
+  old <- options(arrow.skip_nul = TRUE)
+  do.call(
+    base::on.exit,
+    list(bquote(options(.(old))), add = TRUE),
+    envir = .local_envir
+  )
+  invisible(old)
 }

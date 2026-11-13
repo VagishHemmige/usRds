@@ -31,7 +31,10 @@ a column named \code{USRDS_ID}.}
 \code{index_date}.  The default value of NULL specifies no variable returned.}
 
 \item{cache}{whether or not to cache, or use a previously cached version, of the medicare coverage data frame.  This can save substantial amounts of
-time in a loop.}
+time in a loop. The cache is used only when it was built from the same
+USRDS folder and covers every patient in \code{df}; otherwise \code{payhist} is read
+again and the cache replaced. It is cleared whenever the files are mapped
+again with \code{\link[=set_USRDS_wd]{set_USRDS_wd()}}. Ignored when \code{medicare_coverage_df} is given.}
 }
 \value{
 The original \code{df} data fame with the variable \code{medicare_primary_TF} added

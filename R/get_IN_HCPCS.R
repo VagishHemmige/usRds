@@ -65,6 +65,7 @@
 #' get_IN_HCPCS(NULL, years = 2012:2016)  # All HCPCS claims
 #' }
 get_IN_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
+  .local_arrow_options()
   variablelist <- c(
     "USRDS_ID",
     "CLM_FROM",

@@ -26,7 +26,11 @@ diagnosis has been made
 
 ``` r
 if (FALSE) { # \dontrun{
-cryptococcus_icd <- c("1175", "B45")
+# Codes are matched exactly, so list every billable code (#3):
+# ICD-9 117.5 and ICD-10-CM B45.0-B45.3, B45.7-B45.9, without periods
+cryptococcus_icd <- c(
+  "1175", "B450", "B451", "B452", "B453", "B457", "B458", "B459"
+)
 
 # Retrieve claims for all patients in selected years
 result <- get_IN_ICD(icd_codes = cryptococcus_icd, years = 2013:2018)

@@ -91,8 +91,9 @@ distributions</li>
 <code>.parquet</code> — efficient columnar format for fast and
 scalable access</li>
 </ul>
-<p>If multiple versions of a file are present, <code>.parquet</code> is
-prioritized automatically.</p>
+<p>If a file exists in more than one format, <code><a href="../reference/set_USRDS_wd.html">set_USRDS_wd()</a></code>
+uses one of them: Parquet first, then SAS, then CSV, unless you choose
+another order (see Step 2).</p>
 </div>
 <div class="section level2">
 <h2 id="why-use-parquet-optional">Why Use Parquet? (Optional)<a class="anchor" aria-label="anchor" href="#why-use-parquet-optional"></a>
@@ -148,30 +149,29 @@ directory:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/VagishHemmige/usRds" class="external-link">usRds</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">convert_USRDS_to_parquet</span><span class="op">(</span></span>
-<span>  file_key <span class="op">=</span> <span class="st">"IN"</span>,</span>
-<span>  years <span class="op">=</span> <span class="fl">2006</span><span class="op">:</span><span class="fl">2012</span>,</span>
+<span><span class="fu"><a href="../reference/convert_usrds_to_parquet.html">convert_usrds_to_parquet</a></span><span class="op">(</span></span>
+<span>  source_dir <span class="op">=</span> <span class="st">"/path/to/usrds_data"</span>,</span>
+<span>  target_dir <span class="op">=</span> <span class="st">"/path/to/usrds_data"</span>,</span>
 <span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This will:</p>
 <ul>
-<li>Look up files based on <code>.usrds_env$file_list</code>
+<li>Convert every <code>.sas7bdat</code> and <code>.csv</code> file
+under <code>source_dir</code>
 </li>
-<li>Automatically detect whether the input is CSV or SAS</li>
-<li>Save <code>.parquet</code> versions in the same directory as the
-source</li>
-<li>Skip conversion if <code>.parquet</code> files already exist (unless
-<code>overwrite = TRUE</code>)</li>
+<li>Write each <code>.parquet</code> file to the same relative folder
+under <code>target_dir</code>
+</li>
+<li>Skip files whose <code>.parquet</code> version already exists
+(unless <code>overwrite = TRUE</code>)</li>
 </ul>
-<div class="section level3">
-<h3 id="example-folder-structure-after-conversion">Example Folder Structure After Conversion<a class="anchor" aria-label="anchor" href="#example-folder-structure-after-conversion"></a>
-</h3>
+<p>When <code>target_dir</code> is the same folder as
+<code>source_dir</code>, each Parquet file sits next to its source, and
+<code><a href="../reference/set_USRDS_wd.html">set_USRDS_wd()</a></code> uses the Parquet copy:</p>
 <pre><code>/path/to/usrds_data/
 ├── 5) ESRD Institution/
-│   ├── IN2006/
-│   │   ├── in2006a.sas7bdat
-│   │   └── in2006a.parquet</code></pre>
-</div>
+│   ├── inc2010a.sas7bdat
+│   └── inc2010a.parquet</code></pre>
 </div>
 <div class="section level2">
 <h2 id="step-2-set-the-usrds-working-directory">Step 2: Set the USRDS Working Directory<a class="anchor" aria-label="anchor" href="#step-2-set-the-usrds-working-directory"></a>
@@ -183,6 +183,28 @@ with:</p>
 <p>To make this setting persist across sessions:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_USRDS_wd.html">set_USRDS_wd</a></span><span class="op">(</span><span class="st">"/path/to/usrds_data"</span>, permanent <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><code><a href="../reference/set_USRDS_wd.html">set_USRDS_wd()</a></code> then maps the files it finds and reports
+what it found. Files are recognised by name, as in the USRDS delivery
+(for example <code>patients.sas7bdat</code> or
+<code>ps2010a.csv</code>), in any folder under the path and without
+regard to case. Files with other names, such as your own analysis files,
+are counted and set aside. It keeps one copy of each file:</p>
+<ul>
+<li>
+<p>If a file exists in more than one format, it uses the first
+format in <code>format_preference</code>, which is Parquet, then SAS,
+then CSV by default. To use your SAS files instead:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_USRDS_wd.html">set_USRDS_wd</a></span><span class="op">(</span><span class="st">"/path/to/usrds_data"</span>, format_preference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sas7bdat"</span>, <span class="st">"csv"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</li>
+<li><p>If there are two copies of a file in the same format (for example
+a backup in any subfolder), it stops and lists both, so the same claims
+are never read twice.</p></li>
+<li><p>If only part of a year’s claim files is present (for example
+some, but not all, of the 2007 institutional files), it warns and lists
+the missing files. Use <code>on_incomplete = "error"</code> to stop
+instead.</p></li>
+</ul>
 <p>This working directory is used by all downstream functions to locate
 USRDS files.</p>
 </div>
@@ -193,7 +215,7 @@ USRDS files.</p>
 <ol style="list-style-type: decimal">
 <li>
 <strong>(Optional)</strong> Convert raw files to Parquet using
-<code>convert_USRDS_to_parquet()</code>
+<code><a href="../reference/convert_usrds_to_parquet.html">convert_usrds_to_parquet()</a></code>
 </li>
 <li>
 <strong>Set the working directory</strong> with

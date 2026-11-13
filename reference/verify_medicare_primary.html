@@ -92,7 +92,10 @@ a column named <code>USRDS_ID</code>.</p></dd>
 
 <dt id="arg-cache">cache<a class="anchor" aria-label="anchor" href="#arg-cache"></a></dt>
 <dd><p>whether or not to cache, or use a previously cached version, of the medicare coverage data frame.  This can save substantial amounts of
-time in a loop.</p></dd>
+time in a loop. The cache is used only when it was built from the same
+USRDS folder and covers every patient in <code>df</code>; otherwise <code>payhist</code> is read
+again and the cache replaced. It is cleared whenever the files are mapped
+again with <code><a href="set_USRDS_wd.html">set_USRDS_wd()</a></code>. Ignored when <code>medicare_coverage_df</code> is given.</p></dd>
 
 </dl></div>
     <div class="section level2">

@@ -16,8 +16,10 @@ The package works with:
 - `.csv` — used in earlier years and alternate distributions
 - `.parquet` — efficient columnar format for fast and scalable access
 
-If multiple versions of a file are present, `.parquet` is prioritized
-automatically.
+If a file exists in more than one format,
+[`set_USRDS_wd()`](https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.md)
+uses one of them: Parquet first, then SAS, then CSV, unless you choose
+another order (see Step 2).
 
 ## Why Use Parquet? (Optional)
 
@@ -47,28 +49,30 @@ CSV files to Parquet *before* setting the working directory:
 
 library(usRds)
 
-convert_USRDS_to_parquet(
-  file_key = "IN",
-  years = 2006:2012,
+convert_usrds_to_parquet(
+  source_dir = "/path/to/usrds_data",
+  target_dir = "/path/to/usrds_data",
   overwrite = FALSE
 )
 ```
 
 This will:
 
-- Look up files based on `.usrds_env$file_list`
-- Automatically detect whether the input is CSV or SAS
-- Save `.parquet` versions in the same directory as the source
-- Skip conversion if `.parquet` files already exist (unless
+- Convert every `.sas7bdat` and `.csv` file under `source_dir`
+- Write each `.parquet` file to the same relative folder under
+  `target_dir`
+- Skip files whose `.parquet` version already exists (unless
   `overwrite = TRUE`)
 
-### Example Folder Structure After Conversion
+When `target_dir` is the same folder as `source_dir`, each Parquet file
+sits next to its source, and
+[`set_USRDS_wd()`](https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.md)
+uses the Parquet copy:
 
     /path/to/usrds_data/
     ├── 5) ESRD Institution/
-    │   ├── IN2006/
-    │   │   ├── in2006a.sas7bdat
-    │   │   └── in2006a.parquet
+    │   ├── inc2010a.sas7bdat
+    │   └── inc2010a.parquet
 
 ## Step 2: Set the USRDS Working Directory
 
@@ -86,6 +90,31 @@ To make this setting persist across sessions:
 set_USRDS_wd("/path/to/usrds_data", permanent = TRUE)
 ```
 
+[`set_USRDS_wd()`](https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.md)
+then maps the files it finds and reports what it found. Files are
+recognised by name, as in the USRDS delivery (for example
+`patients.sas7bdat` or `ps2010a.csv`), in any folder under the path and
+without regard to case. Files with other names, such as your own
+analysis files, are counted and set aside. It keeps one copy of each
+file:
+
+- If a file exists in more than one format, it uses the first format in
+  `format_preference`, which is Parquet, then SAS, then CSV by default.
+  To use your SAS files instead:
+
+  ``` r
+
+  set_USRDS_wd("/path/to/usrds_data", format_preference = c("sas7bdat", "csv"))
+  ```
+
+- If there are two copies of a file in the same format (for example a
+  backup in any subfolder), it stops and lists both, so the same claims
+  are never read twice.
+
+- If only part of a year’s claim files is present (for example some, but
+  not all, of the 2007 institutional files), it warns and lists the
+  missing files. Use `on_incomplete = "error"` to stop instead.
+
 This working directory is used by all downstream functions to locate
 USRDS files.
 
@@ -94,7 +123,7 @@ USRDS files.
 To begin using `usRds`:
 
 1.  **(Optional)** Convert raw files to Parquet using
-    `convert_USRDS_to_parquet()`
+    [`convert_usrds_to_parquet()`](https://vagishhemmige.github.io/usRds/reference/convert_usrds_to_parquet.md)
 2.  **Set the working directory** with
     [`set_USRDS_wd()`](https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.md)
 3.  Proceed to the next vignette for filtering and extracting claims

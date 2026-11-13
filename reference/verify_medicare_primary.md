@@ -55,7 +55,12 @@ verify_medicare_primary(
 
   whether or not to cache, or use a previously cached version, of the
   medicare coverage data frame. This can save substantial amounts of
-  time in a loop.
+  time in a loop. The cache is used only when it was built from the same
+  USRDS folder and covers every patient in `df`; otherwise `payhist` is
+  read again and the cache replaced. It is cleared whenever the files
+  are mapped again with
+  [`set_USRDS_wd()`](https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.md).
+  Ignored when `medicare_coverage_df` is given.
 
 ## Value
 

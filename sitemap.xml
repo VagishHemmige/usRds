@@ -1,7 +1,9 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://vagishhemmige.github.io/usRds/404.html</loc></url>
+<url><loc>https://vagishhemmige.github.io/usRds/AGENTS.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/LICENSE-text.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/LICENSE.html</loc></url>
+<url><loc>https://vagishhemmige.github.io/usRds/REVIEWING.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/articles/accessing-files.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/articles/getting-started.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/articles/index.html</loc></url>
@@ -15,8 +17,6 @@
 <url><loc>https://vagishhemmige.github.io/usRds/reference/apply_usrds_varlabels.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/convert_usrds_to_parquet.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/create_usrds_cohort.html</loc></url>
-<url><loc>https://vagishhemmige.github.io/usRds/reference/dot-map_USRDS_files.html</loc></url>
-<url><loc>https://vagishhemmige.github.io/usRds/reference/dot-usrds_env.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/establish_dx_date.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/finalize_usrds_cohort.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/get_IN_CLM_costs.html</loc></url>
@@ -33,6 +33,7 @@
 <url><loc>https://vagishhemmige.github.io/usRds/reference/prorate_costs_by_day.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/usRds-package.html</loc></url>
+<url><loc>https://vagishhemmige.github.io/usRds/reference/usrds_files.html</loc></url>
 <url><loc>https://vagishhemmige.github.io/usRds/reference/verify_medicare_primary.html</loc></url>
 </urlset>
 

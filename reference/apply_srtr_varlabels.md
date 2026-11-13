@@ -1,7 +1,11 @@
 # Apply SRTR variable labels to a data frame
 
 Adds descriptive variable labels to a dataset using the SRTR SAF data
-dictionary.
+dictionary from the 'sRtr' package, which must be installed. 'sRtr' also
+has its own
+[`sRtr::apply_srtr_varlabels()`](https://rdrr.io/pkg/sRtr/man/apply_srtr_varlabels.html),
+which can infer the dataset from a file loaded with
+[`sRtr::load_srtr_file()`](https://rdrr.io/pkg/sRtr/man/load_srtr_file.html).
 
 ## Usage
 
@@ -33,9 +37,8 @@ via
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-df <- read.csv("CAND_KIPA.parquet")
-df <- apply_srtr_varlabels(df, dataset_key = "CAND_KIPA", verbose = TRUE)
-labelled::var_label(df$ABO)
-} # }
+df <- data.frame(CAN_ABO = c("A", "O"))
+df <- apply_srtr_varlabels(df, dataset_key = "CAND_KIPA")
+labelled::var_label(df$CAN_ABO)
+#> [1] "Patient/s Blood Type"
 ```

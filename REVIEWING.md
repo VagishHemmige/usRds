@@ -50,6 +50,15 @@ the earlier head is an ancestor.
    and data-access inspection required by AGENTS.md. Never run live tests.
    Missing checks and dependency limitations must be reported without claiming
    execution based on someone else's report.
+
+   Choose validation scope for each PR from the changed behavior and its
+   downstream reach, not merely the number of changed lines. State the selected
+   scope and rationale. Run focused checks first; expand when shared interfaces,
+   scientific calculations, dependencies, or observed failures warrant it.
+   Distinguish failures introduced by the PR from existing failures. If adequate
+   validation is unavailable, report the specific gap. Do not expand into an
+   unrelated whole-package audit.
+
 6. Reconcile previous findings against the current code and milestone. Identify
    partial fixes without repeating resolved findings or treating every open
    issue as a new regression. Assess other reviewers' claims rather than

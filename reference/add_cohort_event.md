@@ -22,7 +22,8 @@ add_cohort_event(
 
   is a USRDS cohort created using the
   [`create_usrds_cohort()`](https://vagishhemmige.github.io/usRds/reference/create_usrds_cohort.md)
-  function
+  function. It must not yet have been passed to
+  [`finalize_usrds_cohort()`](https://vagishhemmige.github.io/usRds/reference/finalize_usrds_cohort.md).
 
 - event_data_frame:
 

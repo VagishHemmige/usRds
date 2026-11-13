@@ -12,9 +12,31 @@
       .map_USRDS_files(quiet = TRUE)
     Condition
       Error in `.map_USRDS_files()`:
-      ! 1 file has more than one copy in the same format.
-      x '<USRDS_WD>/5) ESRD Institution/inc2010a.csv' and '<USRDS_WD>/backups/inc2010a.csv'
-      i Keep one copy of each, or move the others outside `USRDS_WD`, then run `set_USRDS_wd()` again.
+      ! 1 USRDS file has more than one copy in the same format, so its claims would be read more than once.
+      x inc2010a.csv (2 copies): 5) ESRD Institution/inc2010a.csv; backups/inc2010a.csv
+      i Paths are relative to '<USRDS_WD>'.
+      i Keep one copy of each file under `USRDS_WD` (move backups elsewhere), then run `set_USRDS_wd()` again.
+
+# .map_USRDS_files() lists each duplicated file on its own line
+
+    Code
+      .map_USRDS_files(quiet = TRUE)
+    Condition
+      Error in `.map_USRDS_files()`:
+      ! 2 USRDS files have more than one copy in the same format, so their claims would be read more than once.
+      x inc2010a.csv (3 copies): 5) ESRD Institution/inc2010a.csv; backups/2019/inc2010a.csv; backups/inc2010a.csv
+      x patients.sas7bdat (2 copies): ESRD Core/patients.sas7bdat; old/patients.SAS7BDAT
+      i Paths are relative to '<USRDS_WD>'.
+      i Keep one copy of each file under `USRDS_WD` (move backups elsewhere), then run `set_USRDS_wd()` again.
+
+# .map_USRDS_files() only reports duplicates in a format it will not read
+
+    Code
+      result <- .map_USRDS_files()
+    Message
+      v Mapped 1 USRDS file: 1 Parquet.
+      i 2 other copies in another format were set aside. Format order: "parquet", "sas7bdat", and "csv".
+      ! 1 file has duplicate copies in a format that is not being read, for example 'patients.sas7bdat'. They are ignored now, but would stop mapping if that format were read.
 
 # .map_USRDS_files() stops when no USRDS files are found
 

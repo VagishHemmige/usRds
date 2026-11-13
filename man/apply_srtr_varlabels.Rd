@@ -23,7 +23,7 @@ has its own \code{sRtr::apply_srtr_varlabels()}, which can infer the dataset
 from a file loaded with \code{sRtr::load_srtr_file()}.
 }
 \examples{
-\dontshow{if (rlang::is_installed("sRtr")) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (rlang::is_installed("sRtr")) withAutoprint(\{ # examplesIf}
 df <- data.frame(CAN_ABO = c("A", "O"))
 df <- apply_srtr_varlabels(df, dataset_key = "CAND_KIPA")
 labelled::var_label(df$CAN_ABO)

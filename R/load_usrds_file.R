@@ -48,7 +48,10 @@ load_usrds_file <- function(
 ) {
   # ---- Ensure file registry is initialized ----
   if (is.null(.usrds_env$file_list)) {
-    stop("File list not initialized.")
+    cli::cli_abort(c(
+      "No USRDS files are mapped yet.",
+      "i" = "Run {.code set_USRDS_wd(\"<your USRDS folder>\")} first."
+    ))
   }
 
   # Standardize file key for lookup

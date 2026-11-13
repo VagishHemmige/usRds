@@ -19,6 +19,13 @@
     stop("file_keys must be a non-empty character vector of file_root values.")
   }
 
+  if (is.null(.usrds_env$file_list)) {
+    cli::cli_abort(c(
+      "No USRDS files are mapped yet.",
+      "i" = "Run {.code set_USRDS_wd(\"<your USRDS folder>\")} first."
+    ))
+  }
+
   # Extract the list of available years from file_list for the specified file_roots
   available_years <- .usrds_env$file_list |>
     dplyr::filter(.data$file_root %in% .env$file_keys) |>

@@ -26,6 +26,11 @@ same patient to use different baseline dates.
 
 If \code{baseline_date_variable} is unspecified or specified as NULL, its default value, a default baseline value will be calculated for each patient such that
 each patient's first observation has \code{tstart}=0.
+
+Finalize a cohort once, after all covariates and events have been added. The
+returned cohort is marked as finalized, and passing it to
+\code{finalize_usrds_cohort()} again is an error, because a second shift would
+subtract the baseline twice.
 }
 \examples{
 \dontrun{

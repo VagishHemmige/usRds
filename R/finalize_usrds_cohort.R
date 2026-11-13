@@ -10,6 +10,11 @@
 #' If `baseline_date_variable` is unspecified or specified as NULL, its default value, a default baseline value will be calculated for each patient such that
 #' each patient's first observation has `tstart`=0.
 #'
+#' Finalize a cohort once, after all covariates and events have been added. The
+#' returned cohort is marked as finalized, and passing it to
+#' `finalize_usrds_cohort()` again is an error, because a second shift would
+#' subtract the baseline twice.
+#'
 #' @param USRDS_cohort is a USRDS cohort created using the `create_usrds_cohort()` function
 #'
 #' @param baseline_date_variable, if not NULL, includes the name of the variable in `USRDS_cohort` that determines the t0 date for each row of
@@ -34,6 +39,20 @@ finalize_usrds_cohort <- function(USRDS_cohort, baseline_date_variable = NULL) {
 
   if (!all(c("USRDS_ID", "tstart", "tstop") %in% names(USRDS_cohort))) {
     stop("USRDS_cohort must contain USRDS_ID, tstart, and tstop", call. = FALSE)
+  }
+
+  # A second shift would subtract the baseline from times that are already
+  # relative to it, so the time scale would be silently wrong (#34).
+  if (isTRUE(attr(USRDS_cohort, "finalized", exact = TRUE))) {
+    stop(
+      paste0(
+        "USRDS_cohort has already been finalized; its tstart and tstop are ",
+        "already relative to the baseline. Call finalize_usrds_cohort() once, ",
+        "on the cohort returned by create_usrds_cohort() and the ",
+        "add_cohort_*() functions."
+      ),
+      call. = FALSE
+    )
   }
 
   #Validate baseline_date_variable

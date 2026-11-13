@@ -12,7 +12,8 @@ add_cohort_event(
 )
 }
 \arguments{
-\item{USRDS_cohort}{is a USRDS cohort created using the \code{create_usrds_cohort()} function}
+\item{USRDS_cohort}{is a USRDS cohort created using the \code{create_usrds_cohort()} function.
+It must not yet have been passed to \code{finalize_usrds_cohort()}.}
 
 \item{event_data_frame}{is a data frame with a date variable (delineated via the \code{event_date} option).}
 

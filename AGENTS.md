@@ -42,9 +42,12 @@ State when references are unavailable; never invent variables or definitions.
 
 Definitions, coefficients, arguments, outputs, loading behavior and derived
 variables are behavior changes. Do not silently choose unresolved scientific
-defaults or add arguments merely to avoid a design decision. Compare meaningful
-alternatives on small synthetic examples where feasible, then seek the
-maintainer's decision when needed.
+defaults. When a design choice is close and alternatives serve plausible user
+needs, propose a function argument with a recommended default and explain the
+tradeoffs. Seek the maintainer's decision before implementation. Do not use an
+argument to conceal unresolved scientific definitions or offer an invalid method
+as an equally acceptable choice. Compare meaningful alternatives on small
+synthetic examples where feasible.
 
 Preserve the documented distinction between patient-specific default baselines
 and row-specific supplied baselines in `R/finalize_usrds_cohort.R`. Changes to
@@ -67,10 +70,9 @@ defaults without a decision.
   unset; `.onLoad()` can map files when `USRDS_WD` is set. The existing live
   guard is `skip_if_not_live()` in `tests/testthat/helper-live.R`; inspect its
   call sites rather than assuming the helper protects every execution path.
-- Never edit or regenerate `data/`. Changes to `data-raw/` require approval;
-  the maintainer regenerates `data/`. Treat internal generated metadata such
-  as `R/sysdata.rda` as generated artifacts requiring explicit authorization,
-  not as a shortcut around this rule.
+- Never edit or regenerate `data/` or `R/sysdata.rda`. Changes to the
+  generating scripts in `data-raw/` require approval; the maintainer
+  regenerates these artifacts.
 - Package code must not write outside `tempdir()` unless the caller explicitly
   supplies a destination. Check persistent configuration and conversion paths.
 
@@ -83,18 +85,19 @@ commitment; material changes after approval require renewed approval. Show full
 new files, readable diffs and access to complete changed files. Do not claim
 side-by-side views or attachments that were not actually provided.
 
-For ChatGPT work, after approval commit and push a `chatgpt/<topic>` task branch
-and open a PR; this workflow applies only within the maintainer's granted
-authorization. Never push directly to the default branch, force-push, merge or
-delete remote branches without explicit instruction. Identify ChatGPT authorship
-in the PR body so independent review can be routed correctly. Do not post
-separate issues or replies to other people without authorization.
+What each assistant may commit, push, post, merge or delete is set by the
+maintainer outside this repository. Identify assistant authorship in the PR body
+so independent review can be routed correctly.
 
-Read available R package-development and critical-code-reviewer skills; add
-r-testthat and review-testing for changed tests/new behavior, r-cli for cli,
-r-cran-extrachecks for DESCRIPTION/examples/vignettes or CRAN preparation, and
-r-lifecycle for deprecations/renames. Report unavailable skills and continue.
-User permissions and these protections take precedence over skill defaults.
+Read available skills for R package development and critical code review. Add
+skills for writing and reviewing tests when tests or behavior change, cli
+messaging when using cli, CRAN checks for DESCRIPTION/examples/vignettes or CRAN
+preparation, and lifecycle management for deprecations/renames. Names vary by
+environment (for example, `r-testthat` or `testing-r-packages`, `r-cli` or
+`cli`, `r-cran-extrachecks` or `cran-extrachecks`, and `r-lifecycle` or
+`lifecycle`); use the available equivalent. Report unavailable capabilities
+and continue. User permissions and these protections take precedence over
+skill defaults.
 
 Prefer regression tests that fail before a fix. Follow established local code
 conventions rather than impose unrelated cleanup. Run focused synthetic checks

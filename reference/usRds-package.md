@@ -18,6 +18,12 @@ Useful links:
 ## Author
 
 **Maintainer**: Vagish Hemmige <vagish.hemmige@gmail.com>
+([ORCID](https://orcid.org/0009-0006-6346-1826))
+
+Authors:
+
+- Vagish Hemmige <vagish.hemmige@gmail.com>
+  ([ORCID](https://orcid.org/0009-0006-6346-1826))
 
 Other contributors:
 

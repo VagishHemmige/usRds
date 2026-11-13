@@ -36,25 +36,39 @@ ancestor.
     existing limitations. Read changed human-written code and relevant
     surrounding paths; identify omitted or truncated material. Reserve
     whole-package coverage for an explicitly whole-package review.
+
 2.  Trace downstream effects through callers, joins, returned objects
     and their attributes, tests, documentation and affected workflows.
     Evaluate whether a design fits existing APIs or duplicates
     functionality. Intentional, documented interface changes may be
     appropriate during development; accidental breakage is still a
     defect.
+
 3.  Derive edge cases independently of the implementation. Verify
     scientific claims against release-appropriate authoritative sources.
     A missing source is an evidence gap, not proof that a definition is
     wrong. Do not silently settle an unresolved methodological choice.
+
 4.  Evaluate tests and CI independently: passing checks can encode
     incorrect assumptions. Check expected values, mock boundaries, skips
     and whether a regression test detects the original bug. Inspect CI
     for the reviewed SHA; distinguish absent, pending, failed and passed
     checks. Do not equate a website build with a full package check.
+
 5.  Execute only safe, relevant synthetic checks in isolation after the
     startup and data-access inspection required by AGENTS.md. Never run
     live tests. Missing checks and dependency limitations must be
     reported without claiming execution based on someone else’s report.
+
+    Choose validation scope for each PR from the changed behavior and
+    its downstream reach, not merely the number of changed lines. State
+    the selected scope and rationale. Run focused checks first; expand
+    when shared interfaces, scientific calculations, dependencies, or
+    observed failures warrant it. Distinguish failures introduced by the
+    PR from existing failures. If adequate validation is unavailable,
+    report the specific gap. Do not expand into an unrelated
+    whole-package audit.
+
 6.  Reconcile previous findings against the current code and milestone.
     Identify partial fixes without repeating resolved findings or
     treating every open issue as a new regression. Assess other

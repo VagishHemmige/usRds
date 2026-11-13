@@ -32,7 +32,7 @@
       dplyr::select(dplyr::all_of(variablelist)) |>
       dplyr::filter(.data$SPCLTY %in% .env$specialtycodelist) |>
       dplyr::mutate(CLM_FROM = lubridate::as_date(.data$CLM_FROM)) |>
-      arrow::collect()
+      dplyr::collect()
     return(temp)
   }
 }

@@ -49,3 +49,36 @@ test_that("get_PS_specialty() does not print file details", {
     "ps2010a"
   )
 })
+
+test_that("get_PS_specialty() reads Parquet files", {
+  dir <- withr::local_tempdir()
+  path <- file.path(dir, "ps2010a.parquet")
+  arrow::write_parquet(
+    data.frame(
+      USRDS_ID = c(1, 2, 3),
+      CLM_FROM = as.Date(c("2010-01-01", "2010-02-15", "2010-03-01")),
+      SPCLTY = c(33, 44, 33),
+      HCPCS = c("A1111", "A2222", "A3333")
+    ),
+    path
+  )
+  old <- .usrds_env$file_list
+  withr::defer(.usrds_env$file_list <- old)
+  .usrds_env$file_list <- data.frame(
+    file_path = path,
+    file_name = "ps2010a.parquet",
+    file_root = "ps2010a",
+    file_suffix = "parquet",
+    Year = 2010,
+    file_directory = "PS"
+  )
+
+  result <- get_PS_specialty(
+    specialtycodelist = 33,
+    yearlist = 2010,
+    HCPCS = TRUE
+  )
+
+  expect_equal(result$USRDS_ID, c(1, 3))
+  expect_equal(result$CLM_FROM, as.Date(c("2010-01-01", "2010-03-01")))
+})

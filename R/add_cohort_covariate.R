@@ -13,7 +13,8 @@
 #'   - Patient ZIP code
 #'
 #'
-#' @param USRDS_cohort is a USRDS cohort created using the `create_usrds_cohort()` function
+#' @param USRDS_cohort is a USRDS cohort created using the `create_usrds_cohort()` function.
+#'   It must not yet have been passed to `finalize_usrds_cohort()`.
 #'
 #' @param covariate_data_frame is a data frame with a date variable (delineated via the `covariate_date` option).
 #'
@@ -49,6 +50,18 @@ add_cohort_covariate <- function(
     !identical(attr(USRDS_cohort, "cohort_type", exact = TRUE), "USRDS_cohort")
   ) {
     stop("USRDS_cohort must be a USRDS cohort object", call. = FALSE)
+  }
+
+  # tstart and tstop are relative to the baseline after finalization, so new
+  # covariate dates could not be placed on the same time scale (#34).
+  if (isTRUE(attr(USRDS_cohort, "finalized", exact = TRUE))) {
+    stop(
+      paste0(
+        "USRDS_cohort has already been finalized, so covariates can no longer ",
+        "be added. Call add_cohort_covariate() before finalize_usrds_cohort()."
+      ),
+      call. = FALSE
+    )
   }
 
   # Check ID exists in both data frames

@@ -19,9 +19,13 @@ test_that("convert_usrds_to_parquet() maps each CSV and SAS file to a Parquet pa
 
   result <- convert_usrds_to_parquet(source_dir, target_dir)
 
+  # The converter builds paths with fs, which tidies separators; macOS and
+  # Windows spell tempdir() differently, so compare tidied paths.
   expect_setequal(
-    calls,
-    file.path(target_dir, c("core/patients.parquet", "ps2010a.parquet"))
+    as.character(fs::path_norm(calls)),
+    as.character(fs::path_norm(
+      file.path(target_dir, c("core/patients.parquet", "ps2010a.parquet"))
+    ))
   )
   expect_setequal(result$ext, c("csv", "sas7bdat"))
 })

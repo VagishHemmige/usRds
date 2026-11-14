@@ -8,6 +8,9 @@ establish_dx_date(df, diagnosis_established = "diagnosis")
 }
 \arguments{
 \item{df}{data frame of claims created by a \verb{get_*_ICD} function}
+
+\item{diagnosis_established}{A string stored in the \code{diagnosis} column of
+the result, naming the diagnosis being dated (for example \code{"cryptococcus"}).}
 }
 \value{
 A data frame filtered to keep the claim which establishes that a diagnosis has been made

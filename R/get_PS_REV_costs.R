@@ -54,6 +54,8 @@
 #'
 #' @param years Integer vector of calendar years to include.
 #' @param usrds_ids Optional. Vector of USRDS_IDs to restrict results to.
+#' @param remove_missing_values If `TRUE` (the default), drop line items whose
+#'   `PMTAMT` is missing.
 #'
 #' @return A data frame with columns: `USRDS_ID`, `HCFASAF`, `CLM_FROM`, `CLM_THRU`,`SBMTCH`, `ALOWCH`, `PMTAMT`
 #' @export

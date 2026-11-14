@@ -54,6 +54,9 @@
 #'
 #' @param years Integer vector of calendar years to include.  Range is 2013-2021.
 #' @param usrds_ids Optional. Vector of USRDS_IDs to restrict results to.
+#' @param remove_missing_values Currently has no effect: claims with a missing
+#'   `CLM_PMT_AMT` are always kept. Kept for consistency with
+#'   `get_PS_REV_costs()`; whether to drop them is undecided (see GitHub #54).
 #'
 #' @return A data frame with columns: `USRDS_ID`, `HCFASAF`, `CLM_FROM`, `CLM_THRU`, `CLM_PMT_AMT`,
 #' `CARR_CLM_PRMRY_PYR_PD_AMT`,`NCH_CLM_PRVDR_PMT_AMT`,`NCH_CLM_BENE_PMT_AMT`,`NCH_CARR_SBMT_CHRG_AMT`,

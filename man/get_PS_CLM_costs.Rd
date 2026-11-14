@@ -10,6 +10,10 @@ get_PS_CLM_costs(years, usrds_ids = NULL, remove_missing_values = TRUE)
 \item{years}{Integer vector of calendar years to include.  Range is 2013-2021.}
 
 \item{usrds_ids}{Optional. Vector of USRDS_IDs to restrict results to.}
+
+\item{remove_missing_values}{Currently has no effect: claims with a missing
+\code{CLM_PMT_AMT} are always kept. Kept for consistency with
+\code{get_PS_REV_costs()}; whether to drop them is undecided (see GitHub #54).}
 }
 \value{
 A data frame with columns: \code{USRDS_ID}, \code{HCFASAF}, \code{CLM_FROM}, \code{CLM_THRU}, \code{CLM_PMT_AMT},

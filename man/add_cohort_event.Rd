@@ -31,6 +31,19 @@ dates representing an event.  The resulting output is a USRDS longitudinal cohor
 the data frame
 }
 \examples{
-\dontrun{
-}
+# Made-up patients; real cohorts usually start from a USRDS file
+patients <- data.frame(
+  USRDS_ID = c(1, 2),
+  start = as.Date(c("2020-01-01", "2020-03-01")),
+  end = as.Date(c("2020-12-31", "2020-12-31"))
+)
+cohort <- create_usrds_cohort(patients, start_date = "start", end_date = "end")
+admissions <- data.frame(USRDS_ID = 2, admit_date = as.Date("2020-06-01"))
+cohort <- add_cohort_event(
+  cohort,
+  admissions,
+  event_date = "admit_date",
+  event_variable_name = "hospitalized"
+)
+cohort
 }

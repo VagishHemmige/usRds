@@ -10,6 +10,9 @@ get_PS_REV_costs(years, usrds_ids = NULL, remove_missing_values = TRUE)
 \item{years}{Integer vector of calendar years to include.}
 
 \item{usrds_ids}{Optional. Vector of USRDS_IDs to restrict results to.}
+
+\item{remove_missing_values}{If \code{TRUE} (the default), drop line items whose
+\code{PMTAMT} is missing.}
 }
 \value{
 A data frame with columns: \code{USRDS_ID}, \code{HCFASAF}, \code{CLM_FROM}, \code{CLM_THRU},\code{SBMTCH}, \code{ALOWCH}, \code{PMTAMT}

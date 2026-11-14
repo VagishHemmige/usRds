@@ -17,6 +17,11 @@ establish_dx_date(df, diagnosis_established = "diagnosis")
 
   data frame of claims created by a `get_*_ICD` function
 
+- diagnosis_established:
+
+  A string stored in the `diagnosis` column of the result, naming the
+  diagnosis being dated (for example `"cryptococcus"`).
+
 ## Value
 
 A data frame filtered to keep the claim which establishes that a

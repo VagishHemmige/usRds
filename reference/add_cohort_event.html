@@ -85,8 +85,29 @@ It must not yet have been passed to <code><a href="finalize_usrds_cohort.html">f
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Made-up patients; real cohorts usually start from a USRDS file</span></span></span>
+<span class="r-in"><span><span class="va">patients</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  USRDS_ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2020-01-01"</span>, <span class="st">"2020-03-01"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2020-12-31"</span>, <span class="st">"2020-12-31"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="fu"><a href="create_usrds_cohort.html">create_usrds_cohort</a></span><span class="op">(</span><span class="va">patients</span>, start_date <span class="op">=</span> <span class="st">"start"</span>, end_date <span class="op">=</span> <span class="st">"end"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">admissions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>USRDS_ID <span class="op">=</span> <span class="fl">2</span>, admit_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-06-01"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="fu">add_cohort_event</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">cohort</span>,</span></span>
+<span class="r-in"><span>  <span class="va">admissions</span>,</span></span>
+<span class="r-in"><span>  event_date <span class="op">=</span> <span class="st">"admit_date"</span>,</span></span>
+<span class="r-in"><span>  event_variable_name <span class="op">=</span> <span class="st">"hospitalized"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cohort</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   USRDS_ID      start        end cohort_start_date cohort_stop_date tstart</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        1 2020-01-01 2020-12-31        2020-01-01       2020-12-31  18262</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        2 2020-03-01 2020-12-31        2020-03-01       2020-06-01  18322</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        2 2020-03-01 2020-12-31        2020-06-01       2020-12-31  18414</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   tstop hospitalized</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 18627            0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 18414            1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 18627            0</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -20,6 +20,13 @@ get_PS_CLM_costs(years, usrds_ids = NULL, remove_missing_values = TRUE)
 
   Optional. Vector of USRDS_IDs to restrict results to.
 
+- remove_missing_values:
+
+  Currently has no effect: claims with a missing `CLM_PMT_AMT` are
+  always kept. Kept for consistency with
+  [`get_PS_REV_costs()`](https://vagishhemmige.github.io/usRds/reference/get_PS_REV_costs.md);
+  whether to drop them is undecided (see GitHub \#54).
+
 ## Value
 
 A data frame with columns: `USRDS_ID`, `HCFASAF`, `CLM_FROM`,

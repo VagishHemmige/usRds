@@ -39,6 +39,18 @@ and `tstop` helper numbers
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-} # }
+# Made-up patients; real cohorts usually start from a USRDS file
+patients <- data.frame(
+  USRDS_ID = c(1, 2),
+  start = as.Date(c("2020-01-01", "2020-03-01")),
+  end = as.Date(c("2020-12-31", "2020-12-31"))
+)
+cohort <- create_usrds_cohort(patients, start_date = "start", end_date = "end")
+cohort
+#>   USRDS_ID      start        end cohort_start_date cohort_stop_date tstart
+#> 1        1 2020-01-01 2020-12-31        2020-01-01       2020-12-31  18262
+#> 2        2 2020-03-01 2020-12-31        2020-03-01       2020-12-31  18322
+#>   tstop
+#> 1 18627
+#> 2 18627
 ```

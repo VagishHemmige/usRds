@@ -100,8 +100,29 @@ and a new time-varying covariate column named <code>covariate_variable_name</cod
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Made-up patients; real cohorts usually start from a USRDS file</span></span></span>
+<span class="r-in"><span><span class="va">patients</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  USRDS_ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  start <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2020-01-01"</span>, <span class="st">"2020-03-01"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  end <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2020-12-31"</span>, <span class="st">"2020-12-31"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="fu"><a href="create_usrds_cohort.html">create_usrds_cohort</a></span><span class="op">(</span><span class="va">patients</span>, start_date <span class="op">=</span> <span class="st">"start"</span>, end_date <span class="op">=</span> <span class="st">"end"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">diagnoses</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>USRDS_ID <span class="op">=</span> <span class="fl">1</span>, dx_date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2020-04-01"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cohort</span> <span class="op">&lt;-</span> <span class="fu">add_cohort_covariate</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  <span class="va">cohort</span>,</span></span>
+<span class="r-in"><span>  <span class="va">diagnoses</span>,</span></span>
+<span class="r-in"><span>  covariate_date <span class="op">=</span> <span class="st">"dx_date"</span>,</span></span>
+<span class="r-in"><span>  covariate_variable_name <span class="op">=</span> <span class="st">"diabetes"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cohort</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   USRDS_ID      start        end cohort_start_date cohort_stop_date tstart</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        1 2020-01-01 2020-12-31        2020-01-01       2020-04-01  18262</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        1 2020-01-01 2020-12-31        2020-04-01       2020-12-31  18353</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        2 2020-03-01 2020-12-31        2020-03-01       2020-12-31  18322</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   tstop diabetes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 18353        0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 18627        1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 18627        0</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

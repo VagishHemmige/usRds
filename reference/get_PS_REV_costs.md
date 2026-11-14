@@ -20,6 +20,10 @@ get_PS_REV_costs(years, usrds_ids = NULL, remove_missing_values = TRUE)
 
   Optional. Vector of USRDS_IDs to restrict results to.
 
+- remove_missing_values:
+
+  If `TRUE` (the default), drop line items whose `PMTAMT` is missing.
+
 ## Value
 
 A data frame with columns: `USRDS_ID`, `HCFASAF`, `CLM_FROM`,

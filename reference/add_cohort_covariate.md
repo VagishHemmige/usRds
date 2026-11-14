@@ -67,6 +67,27 @@ Examples of characteristics
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-} # }
+# Made-up patients; real cohorts usually start from a USRDS file
+patients <- data.frame(
+  USRDS_ID = c(1, 2),
+  start = as.Date(c("2020-01-01", "2020-03-01")),
+  end = as.Date(c("2020-12-31", "2020-12-31"))
+)
+cohort <- create_usrds_cohort(patients, start_date = "start", end_date = "end")
+diagnoses <- data.frame(USRDS_ID = 1, dx_date = as.Date("2020-04-01"))
+cohort <- add_cohort_covariate(
+  cohort,
+  diagnoses,
+  covariate_date = "dx_date",
+  covariate_variable_name = "diabetes"
+)
+cohort
+#>   USRDS_ID      start        end cohort_start_date cohort_stop_date tstart
+#> 1        1 2020-01-01 2020-12-31        2020-01-01       2020-04-01  18262
+#> 2        1 2020-01-01 2020-12-31        2020-04-01       2020-12-31  18353
+#> 3        2 2020-03-01 2020-12-31        2020-03-01       2020-12-31  18322
+#>   tstop diabetes
+#> 1 18353        0
+#> 2 18627        1
+#> 3 18627        0
 ```

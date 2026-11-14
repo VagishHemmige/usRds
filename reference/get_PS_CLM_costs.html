@@ -62,6 +62,12 @@ Option to <code>remove_missing_values</code> defaults to TRUE</p>
 <dt id="arg-usrds-ids">usrds_ids<a class="anchor" aria-label="anchor" href="#arg-usrds-ids"></a></dt>
 <dd><p>Optional. Vector of USRDS_IDs to restrict results to.</p></dd>
 
+
+<dt id="arg-remove-missing-values">remove_missing_values<a class="anchor" aria-label="anchor" href="#arg-remove-missing-values"></a></dt>
+<dd><p>Currently has no effect: claims with a missing
+<code>CLM_PMT_AMT</code> are always kept. Kept for consistency with
+<code><a href="get_PS_REV_costs.html">get_PS_REV_costs()</a></code>; whether to drop them is undecided (see GitHub #54).</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>

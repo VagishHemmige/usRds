@@ -4,6 +4,13 @@ Shared standards for human, ChatGPT and Claude reviews. Read AGENTS.md
 too. This file grants no posting, implementation, approval or merge
 permission.
 
+For reference selection, placement and citation, follow
+[reference/README.md](https://vagishhemmige.github.io/usRds/reference/README.md).
+Consult relevant annotations and their underlying sources within the
+review’s scope; state which sources and editions support consequential
+scientific conclusions and what remains unread or unavailable. A catalog
+entry alone is not verification.
+
 ## Policy revision and scope
 
 For PR reviews, record the current target-branch SHA and read AGENTS.md

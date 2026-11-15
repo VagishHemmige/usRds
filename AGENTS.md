@@ -42,6 +42,14 @@ publish private conversations.
 
 ## Scientific grounding
 
+Start with
+[reference/README.md](https://vagishhemmige.github.io/usRds/reference/README.md)
+for source selection, placement, annotation status and citation
+conventions. Use its manuscript and code annotations to find relevant
+background, then verify the underlying source. Separate defining
+sources, published conventions and external implementations; none of the
+latter automatically establishes an approved package default.
+
 Consult the Researcher’s Guide and Appendices B (variables) and C
 (formats) applicable to the data release. Use relevant ADR methods and
 original papers for scientific methods. Name the edition, section/table

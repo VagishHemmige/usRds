@@ -8,6 +8,8 @@ observed in source, not independently verified against release dictionaries.
 ## webbedfeet/USRDS2015
 
 - **Commit:** `bcda102f430f5c0f6af32915f2582ac9448490e8`.
+- **License check:** no license file identified in the complete tree at this
+  commit; no permission to reuse code verified. Read for ideas; do not copy code.
 - **Inspected:** [ingestion](https://github.com/webbedfeet/USRDS2015/blob/bcda102f430f5c0f6af32915f2582ac9448490e8/R/Original/Ingest_into_DB.R),
   [hospital comorbidities](https://github.com/webbedfeet/USRDS2015/blob/bcda102f430f5c0f6af32915f2582ac9448490e8/R/JASN/hospital_comorb.R),
   [event helper](https://github.com/webbedfeet/USRDS2015/blob/bcda102f430f5c0f6af32915f2582ac9448490e8/lib/R/detect_event.R).
@@ -40,6 +42,8 @@ observed in source, not independently verified against release dictionaries.
 ## cxh1996108/USRDS-Project
 
 - **Commit:** `7dcd688335dd74a12282a00801e0041bec3372f4`.
+- **License check:** no license file identified in the complete tree at this
+  commit; no permission to reuse code verified. Read for ideas; do not copy code.
 - **Inspected:** [USRDS.py, lines 1–180](https://github.com/cxh1996108/USRDS-Project/blob/7dcd688335dd74a12282a00801e0041bec3372f4/USRDS.py#L1-L180).
 - **Context:** Python/pandas/PyTorch, recurrent mortality classification from a
   preassembled longitudinal CSV. Upstream SAF construction is not shown.
@@ -57,6 +61,8 @@ observed in source, not independently verified against release dictionaries.
 ## yuewang0120/Kernel-Estimation-of-Bivariate-Time-varying-Coefficient-Model-for-Longitudinal-Data-with-Terminal-Ev
 
 - **Commit:** `7c0ef7e35775b78306f3ac2760e3b03349f86f4c`.
+- **License check:** no license file identified in the complete tree at this
+  commit; no permission to reuse code verified. Read for ideas; do not copy code.
 - **Inspected:** [README](https://github.com/yuewang0120/Kernel-Estimation-of-Bivariate-Time-varying-Coefficient-Model-for-Longitudinal-Data-with-Terminal-Ev/blob/7c0ef7e35775b78306f3ac2760e3b03349f86f4c/README.md)
   and file tree only. **Not yet a code annotation.**
 - **Context:** longitudinal outcomes and terminal events; 2007 incident ESRD

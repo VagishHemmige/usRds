@@ -16,13 +16,10 @@ comprehensively audited for this reference-infrastructure change.
   variable rather than matching a label by appearance.
 
 Project reference names are `USRDS_Researcher_Guide_2025_text.md`,
-`USRDS_Appendix_B_2025_text.md` and `USRDS_Appendix_C_2025_text.md`. Availability
-is environment-dependent: only Appendix B was supplied in the working session
-that created this map. Its header identifies a worksheet transcription with
-original row/column coordinates, JSON-encoded values and merged-cell anchors.
-Those escapes are not necessarily corruption. Consult the original workbook
-for ambiguous layout or merged headings. Do not assume another reviewer has
-these uploads, and do not copy private storage paths into source citations.
+`USRDS_Appendix_B_2025_text.md` and `USRDS_Appendix_C_2025_text.md`. Official workbooks are authoritative; transcriptions should preserve
+worksheet and row/column locators. Verify ambiguous merged cells, headings and
+escaped values against the original workbook. Availability of local copies must
+be checked in the current environment.
 
 For historical work, locate the matching edition. The
 [2024 Guide](https://www.niddk.nih.gov/-/media/Files/USRDS/For-Researchers/2024/USRDS_Researcher_Guide_2024.pdf)
@@ -41,7 +38,7 @@ does not establish a complete lookback or continued claims observation.
 
 Use the Methods chapter associated with the ADR year and volume being
 reproduced, reached through the [USRDS site](https://www.niddk.nih.gov/about-niddk/strategic-plans-reports/usrds).
-No ADR chapter was fully read for this infrastructure draft. Before adopting an
+A concrete historical starting point is [2017 ADR Volume 2: ESRD Analytical Methods](https://www.niddk.nih.gov/-/media/Files/USRDS/2017--Previous-ADR/ESRD/v2_c13_esrdmethods_17.pdf). Its contents and selected passages were inspected; it was not fully read. Before adopting an
 ADR convention, record its year, population, denominator, modality and payer
 rules, time origin and censoring, and payment/inflation perspective as relevant.
 Keep a paper's adaptations distinct from the ADR's original convention.

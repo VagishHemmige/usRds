@@ -43,7 +43,8 @@ is unavailable. Use an authorized connected browser when available and useful.
 
 Each entry uses its PMCID as the heading and records:
 
-- Citation, DOI, publication year, source role, study period and cutoff.
+- Citation, DOI, publication year, source role, study period and cutoff. The
+  catalog uses Europe PMC `pubYear`, which can differ from first-online year.
 - Population and unit: person, transplant, claim, encounter, facility or interval.
 - Files and fields: only exact names stated in the paper or independently
   checked in a named edition of a dictionary. Never infer exact variable names.

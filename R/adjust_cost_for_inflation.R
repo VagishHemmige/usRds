@@ -24,23 +24,8 @@ adjust_costs_for_inflation <- function(
   baseline_month,
   baseline_year
 ) {
-  #List potential variables which could be in a data frame
-  cost_vars <- c(
-    "PMTAMT",
-    "ALOWCH",
-    "SBMTCH",
-    "CLM_TOT",
-    "CLM_AMT",
-    "REVPMT",
-    "NCH_CLM_BENE_PMT_AMT",
-    "PMTAMT_PRORATED",
-    "ALOWCH_PRORATED",
-    "SBMTCH_PRORATED",
-    "CLM_TOT_PRORATED",
-    "CLM_AMT_PRORATED",
-    "NCH_CLM_BENE_PMT_AMT_PRORATED",
-    "REVPMT_PRORATED"
-  )
+  #Amount columns from the cost extractors, plus prorated copies
+  cost_vars <- .usrds_cost_column_names("_PRORATED")
 
   #Error checking
   baseline_year <- as.integer(baseline_year)

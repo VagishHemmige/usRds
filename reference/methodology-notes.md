@@ -3,7 +3,8 @@
 Initial synthesis of inspected sources, 2026-11-15. These are distinctions to
 preserve when interpreting analyses, not approved package defaults. The linked
 papers are primary sources; individual reading limits are in the manuscript
-annotations. Unless specified there, tables, figures as images, supplements and
+annotations delivered across the companion batches (including #62 and #63).
+Until those PRs land, their annotations are available on the PR branches. Unless specified there, tables, figures as images, supplements and
 exact mappings to release dictionaries remain unverified.
 
 ## Registry inclusion, claims observation and validation
@@ -52,9 +53,7 @@ order and person-time, not a reason to treat every claim as a separate encounter
 
 Transplant date, hospital discharge, infection diagnosis, graft failure and modality
 transfer answer different questions. Preserve event-specific origins and the
-historical state used for each measurement. First transplant for excluding prior
-infection and most recent transplant for elapsed time need not be interchangeable
-([PMC12089938](https://pmc.ncbi.nlm.nih.gov/articles/PMC12089938/), Methods/Results).
+historical state used for each measurement.
 
 [PMC9091783](https://pmc.ncbi.nlm.nih.gov/articles/PMC9091783/) begins follow-up on
 the first HD day after PD, including transfers lasting only one day. Requiring

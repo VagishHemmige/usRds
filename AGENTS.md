@@ -146,6 +146,18 @@ maintainer-run validation on real files. Give exact commands appropriate
 to the affected paths, including vignette rebuilding when relevant; do
 not run those live commands.
 
+## Whole-package reviews
+
+Use
+[PACKAGE_REVIEW.md](https://vagishhemmige.github.io/usRds/PACKAGE_REVIEW.md)
+only when the maintainer explicitly commissions a deep package review.
+It requires separate dialysis and transplant clinical perspectives,
+source-backed assessment, complete coverage, and concrete proposals for
+lasting tests and documentation. Routine PR reviews remain scoped by
+REVIEWING.md. Reference placement remains governed by
+reference/README.md. The protocol’s presence does not start an audit or
+expand permissions.
+
 ## Review responses
 
 Evaluate external findings as agree, partly agree or disagree, with

@@ -2,7 +2,7 @@
 
 Six main-text readings on validation, infection ascertainment, transplant costs, graft failure and matching. Tables, figure images and supplements remain unverified unless individually specified.
 
-| Manuscript | Year | Annotation | Europe PMC |
+| Manuscript | Year | Main-text annotation | Europe PMC |
 |---|---|---|---|
 | [Incidence, risk factors and distribution of syphilis in the end-stage renal disease population in the USA.](https://pmc.ncbi.nlm.nih.gov/articles/PMC7467576/) | 2020 | [PMC7467576 — MT](../manuscripts/PMC7467576.md) | [Full text](https://europepmc.org/articles/PMC7467576) |
 | [Costs in the Year Following Deceased Donor Kidney Transplantation: Relationships With Renal Function and Graft Failure.](https://pmc.ncbi.nlm.nih.gov/articles/PMC9184448/) | 2022 | [PMC9184448 — MT](../manuscripts/PMC9184448.md) | [Full text](https://europepmc.org/articles/PMC9184448) |

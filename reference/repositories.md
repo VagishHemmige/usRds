@@ -63,16 +63,30 @@ observed in source, not independently verified against release dictionaries.
 - **Commit:** `7c0ef7e35775b78306f3ac2760e3b03349f86f4c`.
 - **License check:** no license file identified in the complete tree at this
   commit; no permission to reuse code verified. Read for ideas; do not copy code.
-- **Inspected:** [README](https://github.com/yuewang0120/Kernel-Estimation-of-Bivariate-Time-varying-Coefficient-Model-for-Longitudinal-Data-with-Terminal-Ev/blob/7c0ef7e35775b78306f3ac2760e3b03349f86f4c/README.md)
-  and file tree only. **Not yet a code annotation.**
-- **Context:** longitudinal outcomes and terminal events; 2007 incident ESRD
-  claims application. README separates real-data analyses from pseudo-data
-  reproduction and simulation scripts.
-- **Potential value:** examine separate bandwidth selection, estimation and
-  simulation workflows for time-varying longitudinal models.
-- **Limits:** README calls the supplied dataset pseudo-data, but the generation
-  provenance was not independently verified. Neither it nor outputs were opened.
-  Numerical implementation and manuscript/code agreement remain unchecked.
+- **Inspected:** README, complete `code/functions.R` and `code/pseudo_fit.R`
+  at the cited commit; source only, nothing executed.
+- **Context:** bivariate time-varying coefficient estimation for longitudinal
+  claims approaching a terminal event; R with parallel workers and Rcpp.
+- **Operational choices:** the application uses time since entry and time until
+  death jointly, transforms daily claims as `log(daily_claim / 1000 + 1)`,
+  and contrasts a preconstructed primary-cause indicator. The fitting script
+  distinguishes original-data bandwidth from pseudo-data bandwidth. Cross-validation
+  splits unique person IDs, keeping repeated records together; variance calculations
+  aggregate weighted contributions by person. Adaptive fitting doubles bandwidth
+  until the local design has full rank.
+- **Useful patterns:** person-level validation folds, explicit two-clock modeling,
+  and a separation between estimation, uncertainty and bandwidth selection.
+- **Limits:** helpers depend on a global cluster object and internal R QR symbols;
+  adaptive uncertainty fitting has no explicit maximum-bandwidth guard. The
+  application requests 20 workers and loads/saves fixed paths. The transformed
+  daily outcome is not raw-dollar cost, and observed time-to-death is not a
+  prospective predictor available before death. Source fields are derived,
+  not verified USRDS dictionary names. Numerical correctness and correspondence
+  to the manuscript equations were not established by this source inspection.
+- **Data provenance:** README describes supplied data as pseudo-data, but its
+  generation provenance has not been independently verified; neither the RData
+  input nor any saved output was opened. Readable source remains useful without
+  loading those artifacts.
 
 ## Discovery scope
 

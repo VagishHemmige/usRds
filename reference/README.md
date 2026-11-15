@@ -8,6 +8,7 @@ finding, maintaining and citing that background during coding and review.
 |---|---|
 | [Manuscript catalog](pmc-manuscripts.md) | Collection being developed toward 100 PMC manuscripts; explicit reading status and individual annotations |
 | [Code repositories](repositories.md) | Commit-specific source inspection, useful patterns and limitations |
+| [Methodological background](methodology-notes.md) | Cross-paper distinctions, source locators and unresolved choices |
 | [Official sources](web-sources.md) | Researcher's Guides, appendices and ADR methods; editions and access limitations |
 
 ## Use during development and review

@@ -93,3 +93,40 @@ test_that("prorate_costs_by_day() prorates inflation-adjusted amounts", {
   expect_equal(result$CLM_PMT_AMT_ADJUSTED_PRORATED, c(165, 165))
   expect_equal(result$REV_CH_ADJUSTED_PRORATED, c(25, 25))
 })
+
+test_that("prorating and adjusting for inflation give the same result in either order", {
+  claims <- data.frame(
+    USRDS_ID = c(1, 2),
+    CLM_FROM = as.Date(c("2010-06-29", "2012-03-01")),
+    CLM_THRU = as.Date(c("2010-07-02", "2012-03-02")),
+    CLM_PMT_AMT = c(400, -60),
+    REV_CH = c(NA, 80)
+  )
+
+  prorated_first <- claims |>
+    prorate_costs_by_day() |>
+    adjust_costs_for_inflation("December", 2015)
+  adjusted_first <- claims |>
+    adjust_costs_for_inflation("December", 2015) |>
+    prorate_costs_by_day()
+
+  expect_equal(
+    prorated_first$CLM_PMT_AMT_PRORATED_ADJUSTED,
+    adjusted_first$CLM_PMT_AMT_ADJUSTED_PRORATED
+  )
+  expect_equal(
+    prorated_first$REV_CH_PRORATED_ADJUSTED,
+    adjusted_first$REV_CH_ADJUSTED_PRORATED
+  )
+
+  # Both orders use the CPI of the claim's start month, even for the days of
+  # claim 1 that fall in July.
+  ratio <- function(year, month) {
+    medical_cpi$value[medical_cpi$year == 2015 & medical_cpi$periodName == "December"] /
+      medical_cpi$value[medical_cpi$year == year & medical_cpi$periodName == month]
+  }
+  expected <- c(rep(400 * ratio(2010, "June") / 4, 4), rep(-60 * ratio(2012, "March") / 2, 2))
+  expect_equal(adjusted_first$CLM_PMT_AMT_ADJUSTED_PRORATED, expected)
+  expect_equal(sum(adjusted_first$CLM_PMT_AMT_ADJUSTED_PRORATED), sum(expected))
+  expect_equal(adjusted_first$REV_CH_ADJUSTED_PRORATED[1:4], rep(NA_real_, 4))
+})

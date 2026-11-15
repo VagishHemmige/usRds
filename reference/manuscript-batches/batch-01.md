@@ -1,6 +1,6 @@
 # Manuscript batch 01
 
-Six original studies using USRDS. The annotations record what was read and distinguish reported methods from inference. Main-text reading does not include comprehensive table, figure-image or supplement appraisal.
+Five original studies using USRDS. The annotations record what was read and distinguish reported methods from inference. Main-text reading does not include comprehensive table, figure-image or supplement appraisal.
 
 | Manuscript | Year | Main-text annotation | Europe PMC |
 |---|---|---|---|

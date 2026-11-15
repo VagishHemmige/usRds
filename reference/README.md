@@ -6,7 +6,7 @@ finding, maintaining and citing that background during coding and review.
 
 | File | Purpose |
 |---|---|
-| [Manuscript catalog](pmc-manuscripts.md) | Collection being developed toward 100 PMC manuscripts; explicit reading status and individual annotations |
+| [Manuscript catalog](pmc-manuscripts.md) | 100-manuscript collection across 17 companion batches; explicit reading status and individual annotations |
 | [Code repositories](repositories.md) | Commit-specific source inspection, useful patterns and limitations |
 | [Methodological background](methodology-notes.md) | Cross-paper distinctions, source locators and unresolved choices |
 | [Official sources](web-sources.md) | Researcher's Guides, appendices and ADR methods; editions and access limitations |
@@ -83,6 +83,6 @@ individual-specific exceptions and disclose their unverified provenance.
 
 No restricted patient data belong here. Store links and original concise
 annotations, not copies of manuscripts, dictionaries or third-party code.
-Check licensing before reusing code. Package-build exclusion is proposed separately in `.Rbuildignore`; check the
-actual configuration before assuming this directory is excluded. Build exclusion
+Check licensing before reusing code. The companion guidance change (#61) adds `^reference$` to `.Rbuildignore`;
+verify that line is present in the assembled checkout. Build exclusion
 alone makes no claim about website publication or privacy.

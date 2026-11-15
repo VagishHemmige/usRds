@@ -1,9 +1,9 @@
 # Methodological distinctions from the literature
 
-Initial synthesis of inspected sources, 2026-11-15. These are distinctions to
+Synthesis of the completed 100-manuscript collection, 2026-11-15. These are distinctions to
 preserve when interpreting analyses, not approved package defaults. The linked
 papers are primary sources; individual reading limits are in the manuscript
-annotations delivered across the companion batches (including #62 and #63).
+annotations delivered across the [17 companion batches](pmc-manuscripts.md#batch-map).
 Until those PRs land, their annotations are available on the PR branches. Unless specified there, tables, figures as images, supplements and
 exact mappings to release dictionaries remain unverified.
 
@@ -124,3 +124,72 @@ measurement requirements. If a paper omits a detail or contains inconsistent
 counts, retain that uncertainty rather than completing the method by guesswork.
 Consult [official sources](web-sources.md) for definitions and
 [external code annotations](repositories.md) for implementation ideas.
+
+## Additional distinctions from the completed collection
+
+### Exposure timing and information available at prediction
+
+An ever-recorded diagnosis is not a baseline diagnosis. For example,
+[pressure ulcers](manuscripts/PMC10456114.md) are ascertained over follow-up while
+survival begins at dialysis initiation. Weighting on measured characteristics does
+not itself align these clocks. A temporal exposure design or explicit landmark
+would answer a better-defined question; neither should be silently substituted
+when reproducing the published analysis. Likewise, a
+[spatial survival analysis](manuscripts/PMC12691873.md) includes cause of death as
+a predictor: that information is unavailable for prediction at dialysis initiation.
+
+[Repeated transplant states](manuscripts/PMC6124921.md) require both person identity
+and episode identity, with a defined reset of the state clock. A return to dialysis,
+recorded graft failure and retransplant are distinct events. Compare source dates
+and rules before combining them; a paper's multistate model does not establish
+which SAF field implements a transition.
+
+### Missingness and ascertainment across eras
+
+[PMC9613499](manuscripts/PMC9613499.md) distinguishes an entirely blank comorbidity
+section from an explicitly checked absence of comorbidity. Form versions and
+applicability matter: missing vascular access for a PD patient is not necessarily
+an unknown HD access. [PMC10821439](manuscripts/PMC10821439.md) illustrates how
+access-related exclusions can strongly select the cohort. Neither convention
+justifies recoding all missing values to absence.
+
+[PMC12008760](manuscripts/PMC12008760.md) follows calcimimetic ascertainment across
+Part D, Part B transitional payment and bundled-payment periods. A source change
+can remove drug visibility without ending treatment. Coverage gaps, refill gaps
+and unobservable bundled administration must remain distinct; compare the
+[Part D persistence study](manuscripts/PMC9205678.md). Code-family coverage also
+changes across ICD versions; three-digit grouping is not sufficient evidence that
+a phenotype has equivalent specificity in each era.
+
+### Access denominators, payer hierarchy and geography
+
+[PMC10719652](manuscripts/PMC10719652.md) uses separate incident, referred and
+evaluated denominators. [PMC12828506](manuscripts/PMC12828506.md) cannot estimate
+all-dialysis referral rates because transplant-center participation is incomplete.
+A median facility proportion is also different from the patient-weighted regional
+probability. Keep first-facility attribution, center participation and data-end dates.
+
+Even related studies prioritize overlapping insurance differently: Medicaid precedes
+Medicare in [PMC12348215](manuscripts/PMC12348215.md), whereas Medicare precedes
+Medicaid in [PMC12828506](manuscripts/PMC12828506.md). These are study conventions,
+not conflicting definitions of the underlying coverage records.
+[PMC11179932](manuscripts/PMC11179932.md) accepts MPAB or MPO; this is not the same
+eligibility rule as requiring both Parts A and B for an observed claims endpoint.
+
+Daily environmental linkage in [PMC11489478](manuscripts/PMC11489478.md) uses the
+last dialysis-clinic ZIP before an outcome; baseline residential ZIP in
+[PMC8102374](manuscripts/PMC8102374.md) answers a different exposure question.
+Record location source, date, aggregation and lag explicitly. Neither ZIP proxy
+measures an individual's true exposure.
+
+### Aggregate costs and simulated outcomes
+
+GDP deflation in [PMC8655828](manuscripts/PMC8655828.md), PCE-health deflation in
+[PMC12848627](manuscripts/PMC12848627.md), fixed-rate adjustment and medical CPI
+are different economic choices. Simulation papers using ADR cost inputs belong
+in this collection as aggregate-data applications; they are not examples of
+patient-level claims extraction. Keep simulated policy effects separate from
+observed estimates, and inflation separate from discounting.
+
+These distinctions identify questions to resolve during development. They do not
+approve new arguments, helper functions, score coefficients or scientific defaults.

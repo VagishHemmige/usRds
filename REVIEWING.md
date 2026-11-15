@@ -2,6 +2,9 @@
 
 Shared standards for human, ChatGPT and Claude reviews. Read AGENTS.md too.
 This file grants no posting, implementation, approval or merge permission.
+For an explicitly commissioned whole-package review, also use
+[PACKAGE_REVIEW.md](PACKAGE_REVIEW.md). Its full-inventory and deliverable
+requirements do not apply to routine PR reviews.
 
 For reference selection, placement and citation, follow
 [reference/README.md](reference/README.md). Consult relevant annotations and

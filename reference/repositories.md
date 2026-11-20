@@ -88,6 +88,119 @@ observed in source, not independently verified against release dictionaries.
   input nor any saved output was opened. Readable source remains useful without
   loading those artifacts.
 
+## acmilannesta/Adult_readmission
+
+- **Commit:** `4dae56c097258517c95b13907af4fef1db0b7e9e`.
+- **License check:** no license file in the tree at this commit. Read for ideas; do not copy code.
+- **Inspected:** [cohort file, complete](https://github.com/acmilannesta/Adult_readmission/blob/4dae56c097258517c95b13907af4fef1db0b7e9e/cohort%20medicare%20index%20hospital.103117.sas); [derived-variables file](https://github.com/acmilannesta/Adult_readmission/blob/4dae56c097258517c95b13907af4fef1db0b7e9e/derive%20new%20variables.06212018.sas),
+  lines 150–205 and 430–490 only. Source only.
+- **Context:** SAS, 2016 SAF; readmission after first adult kidney transplant, 2005–2013.
+- **Operational choices:**
+  - Medicare primary is PAYHIST `MPAB` or `MPO` on the transplant date
+    ([L23–28](https://github.com/acmilannesta/Adult_readmission/blob/4dae56c097258517c95b13907af4fef1db0b7e9e/cohort%20medicare%20index%20hospital.103117.sas#L23-L28)) and for at least 11/12 of the year before it, measured from
+    the later of `FIRST_SE` and transplant date minus 365 ([L67–166](https://github.com/acmilannesta/Adult_readmission/blob/4dae56c097258517c95b13907af4fef1db0b7e9e/cohort%20medicare%20index%20hospital.103117.sas#L67-L166)).
+  - `HOSP_to2009` and `HOSP_2010on` are stacked ([L45–65](https://github.com/acmilannesta/Adult_readmission/blob/4dae56c097258517c95b13907af4fef1db0b7e9e/cohort%20medicare%20index%20hospital.103117.sas#L45-L65)).
+  - Charlson groups match the first 3, 4 and 5 characters of `HSDIAG1`–`HSDIAG25`
+    ([L545–654](https://github.com/acmilannesta/Adult_readmission/blob/4dae56c097258517c95b13907af4fef1db0b7e9e/cohort%20medicare%20index%20hospital.103117.sas#L545-L654)).
+  - Same-day duplicate claims are dropped and nested overlapping stays merged before
+    counting ([L192–290](https://github.com/acmilannesta/Adult_readmission/blob/4dae56c097258517c95b13907af4fef1db0b7e9e/cohort%20medicare%20index%20hospital.103117.sas#L192-L290)); readmission counts are censored at a second
+    transplant within a year ([L367–388](https://github.com/acmilannesta/Adult_readmission/blob/4dae56c097258517c95b13907af4fef1db0b7e9e/cohort%20medicare%20index%20hospital.103117.sas#L367-L388)).
+  - 2728 variables from the 1995 and 2005 forms (for example `HYPER`/`COMO_HTN`,
+    `MDCR`/`MEDCOV_MEDICARE`) are combined into one flag, keeping the last record per
+    patient in file order ([L724–806](https://github.com/acmilannesta/Adult_readmission/blob/4dae56c097258517c95b13907af4fef1db0b7e9e/cohort%20medicare%20index%20hospital.103117.sas#L724-L806)).
+  - RXGROUP is grouped as 1–3 HD and 5/7/9 PD ([L433–446](https://github.com/acmilannesta/Adult_readmission/blob/4dae56c097258517c95b13907af4fef1db0b7e9e/derive%20new%20variables.06212018.sas#L433-L446)).
+- **Useful patterns:** proportion-of-time coverage rule; prefix matching on several
+  code lengths; one flag across 2728 form versions.
+- **Limits:** form selection depends on file order, not a date; overlap repairs
+  are made by hand for named patients; arrays have fixed maximum sizes.
+- **Provenance limitation:** the source hard-codes individual identifiers (values not
+  reproduced). The repository tree also lists a `.sas7bdat` and CSV files with
+  analysis-dataset names; they were not downloaded or opened, and their provenance
+  is unknown.
+
+## acmilannesta/dialysis_facility_kidney_tx
+
+- **Commit:** `da97ccb20689f40a5948fd7f8a310bc01dd79603`.
+- **License check:** no license file in the tree at this commit. Read for ideas; do not copy code.
+- **Inspected:** [source-data step](https://github.com/acmilannesta/dialysis_facility_kidney_tx/blob/da97ccb20689f40a5948fd7f8a310bc01dd79603/Cohort%20development/Source%20Data%202017_profitstatus_Jason_10152019.sas), lines 1–190; [Step 1](https://github.com/acmilannesta/dialysis_facility_kidney_tx/blob/da97ccb20689f40a5948fd7f8a310bc01dd79603/Cohort%20development/DF_profitStatus_WL_v5_Step1_JG_Mark_Jason_10152019.sas), lines 90–150;
+  [Step 2](https://github.com/acmilannesta/dialysis_facility_kidney_tx/blob/da97ccb20689f40a5948fd7f8a310bc01dd79603/Cohort%20development/DF_profitStatus_WL_v5_Step2_JG_Mark_Jason_10152019.sas), lines 60–260. Notebooks not opened.
+- **Context:** SAS, 2017 SAF; dialysis facility profit status and waitlisting
+  (Gander et al., JAMA Netw Open 2019).
+- **Operational choices:**
+  - Dialysis start is the earliest of `FIRST_SE`, `DIALDAT` and `FACSTD`
+    ([L181](https://github.com/acmilannesta/dialysis_facility_kidney_tx/blob/da97ccb20689f40a5948fd7f8a310bc01dd79603/Cohort%20development/Source%20Data%202017_profitstatus_Jason_10152019.sas#L181)). 2728 forms are kept one per patient and `DIALDAT`
+    ([L56–67](https://github.com/acmilannesta/dialysis_facility_kidney_tx/blob/da97ccb20689f40a5948fd7f8a310bc01dd79603/Cohort%20development/Source%20Data%202017_profitstatus_Jason_10152019.sas#L56-L67)).
+  - RXDETAIL 1–9 is dialysis; RXGROUP 1–2 in-centre HD, 3 home HD, 5/7/9 PD
+    ([L88–120](https://github.com/acmilannesta/dialysis_facility_kidney_tx/blob/da97ccb20689f40a5948fd7f8a310bc01dd79603/Cohort%20development/DF_profitStatus_WL_v5_Step2_JG_Mark_Jason_10152019.sas#L88-L120)).
+  - Facility at the event ([L150–256](https://github.com/acmilannesta/dialysis_facility_kidney_tx/blob/da97ccb20689f40a5948fd7f8a310bc01dd79603/Cohort%20development/DF_profitStatus_WL_v5_Step2_JG_Mark_Jason_10152019.sas#L150-L256)). The event date is the earlier of
+    waitlisting and transplant. The facility is the RXHIST `PROVUSRD` of a spell that
+    contains the event date strictly (`BEGDATE < event < ENDDATE`, so an event on a
+    spell's first or last day does not match; the author's comment flags this line).
+    If the event falls after dialysis start but before the first spell, the 2728
+    `PROVUSRD` is used. All other patients, including events in gaps between spells or
+    after the last spell, get the facility of their last RXHIST record, whatever its
+    dates. Patients without an event get their last record. A missing facility then
+    falls back to the 2728 `PROVUSRD`.
+  - `MEDICALCOVERAGE` combinations are collapsed as employer > Medicaid > Medicare >
+    other > none ([L124–150](https://github.com/acmilannesta/dialysis_facility_kidney_tx/blob/da97ccb20689f40a5948fd7f8a310bc01dd79603/Cohort%20development/DF_profitStatus_WL_v5_Step1_JG_Mark_Jason_10152019.sas#L124-L150)).
+- **Useful patterns:** an explicit insurance hierarchy; the facility question
+  ("which facility on this date") made explicit.
+- **Limits:** the strict boundaries and the last-record fallback are study-specific
+  and can assign a facility whose spell does not contain the event; not a reusable
+  rule as written. Code meanings must be checked against Appendix C; local paths throughout.
+
+## pairs-jh/criteria
+
+- **Commit:** `3264681c00f48ea1a1ab0c2636bcb357aedf7d66`.
+- **License check:** no license file in the tree at this commit. Read for ideas; do not copy code.
+- **Inspected:** [`12_benzodiazepines_expR.do`](https://github.com/pairs-jh/criteria/blob/3264681c00f48ea1a1ab0c2636bcb357aedf7d66/12_benzodiazepines_expR.do) (complete)
+  and the source text of [`chapter3.ipynb`](https://github.com/pairs-jh/criteria/blob/3264681c00f48ea1a1ab0c2636bcb357aedf7d66/chapter3.ipynb) cells 21 and 24–27
+  (0-based; code shown in markdown cells), without outputs. Log files, spreadsheets
+  and rendered pages not opened.
+- **Context:** Stata, 2015–2016 SAFs; potentially inappropriate medications and
+  mortality in older incident dialysis patients.
+- **Operational choices:**
+  - PAYHIST spells with `MPAB`/`MPO`, first spell starting 2013–2014 (cell 21).
+  - Incident in-centre patients 2013–2014, aged 65 and over; follow-up ends at
+    transplant, death or 30 September 2015 (cell 24).
+  - Entry requires day 91 of ESRD inside a PAYHIST spell (cell 26). Part D enrollment
+    is not checked.
+  - Drug classes flagged by substring match on `GNN` in yearly PDE files
+    ([L5–41](https://github.com/pairs-jh/criteria/blob/3264681c00f48ea1a1ab0c2636bcb357aedf7d66/12_benzodiazepines_expR.do#L5-L41)); exposure is time-varying from each
+    fill, with counting-process rows (cells 25–27).
+- **Useful patterns:** counting-process rows from fill dates.
+- **Limits:** 2013 and 2014 PDE files come from different SAF releases
+  ([L5–7](https://github.com/pairs-jh/criteria/blob/3264681c00f48ea1a1ab0c2636bcb357aedf7d66/12_benzodiazepines_expR.do#L5-L7)); substring matching can catch
+  unintended names; no Part D coverage denominator.
+
+## onc-healthit/2021PCOR-ML-AI
+
+- **Commit:** `9b849ba68558818d57477581253c49b9c66951c7`.
+- **License check:** MIT License.
+- **Inspected (source only):** [README](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/README.md) lines 125–303, searched
+  rather than read in full (data source, de-identification, sections 6.2.1–6.2.4);
+  [`pre_esrd_pre2011_claim_variables.R`](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/pre_esrd_pre2011_claim_variables.R)
+  (complete, 37 lines); [`setfieldtypes.R`](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/setfieldtypes.R#L1-L80) lines 1–80;
+  [`S3c_preesrdSrceDataPre2011.R`](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/S3c_preesrdSrceDataPre2011.R#L1-L40) lines 1–40
+  read, the rest searched; [`create_claim_table.R`](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/create_claim_table.R) and
+  [`S1b_patients.R`](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/S1b_patients.R) searched for claim-window, type and cohort
+  rules (lines cited below).
+- **Rule locators:** pre-2011 layout and `HCFASAF` ([S3c L10](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/S3c_preesrdSrceDataPre2011.R#L10));
+  yearly schema handling and pre-2015 ICD-9 tagging ([create_claim_table L2–28](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/create_claim_table.R#L2-L28));
+  dates from SAS day counts ([S1b L213–226](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/S1b_patients.R#L213-L226));
+  `DRG_CD` and `PROVUSRD` as numbers ([variables L13, L33](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/pre_esrd_pre2011_claim_variables.R#L13-L33)).
+- **Context:** R (PostgreSQL) and Python notebooks; ONC/UCSF model of death within
+  90 days of dialysis start using pre-ESRD claims. Dates were shifted per patient
+  for de-identification.
+- **Operational choices:** SAS files converted to CSV with haven. Pre-2011 pre-ESRD
+  claims are in `inc2008`–`inc2010`, with the claim type only in `HCFASAF`; the schema
+  changes by year; claims before 2015 are tagged ICD-9. CSV dates are read as SAS day
+  counts (origin 1960-01-01).
+- **Useful patterns:** per-year schema handling; explicit column types.
+- **Limits:** `DRG_CD` and `PROVUSRD` are read as numbers, which can drop leading
+  zeros. A missing principal diagnosis before 2011 is imputed at random from DRG,
+  a study choice. Earlier R search (2026-11-15) did not find this repository.
+
 ## Discovery scope
 
 GitHub repository searches on 2026-11-15: `USRDS` and
@@ -96,3 +209,9 @@ the `jsan4christ/USRDS2015` copy was not counted as a distinct implementation.
 This is an initial source set, not an exhaustive search of code mentioning USRDS.
 Follow code links in manuscript annotations to expand it without counting forks
 as independent evidence.
+
+Additional searches on 2026-11-20: GitHub code search for `USRDS`, `USRDS_ID`,
+`PAYHIST`, `RXHIST`, `MEDEVID`, `HCFASAF`, `RXHIST60`, `hosp_2010on` and `FIRST_SE`
+in SAS, Stata, Python, notebooks, SQL and SPSS, plus repository searches. Only the
+four repositories above had USRDS code beyond those already listed. NIDDK, CDC/NCHS,
+figshare and Zenodo searches found no USRDS analysis code.

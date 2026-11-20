@@ -177,9 +177,18 @@ observed in source, not independently verified against release dictionaries.
 
 - **Commit:** `9b849ba68558818d57477581253c49b9c66951c7`.
 - **License check:** MIT License.
-- **Inspected:** README sections on data creation; `create_data_set/` scripts
-  `S1b_patients.R`, `S3c_preesrdSrceDataPre2011.R`, `create_claim_table.R`,
-  `setfieldtypes.R`, `pre_esrd_pre2011_claim_variables.R`; source only.
+- **Inspected (source only):** [README](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/README.md) lines 125–303, searched
+  rather than read in full (data source, de-identification, sections 6.2.1–6.2.4);
+  [`pre_esrd_pre2011_claim_variables.R`](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/pre_esrd_pre2011_claim_variables.R)
+  (complete, 37 lines); [`setfieldtypes.R`](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/setfieldtypes.R#L1-L80) lines 1–80;
+  [`S3c_preesrdSrceDataPre2011.R`](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/S3c_preesrdSrceDataPre2011.R#L1-L40) lines 1–40
+  read, the rest searched; [`create_claim_table.R`](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/create_claim_table.R) and
+  [`S1b_patients.R`](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/S1b_patients.R) searched for claim-window, type and cohort
+  rules (lines cited below).
+- **Rule locators:** pre-2011 layout and `HCFASAF` ([S3c L10](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/S3c_preesrdSrceDataPre2011.R#L10));
+  yearly schema handling and pre-2015 ICD-9 tagging ([create_claim_table L2–28](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/create_claim_table.R#L2-L28));
+  dates from SAS day counts ([S1b L213–226](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/S1b_patients.R#L213-L226));
+  `DRG_CD` and `PROVUSRD` as numbers ([variables L13, L33](https://github.com/onc-healthit/2021PCOR-ML-AI/blob/9b849ba68558818d57477581253c49b9c66951c7/create_data_set/pre_esrd_pre2011_claim_variables.R#L13-L33)).
 - **Context:** R (PostgreSQL) and Python notebooks; ONC/UCSF model of death within
   90 days of dialysis start using pre-ESRD claims. Dates were shifted per patient
   for de-identification.

@@ -1,0 +1,109 @@
+---
+title: "Data protection and security"
+---
+
+> **This page is a stub.** It describes what usRds does with your data today
+> and the habits that keep USRDS files safe. It will grow as the package adds
+> its own data-safety checks (see
+> [issue #49](https://github.com/VagishHemmige/usRds/issues/49)).
+
+USRDS files are patient-level records released under a data use agreement
+(DUA). Your DUA is the rule that applies. This page does not replace it, and
+nothing in usRds makes an analysis compliant on its own. If this page and your
+DUA disagree, follow your DUA.
+
+## What usRds does with your files today
+
+- **It reads only the folder you name.** `set_USRDS_wd()` records the folder
+  in the environment variable `USRDS_WD` and maps the files in it by name.
+  When `USRDS_WD` is already set, loading the package maps the same folder
+  again. Mapping reads file names only, not file contents.
+- **It sends nothing anywhere.** usRds makes no network connections and
+  uploads nothing. Your data stays on the machine where you run R.
+- **It writes only where you tell it to.**
+  - `convert_usrds_to_parquet()` writes Parquet files to the `target_dir` you
+    give it, and nowhere else.
+  - `set_USRDS_wd(permanent = TRUE)` adds one line to your `~/.Renviron` file:
+    the folder path, not any data. With the default `permanent = FALSE`,
+    nothing is written.
+- **Results live in your R session.** Data frames returned by the `get_*()`
+  and cohort functions are patient-level. They stay in memory until you save
+  them somewhere.
+
+## Habits that keep data safe
+
+### Treat every copy as USRDS data
+
+Parquet files made by `convert_usrds_to_parquet()`, extracts you save as
+`.rds`, `.csv` or `.parquet`, and cohort data frames are all covered by your
+DUA, just like the original SAS and CSV files. Keep them inside the approved
+storage location your DUA names.
+
+### Keep data out of code repositories
+
+Keep the USRDS folder outside any git repository, and point usRds at it with
+`set_USRDS_wd()` instead of copying files into your project. If data files do
+have to sit inside a project folder, add ignore rules before the first commit,
+for example:
+
+```
+# .gitignore: never commit data
+*.sas7bdat
+*.parquet
+*.csv
+*.rds
+*.RData
+*.rda
+```
+
+Adapt the list to your project: a rule such as `*.csv` also ignores public
+CSV files you may want to commit. A file committed once stays in the
+repository's history even after you delete it, so check `git status` before
+each commit.
+
+### Do not save the workspace
+
+An `.RData` file saved when R closes can hold every patient-level data frame
+from the session. In RStudio, set *Tools > Global Options > General >
+Save workspace to .RData on exit* to **Never**, and turn off *Restore .RData
+into workspace at startup*. `.Rhistory` can also hold values you printed.
+
+### Keep paths out of shared code
+
+Call `set_USRDS_wd()` once (or with `permanent = TRUE`) rather than writing
+your data path into scripts you share. A path can reveal where restricted
+data is stored, and it breaks the script on anyone else's machine.
+
+### Check small cells before sharing results
+
+Tables, figures and model output can identify people when counts are small.
+The CMS cell size suppression policy, which applies to Medicare data, does not
+allow cells of 1 to 10 to be shown, or values from which such a cell could be
+worked out. Check the rule in your own DUA before you share any output.
+
+### Be careful with web tools and AI assistants
+
+Do not paste rows, upload files, or share screenshots of USRDS data with web
+services, including AI coding assistants, unless your DUA allows it. Sharing
+code, error messages with values removed, and made-up example data is a safer
+way to get help.
+
+## Planned protections
+
+The plan in [issue #49](https://github.com/VagishHemmige/usRds/issues/49)
+adds checks to the package itself. Names are provisional and none of these
+exist yet:
+
+- a read-only data-safety check when the package is attached, which notes
+  missing protections in a git repository and warns (by path only) about
+  data-like files that would be committed; turn it off with
+  `options(usRds.safety_check = FALSE)`;
+- the same check in `set_USRDS_wd()` and `convert_usrds_to_parquet()`;
+- `check_repo_for_usrds_data()`, which scans a folder for files that look
+  like USRDS data;
+- opt-in helpers to add ignore rules and a pre-commit check to a project;
+- `check_small_cells()`, which reports cells below a threshold (fewer than
+  11 by default) in data frames, tables, plots and survival fits, without
+  changing them.
+
+This page will be updated as each one is added.

@@ -15,3 +15,7 @@ articles:
   navbar: ~
   contents:
   - accessing-files
+- title: Data protection and security
+  navbar: ~
+  contents:
+  - articles/data-protection

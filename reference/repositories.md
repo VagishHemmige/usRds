@@ -88,6 +88,86 @@ observed in source, not independently verified against release dictionaries.
   input nor any saved output was opened. Readable source remains useful without
   loading those artifacts.
 
+## acmilannesta/Adult_readmission
+
+- **Commit:** `4dae56c097258517c95b13907af4fef1db0b7e9e`.
+- **License check:** no license file in the tree at this commit. Read for ideas; do not copy code.
+- **Inspected:** `cohort medicare index hospital.103117.sas` (complete) and
+  `derive new variables.06212018.sas` (searched for USRDS logic); source only.
+- **Context:** SAS, 2016 SAF; readmission after first adult kidney transplant, 2005–2013.
+- **Operational choices:** Medicare primary means PAYHIST `MPAB` or `MPO` on the
+  transplant date and for at least 11/12 of the year before it, measured from the
+  later of `FIRST_SE` and transplant date minus 365. `HOSP_to2009` and `HOSP_2010on`
+  are stacked; diagnoses come from `HSDIAG1`–`HSDIAG25`; Charlson groups match the
+  first 3, 4 and 5 characters of each code. Same-day duplicate claims are dropped and
+  nested overlapping stays merged before readmissions are counted; follow-up is censored
+  at a second transplant. 2728 variables from the 1995 and 2005 forms (for example
+  `HYPER`/`COMO_HTN`, `MDCR`/`MEDCOV_MEDICARE`) are combined into one flag, keeping
+  the last form in file order. RXGROUP is grouped as 1–3 HD, 5/7/9 PD.
+- **Useful patterns:** proportion-of-time coverage rule; prefix matching on several
+  code lengths; one flag across 2728 form versions.
+- **Limits:** form selection depends on file order, not a date; overlap repairs
+  are made by hand for named patients. Arrays have fixed maximum sizes.
+- **Provenance limitation:** the source hard-codes individual identifiers (values not
+  reproduced). The repository tree also lists a `.sas7bdat` and CSV files with
+  analysis-dataset names; they were not downloaded or opened, and their provenance
+  is unknown.
+
+## acmilannesta/dialysis_facility_kidney_tx
+
+- **Commit:** `da97ccb20689f40a5948fd7f8a310bc01dd79603`.
+- **License check:** no license file in the tree at this commit. Read for ideas; do not copy code.
+- **Inspected:** the SAS files under `Cohort development/` (searched for USRDS logic);
+  notebooks not opened.
+- **Context:** SAS, 2017 SAF; dialysis facility profit status and waitlisting
+  (Gander et al., JAMA Netw Open 2019).
+- **Operational choices:** dialysis start is the earliest of `FIRST_SE`, `DIALDAT` and
+  `FACSTD`. The facility at waitlisting or transplant is the RXHIST `PROVUSRD` of the
+  spell containing the event date; before all spells, or with no RXHIST, the 2728
+  `PROVUSRD`. RXDETAIL 1–9 is dialysis; RXGROUP 1–2 in-centre HD, 3 home HD, 5/7/9 PD.
+  2728 forms are kept one per patient and `DIALDAT`. `MEDICALCOVERAGE` combinations are
+  collapsed as employer > Medicaid > Medicare > other > none.
+- **Useful patterns:** facility as a function of the event date with a documented
+  fallback; an explicit insurance hierarchy.
+- **Limits:** code meanings must be checked against Appendix C for the release;
+  local paths throughout.
+
+## pairs-jh/criteria
+
+- **Commit:** `3264681c00f48ea1a1ab0c2636bcb357aedf7d66`.
+- **License check:** no license file in the tree at this commit. Read for ideas; do not copy code.
+- **Inspected:** `12_benzodiazepines_expR.do` and the source cells (no outputs) of
+  `chapter3.ipynb`; log files, spreadsheets and rendered pages not opened.
+- **Context:** Stata, 2015–2016 SAFs; potentially inappropriate medications and
+  mortality in older incident dialysis patients.
+- **Operational choices:** incident in-centre patients 2013–2014 aged 65 and over;
+  entry requires day 91 of ESRD inside a PAYHIST `MPAB`/`MPO` spell; Part D
+  enrollment is not checked. Drug classes are flagged by substring match on `GNN` in
+  yearly PDE files; exposure is time-varying from each fill. Follow-up ends at
+  transplant, death or 30 September 2015.
+- **Useful patterns:** counting-process rows from fill dates.
+- **Limits:** 2013 and 2014 PDE files come from different SAF releases; substring
+  matching can catch unintended names; no Part D coverage denominator.
+
+## onc-healthit/2021PCOR-ML-AI
+
+- **Commit:** `9b849ba68558818d57477581253c49b9c66951c7`.
+- **License check:** MIT License.
+- **Inspected:** README sections on data creation; `create_data_set/` scripts
+  `S1b_patients.R`, `S3c_preesrdSrceDataPre2011.R`, `create_claim_table.R`,
+  `setfieldtypes.R`, `pre_esrd_pre2011_claim_variables.R`; source only.
+- **Context:** R (PostgreSQL) and Python notebooks; ONC/UCSF model of death within
+  90 days of dialysis start using pre-ESRD claims. Dates were shifted per patient
+  for de-identification.
+- **Operational choices:** SAS files converted to CSV with haven. Pre-2011 pre-ESRD
+  claims are in `inc2008`–`inc2010`, with the claim type only in `HCFASAF`; the schema
+  changes by year; claims before 2015 are tagged ICD-9. CSV dates are read as SAS day
+  counts (origin 1960-01-01).
+- **Useful patterns:** per-year schema handling; explicit column types.
+- **Limits:** `DRG_CD` and `PROVUSRD` are read as numbers, which can drop leading
+  zeros. A missing principal diagnosis before 2011 is imputed at random from DRG,
+  a study choice. Earlier R search (2026-11-15) did not find this repository.
+
 ## Discovery scope
 
 GitHub repository searches on 2026-11-15: `USRDS` and
@@ -96,3 +176,9 @@ the `jsan4christ/USRDS2015` copy was not counted as a distinct implementation.
 This is an initial source set, not an exhaustive search of code mentioning USRDS.
 Follow code links in manuscript annotations to expand it without counting forks
 as independent evidence.
+
+Additional searches on 2026-11-20: GitHub code search for `USRDS`, `USRDS_ID`,
+`PAYHIST`, `RXHIST`, `MEDEVID`, `HCFASAF`, `RXHIST60`, `hosp_2010on` and `FIRST_SE`
+in SAS, Stata, Python, notebooks, SQL and SPSS, plus repository searches. Only the
+four repositories above had USRDS code beyond those already listed. NIDDK, CDC/NCHS,
+figshare and Zenodo searches found no USRDS analysis code.

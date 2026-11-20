@@ -9,3 +9,8 @@
 
 - [Using usRds to access data within the USRDS file
   system](https://vagishhemmige.github.io/usRds/articles/accessing-files.md):
+
+### Data protection and security
+
+- [Data protection and
+  security](https://vagishhemmige.github.io/usRds/articles/data-protection.md):

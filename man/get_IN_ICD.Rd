@@ -15,7 +15,8 @@ If NULL (default), returns all diagnosis claims for the selected years (and USRD
 \item{usrds_ids}{Optional. Vector of USRDS_IDs to restrict the output to specific patients.}
 }
 \value{
-A data frame with columns: \code{USRDS_ID}, \code{CODE}, and \code{CLM_FROM}.
+A data frame with columns: \code{USRDS_ID}, \code{CODE}, \code{CLM_FROM}, and
+\code{HCFASAF} (claim type, as a labelled factor).
 }
 \description{
 Extracts all claims containing specified ICD-9 or ICD-10 diagnosis codes from

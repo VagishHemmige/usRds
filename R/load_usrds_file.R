@@ -8,8 +8,8 @@
 #'
 #' All variable names are standardized to uppercase after loading.
 #'
-#' `col_select` supports tidyselect syntax for CSV and SAS files, and is also available for
-#' Parquet files (resolved automatically to column names).
+#' `col_select` supports tidyselect syntax (column names, `all_of()`,
+#' `starts_with()` and so on) for CSV, SAS and Parquet files alike.
 #'
 #' @param file_key Character. File key (e.g., "PATIENTS", "RXHIST"). Case-insensitive match to registered file names.
 #' @param factor_labels Logical. Whether to apply factor labels (from Appendix C). Default = TRUE.
@@ -75,26 +75,19 @@ load_usrds_file <- function(
   }
 
   # ---- Read the file ----
+  # All three readers take a tidy selection, so the selection is captured
+  # once, unevaluated, and passed on (#22).
+  col_select <- rlang::enquo(col_select)
   df <- switch(
     suffix,
     "csv" = {
-      readr::read_csv(full_path, col_select = col_select, ...)
+      readr::read_csv(full_path, col_select = !!col_select, ...)
     },
     "sas7bdat" = {
-      haven::read_sas(full_path, col_select = col_select, ...)
+      haven::read_sas(full_path, col_select = !!col_select, ...)
     },
     "parquet" = {
-      if (is.null(col_select)) {
-        arrow::read_parquet(full_path, ...)
-      } else {
-        dummy <- arrow::open_dataset(full_path)$head(1) |> as.data.frame()
-        selected_names <- tidyselect::eval_select(
-          rlang::enquo(col_select),
-          dummy
-        ) |>
-          names()
-        arrow::read_parquet(full_path, columns = selected_names, ...)
-      }
+      arrow::read_parquet(full_path, col_select = !!col_select, ...)
     },
     stop("Unsupported file type: ", suffix)
   )

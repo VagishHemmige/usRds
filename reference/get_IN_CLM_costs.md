@@ -22,7 +22,10 @@ get_IN_CLM_costs(years, usrds_ids = NULL)
 
 ## Value
 
-A data frame with columns: \`
+A data frame with one row per claim and columns `USRDS_ID`, `CLM_FROM`
+and `CLM_THRU` (both `Date`), `CLM_TOT`, `CLM_AMT` and `HCFASAF` (claim
+type, as a factor). Dates stored as text that cannot be read become
+`NA`, with a warning naming the file and column.
 
 ## Details
 

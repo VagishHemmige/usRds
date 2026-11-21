@@ -63,7 +63,10 @@ Supports filtering by USRDS_IDs. Handles CSV, SAS, and Parquet formats.</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with columns: `</p>
+    <p>A data frame with one row per claim and columns <code>USRDS_ID</code>,
+<code>CLM_FROM</code> and <code>CLM_THRU</code> (both <code>Date</code>), <code>CLM_TOT</code>, <code>CLM_AMT</code> and
+<code>HCFASAF</code> (claim type, as a factor). Dates stored as text that cannot
+be read become <code>NA</code>, with a warning naming the file and column.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

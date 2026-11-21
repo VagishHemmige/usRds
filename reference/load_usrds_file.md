@@ -63,9 +63,8 @@ factors and variable descriptions.
 
 All variable names are standardized to uppercase after loading.
 
-`col_select` supports tidyselect syntax for CSV and SAS files, and is
-also available for Parquet files (resolved automatically to column
-names).
+`col_select` supports tidyselect syntax (column names, `all_of()`,
+`starts_with()` and so on) for CSV, SAS and Parquet files alike.
 
 ## Examples
 

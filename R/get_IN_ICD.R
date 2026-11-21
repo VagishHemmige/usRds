@@ -43,7 +43,7 @@
       dplyr::rename_with(toupper) |>
       .filter_in("CODE", icd_codes) |>
       .filter_in("USRDS_ID", usrds_ids) |>
-      dplyr::select("USRDS_ID", "CODE", "CLM_FROM")
+      dplyr::select("USRDS_ID", "CODE", "CLM_FROM", "HCFASAF")
   } else {
     stop("Unsupported file type: ", file_suffix)
   }
@@ -64,7 +64,8 @@
 #' @param years Integer vector of calendar years to include.
 #' @param usrds_ids Optional. Vector of USRDS_IDs to restrict the output to specific patients.
 #'
-#' @return A data frame with columns: `USRDS_ID`, `CODE`, and `CLM_FROM`.
+#' @return A data frame with columns: `USRDS_ID`, `CODE`, `CLM_FROM`, and
+#'   `HCFASAF` (claim type, as a labelled factor).
 #' @export
 #'
 #' @examples

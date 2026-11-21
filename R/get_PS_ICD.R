@@ -47,7 +47,7 @@
       dplyr::rename_with(toupper) |>
       .filter_in("DIAG", icd_codes) |>
       .filter_in("USRDS_ID", usrds_ids) |>
-      dplyr::select("USRDS_ID", "DIAG", "CLM_FROM", "CLM_THRU")
+      dplyr::select("USRDS_ID", "DIAG", "CLM_FROM", "CLM_THRU", "HCFASAF")
   } else {
     stop("Unsupported file type: ", file_suffix)
   }

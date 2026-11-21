@@ -89,3 +89,86 @@ test_that("get_IN_HCPCS() filters CSV claims by HCPCS code", {
     ignore_attr = TRUE
   )
 })
+
+test_that("get_IN_CLM_costs() returns both claim dates as Date from CSV (#33)", {
+  local_claims_csv(
+    "inc2010a",
+    data.frame(
+      USRDS_ID = c(1, 2),
+      CLM_FROM = c("01JAN2010", "15FEB2010"),
+      CLM_THRU = c("03JAN2010", "15FEB2010"),
+      CLM_TOT = c(300, 50),
+      CLM_AMT = c(150, 20),
+      HCFASAF = c("I", "O")
+    )
+  )
+
+  result <- suppressMessages(get_IN_CLM_costs(years = 2010))
+
+  expect_s3_class(result$CLM_FROM, "Date")
+  expect_s3_class(result$CLM_THRU, "Date")
+  expect_equal(result$CLM_THRU, as.Date(c("2010-01-03", "2010-02-15")))
+})
+
+test_that("CSV institutional claims prorate over their days and keep their total (#33)", {
+  local_claims_csv(
+    "inc2010a",
+    data.frame(
+      USRDS_ID = 1,
+      CLM_FROM = "01JAN2010",
+      CLM_THRU = "03JAN2010",
+      CLM_TOT = 300,
+      CLM_AMT = 150,
+      HCFASAF = "I"
+    )
+  )
+
+  daily <- suppressMessages(get_IN_CLM_costs(years = 2010)) |>
+    prorate_costs_by_day()
+
+  expect_equal(daily$service_date, as.Date("2010-01-01") + 0:2)
+  expect_equal(sum(daily$CLM_AMT_PRORATED), 150)
+  expect_equal(sum(daily$CLM_TOT_PRORATED), 300)
+})
+
+test_that("get_IN_CLM_costs() reports CSV dates it cannot read (#33)", {
+  local_claims_csv(
+    "inc2010a",
+    data.frame(
+      USRDS_ID = c(1, 2, 3),
+      CLM_FROM = c("01JAN2010", "01JAN2010", "01JAN2010"),
+      CLM_THRU = c("03JAN2010", "not a date", "."),
+      CLM_TOT = c(300, 50, 10),
+      CLM_AMT = c(150, 20, 5),
+      HCFASAF = c("I", "O", "O")
+    )
+  )
+
+  expect_warning(
+    result <- suppressMessages(get_IN_CLM_costs(years = 2010)),
+    class = "usrds_unparsed_dates"
+  )
+  expect_equal(
+    result$CLM_THRU,
+    as.Date(c("2010-01-03", NA, NA))
+  )
+})
+
+test_that("get_IN_CLM_costs() keeps CSV dates that are already ISO (#33)", {
+  local_claims_csv(
+    "inc2010a",
+    data.frame(
+      USRDS_ID = 1,
+      CLM_FROM = "2010-01-01",
+      CLM_THRU = "2010-01-03",
+      CLM_TOT = 300,
+      CLM_AMT = 150,
+      HCFASAF = "I"
+    )
+  )
+
+  result <- expect_no_warning(suppressMessages(get_IN_CLM_costs(years = 2010)))
+
+  expect_equal(result$CLM_FROM, as.Date("2010-01-01"))
+  expect_equal(result$CLM_THRU, as.Date("2010-01-03"))
+})

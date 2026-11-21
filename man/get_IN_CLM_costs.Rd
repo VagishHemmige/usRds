@@ -12,7 +12,10 @@ get_IN_CLM_costs(years, usrds_ids = NULL)
 \item{usrds_ids}{Optional vector of USRDS_IDs to filter to specific patients.}
 }
 \value{
-A data frame with columns: `
+A data frame with one row per claim and columns \code{USRDS_ID},
+\code{CLM_FROM} and \code{CLM_THRU} (both \code{Date}), \code{CLM_TOT}, \code{CLM_AMT} and
+\code{HCFASAF} (claim type, as a factor). Dates stored as text that cannot
+be read become \code{NA}, with a warning naming the file and column.
 }
 \description{
 Searches institutional claim files for specified USRDS_IDs in specified years.

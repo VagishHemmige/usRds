@@ -22,14 +22,14 @@
       dplyr::rename_with(toupper) |>
       dplyr::select(dplyr::all_of(variablelist)) |>
       .filter_in("USRDS_ID", usrds_ids) |>
-      dplyr::mutate(CLM_FROM = lubridate::as_date(.data$CLM_FROM)) |>
-      dplyr::collect()
+      dplyr::collect() |>
+      .parse_claim_dates(c("CLM_FROM", "CLM_THRU"), file_path)
   } else if (file_suffix == "csv") {
     readr::read_csv(file_path, show_col_types = FALSE) |>
       dplyr::rename_with(toupper) |>
       .filter_in("USRDS_ID", usrds_ids) |>
       dplyr::select(dplyr::all_of(variablelist)) |>
-      dplyr::mutate(CLM_FROM = suppressWarnings(lubridate::dmy(.data$CLM_FROM)))
+      .parse_claim_dates(c("CLM_FROM", "CLM_THRU"), file_path)
   } else if (file_suffix == "sas7bdat") {
     haven::read_sas(file_path, col_select = variablelist) |>
       dplyr::rename_with(toupper) |>
@@ -50,7 +50,10 @@
 #' @param years Integer vector of years to include.
 #' @param usrds_ids Optional vector of USRDS_IDs to filter to specific patients.
 #'
-#' @return A data frame with columns: `
+#' @return A data frame with one row per claim and columns `USRDS_ID`,
+#'   `CLM_FROM` and `CLM_THRU` (both `Date`), `CLM_TOT`, `CLM_AMT` and
+#'   `HCFASAF` (claim type, as a factor). Dates stored as text that cannot
+#'   be read become `NA`, with a warning naming the file and column.
 #' @export
 #'
 #' @examples

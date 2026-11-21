@@ -5,5 +5,5 @@
     Condition
       Warning:
       CLM_THRU in 'inc2010a.csv': 2 values could not be read as dates and were set to `NA`.
-      i Expected day-month-year dates such as "01JAN2010".
+      i Dates are read in the forms "31JAN2010" and "2010-01-31".
 

@@ -172,3 +172,27 @@ test_that("get_IN_CLM_costs() keeps CSV dates that are already ISO (#33)", {
   expect_equal(result$CLM_FROM, as.Date("2010-01-01"))
   expect_equal(result$CLM_THRU, as.Date("2010-01-03"))
 })
+
+test_that("an unreadable date on one claim keeps other claims and their costs (#33)", {
+  local_claims_csv(
+    "inc2010a",
+    data.frame(
+      USRDS_ID = c(1, 2),
+      CLM_FROM = c("2010-01-01", "2010-01-01"),
+      CLM_THRU = c("2010-01-03", "not a date"),
+      CLM_TOT = c(300, 50),
+      CLM_AMT = c(150, 20),
+      HCFASAF = c("I", "O")
+    )
+  )
+
+  expect_warning(
+    claims <- suppressMessages(get_IN_CLM_costs(years = 2010)),
+    class = "usrds_unparsed_dates"
+  )
+  daily <- prorate_costs_by_day(claims[claims$USRDS_ID == 1, ])
+
+  expect_equal(claims$CLM_THRU, as.Date(c("2010-01-03", NA)))
+  expect_equal(nrow(daily), 3)
+  expect_equal(sum(daily$CLM_AMT_PRORATED), 150)
+})

@@ -9,14 +9,15 @@
 #     of the values (DATE9., MMDDYY10., ISO, digits with a leading zero, ...)
 #     counted over the first rows;
 #   - whether each SAS file opens with haven, and with encoding = "latin1";
-#   - for a few code columns (HCFASAF, SPCLTY, PAYER), which codes occur in
-#     the first rows;
+#   - for a few code columns (HCFASAF, SPCLTY, PAYER), which of their
+#     Appendix C codes (or code labels) occur in the first rows;
 #   - Appendix B's type and format for each column, where the file name
 #     matches an Appendix B sheet.
 # The report holds no counts of values or codes (only which forms and codes
 # occur), so no small cell can be shown or worked out from other numbers.
 # It never prints a USRDS_ID, a date, an amount or any other value except
-# the codes in the few code columns named above. The only file names it
+# Appendix C codes and labels in the few code columns named above; any
+# other value in those columns goes only to the diagnostics file. The only file names it
 # prints are names usRds recognises as USRDS files; unrecognised names,
 # folder paths and the text of errors go to a separate diagnostics file for
 # your eyes only, which the report names but does not include.
@@ -211,7 +212,16 @@ usrds_data_facts <- function(
       add(column, " | ", result$columns$found[j], " | ", expected)
     }
     for (code in names(result$codes)) {
-      add("Codes in ", code, " (first rows): ", result$codes[[code]])
+      summary <- result$codes[[code]]
+      line <- paste0("Codes in ", code, " (first rows): ", summary$shown)
+      if (length(summary$other) > 0) {
+        line <- paste0(
+          line, "; also values not in Appendix C (",
+          local_only(paste0("Other values in ", code, ", ", f$name), summary$other),
+          ")"
+        )
+      }
+      add(line)
     }
   }
 
@@ -292,17 +302,39 @@ usrds_data_facts <- function(
 
 # Which codes occur, most common first, with no counts. Only short values
 # are listed, so a free-text column named like a code column shows nothing.
-.code_summary <- function(values) {
+# Which codes occur, most common first, with no counts. Only values that
+# are codes or code labels in the column's Appendix C format are shown;
+# anything else is returned separately, for the local diagnostics file
+# only, since a code column can hold free text (#97).
+.code_summary <- function(values, allowed) {
   values <- as.character(values)
   values[is.na(values)] <- "<NA>"
-  counts <- sort(table(values), decreasing = TRUE)
-  if (length(counts) > 30) {
-    return("more than 30 distinct values; not listed")
-  }
-  if (any(nchar(names(counts)) > 40)) {
-    return("values longer than 40 characters; not listed")
-  }
-  paste(paste0("'", names(counts), "'"), collapse = ", ")
+  found <- names(sort(table(values), decreasing = TRUE))
+  is_allowed <- found %in% c(allowed, "<NA>")
+  shown <- found[is_allowed]
+  list(
+    shown = if (length(allowed) == 0) {
+      "no Appendix C code list found for this column; values not listed"
+    } else if (length(shown) == 0) {
+      "none of its Appendix C codes"
+    } else {
+      paste(paste0("'", shown, "'"), collapse = ", ")
+    },
+    other = utils::head(found[!is_allowed], 30)
+  )
+}
+
+# The codes and code labels Appendix C gives for a column, found through
+# the column's format in Appendix B (any sheet).
+.appendix_c_codes <- function(column) {
+  metadata_b <- utils::getFromNamespace("metadata_b", "usRds")
+  metadata_c <- utils::getFromNamespace("metadata_c", "usRds")
+  formats <- metadata_b$format[toupper(metadata_b$variable) == toupper(column)]
+  formats <- unique(gsub("^\\$|\\.$", "", stats::na.omit(formats)))
+  formats <- intersect(formats, names(metadata_c))
+  unique(unlist(lapply(formats, function(f) {
+    c(as.character(metadata_c[[f]]$value), as.character(metadata_c[[f]]$description))
+  })))
 }
 
 .describe_file <- function(path, suffix, n_rows, code_columns) {
@@ -365,7 +397,7 @@ usrds_data_facts <- function(
   codes <- list()
   if (!is.null(sample)) {
     for (column in names(sample)[toupper(names(sample)) %in% code_columns]) {
-      codes[[column]] <- .code_summary(sample[[column]])
+      codes[[column]] <- .code_summary(sample[[column]], .appendix_c_codes(column))
     }
   }
   list(columns = columns, codes = codes, note = note)

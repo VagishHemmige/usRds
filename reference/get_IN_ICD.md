@@ -31,7 +31,8 @@ get_IN_ICD(icd_codes = NULL, years, usrds_ids = NULL)
 
 ## Value
 
-A data frame with columns: `USRDS_ID`, `CODE`, and `CLM_FROM`.
+A data frame with columns: `USRDS_ID`, `CODE`, `CLM_FROM`, and `HCFASAF`
+(claim type, as a labelled factor).
 
 ## Examples
 

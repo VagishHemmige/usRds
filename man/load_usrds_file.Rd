@@ -41,8 +41,8 @@ This function loads a USRDS data file using the internal registry and optionally
 \details{
 All variable names are standardized to uppercase after loading.
 
-\code{col_select} supports tidyselect syntax for CSV and SAS files, and is also available for
-Parquet files (resolved automatically to column names).
+\code{col_select} supports tidyselect syntax (column names, \code{all_of()},
+\code{starts_with()} and so on) for CSV, SAS and Parquet files alike.
 }
 \examples{
 \dontrun{

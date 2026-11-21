@@ -39,10 +39,38 @@
       dplyr::filter(toupper(variable) != "VARIABLE") |>
       dplyr::select(file, variable, type, length, format, description)
 
+    # Cells that wrap in the workbook hold line breaks inside names and
+    # formats (603 names and 79 formats in the 2024 workbook), so those
+    # variables never matched a data column or an Appendix C format (#18).
+    fixed_names <- .remove_line_breaks(df$variable)
+    new_duplicate <- duplicated(toupper(fixed_names)) &
+      !duplicated(toupper(df$variable))
+    if (any(new_duplicate)) {
+      stop(
+        "Removing line breaks gives duplicate variable names in sheet ",
+        sheet, ": ", paste(unique(fixed_names[new_duplicate]), collapse = ", ")
+      )
+    }
+    df$variable <- fixed_names
+    df$format <- .remove_line_breaks(df$format)
+
     return(df)
   })
 
   return(b_metadata)
+}
+
+
+#' Remove line breaks left inside cell text by wrapping in Excel
+#'
+#' @param x A vector; anything other than character is returned unchanged.
+#' @return `x` with every carriage return and line feed removed.
+#' @noRd
+.remove_line_breaks <- function(x) {
+  if (!is.character(x)) {
+    return(x)
+  }
+  gsub("[\r\n]", "", x)
 }
 
 

@@ -48,3 +48,38 @@ test_that(".parse_claim_dates() warns with a count, not the values (#33)", {
   )
   expect_equal(result$CLM_THRU, as.Date(c("2010-01-01", NA, NA)))
 })
+
+test_that(".parse_claim_dates() reads each value on its own, so one bad value spoils no other (#33)", {
+  claims <- data.frame(CLM_FROM = c("2010-01-01", "01FEB2010", "not a date"))
+
+  expect_warning(
+    result <- .parse_claim_dates(claims, "CLM_FROM", "x.csv"),
+    class = "usrds_unparsed_dates"
+  )
+
+  expect_equal(result$CLM_FROM, as.Date(c("2010-01-01", "2010-02-01", NA)))
+})
+
+test_that(".parse_claim_dates() does not guess the order of slash dates (#33)", {
+  claims <- data.frame(CLM_FROM = c("01/02/2010", "01FEB2010"))
+
+  expect_warning(
+    result <- .parse_claim_dates(claims, "CLM_FROM", "x.csv"),
+    class = "usrds_unparsed_dates"
+  )
+
+  expect_equal(result$CLM_FROM, as.Date(c(NA, "2010-02-01")))
+})
+
+test_that(".parse_claim_dates() reads numbers as 1970-based days only when asked (#33)", {
+  claims <- data.frame(CLM_FROM = c(14610, 14641))
+
+  expect_equal(
+    .parse_claim_dates(claims, "CLM_FROM", "x.parquet", numeric_as_unix_days = TRUE)$CLM_FROM,
+    as.Date(c("2010-01-01", "2010-02-01"))
+  )
+  expect_warning(
+    .parse_claim_dates(claims, "CLM_FROM", "x.csv"),
+    class = "usrds_unparsed_dates"
+  )
+})

@@ -23,7 +23,11 @@
       dplyr::select(dplyr::all_of(variablelist)) |>
       .filter_in("USRDS_ID", usrds_ids) |>
       dplyr::collect() |>
-      .parse_claim_dates(c("CLM_FROM", "CLM_THRU"), file_path)
+      .parse_claim_dates(
+        c("CLM_FROM", "CLM_THRU"),
+        file_path,
+        numeric_as_unix_days = TRUE
+      )
   } else if (file_suffix == "csv") {
     readr::read_csv(file_path, show_col_types = FALSE) |>
       dplyr::rename_with(toupper) |>

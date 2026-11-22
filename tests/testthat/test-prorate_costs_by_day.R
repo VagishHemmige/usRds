@@ -130,3 +130,42 @@ test_that("prorating and adjusting for inflation give the same result in either 
   expect_equal(sum(adjusted_first$CLM_PMT_AMT_ADJUSTED_PRORATED), sum(expected))
   expect_equal(adjusted_first$REV_CH_ADJUSTED_PRORATED[1:4], rep(NA_real_, 4))
 })
+
+test_that("prorate_costs_by_day() warns when it drops claims with missing or reversed dates (#66)", {
+  claims <- data.frame(
+    USRDS_ID = c(1, 2, 3, 4),
+    CLM_FROM = as.Date(c("2010-01-01", "2010-01-05", NA, "2010-01-01")),
+    CLM_THRU = as.Date(c("2010-01-03", "2010-01-01", "2010-01-02", NA)),
+    PMTAMT = c(30, 40, 50, 60)
+  )
+
+  expect_snapshot(result <- prorate_costs_by_day(claims))
+  expect_equal(unique(result$USRDS_ID), 1)
+  expect_equal(sum(result$PMTAMT_PRORATED), 30)
+})
+
+test_that("prorate_costs_by_day()'s dropped-claim warning has a class (#66)", {
+  claims <- data.frame(
+    USRDS_ID = 1,
+    CLM_FROM = as.Date("2010-01-05"),
+    CLM_THRU = as.Date("2010-01-01"),
+    PMTAMT = 40
+  )
+
+  expect_warning(
+    result <- prorate_costs_by_day(claims),
+    class = "usrds_dropped_claims"
+  )
+  expect_equal(nrow(result), 0)
+})
+
+test_that("prorate_costs_by_day() does not warn when every claim has valid dates (#66)", {
+  claims <- data.frame(
+    USRDS_ID = c(1, 2),
+    CLM_FROM = as.Date(c("2010-01-01", "2010-01-01")),
+    CLM_THRU = as.Date(c("2010-01-01", "2010-01-02")),
+    PMTAMT = c(10, 20)
+  )
+
+  expect_no_warning(prorate_costs_by_day(claims))
+})

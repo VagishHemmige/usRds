@@ -18,11 +18,29 @@ this function will prorate the costs evenly over the duration of the claim.
 }
 \details{
 The original cost variables will be removed, and replaced by variables with the same name but with
-"_PRORATED" added to the variable na,e.
+"_PRORATED" added to the variable name.
+
+The amount columns processed are those returned by \code{\link[=get_PS_CLM_costs]{get_PS_CLM_costs()}},
+\code{\link[=get_IN_CLM_costs]{get_IN_CLM_costs()}}, \code{\link[=get_PS_REV_costs]{get_PS_REV_costs()}} and \code{\link[=get_IN_REV_costs]{get_IN_REV_costs()}}:
+\code{CLM_PMT_AMT}, \code{CARR_CLM_PRMRY_PYR_PD_AMT}, \code{NCH_CLM_PRVDR_PMT_AMT},
+\code{NCH_CLM_BENE_PMT_AMT}, \code{NCH_CARR_SBMT_CHRG_AMT}, \code{NCH_CARR_ALOW_CHRG_AMT},
+\code{CARR_CLM_CASH_DDCTBL_APPLY_AMT}, \code{CLM_TOT}, \code{CLM_AMT}, \code{SBMTCH}, \code{ALOWCH},
+\code{PMTAMT}, \code{REV_CH} and \code{REVPMT}, and the same columns with \verb{_ADJUSTED}
+added by \code{\link[=adjust_costs_for_inflation]{adjust_costs_for_inflation()}}. Other columns are kept unchanged
+on every day of the claim.
+
+A claim whose \code{CLM_FROM} or \code{CLM_THRU} is missing, or whose \code{CLM_THRU} is
+before its \code{CLM_FROM}, cannot be spread over days. It is left out of the
+result, with a warning giving how many claims were left out for each
+reason, so prorated totals can fall short of the input.
 }
 \examples{
-\dontrun{
-prorate_costs_by_day()
-}
+claims <- data.frame(
+  USRDS_ID = c(1, 2),
+  CLM_FROM = as.Date(c("2010-01-01", "2010-02-01")),
+  CLM_THRU = as.Date(c("2010-01-03", "2010-02-01")),
+  PMTAMT = c(30, 20)
+)
+prorate_costs_by_day(claims)
 
 }

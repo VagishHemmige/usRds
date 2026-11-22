@@ -64,14 +64,35 @@ this function will prorate the costs evenly over the duration of the claim.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The original cost variables will be removed, and replaced by variables with the same name but with
-"_PRORATED" added to the variable na,e.</p>
+"_PRORATED" added to the variable name.</p>
+<p>The amount columns processed are those returned by <code><a href="get_PS_CLM_costs.html">get_PS_CLM_costs()</a></code>,
+<code><a href="get_IN_CLM_costs.html">get_IN_CLM_costs()</a></code>, <code><a href="get_PS_REV_costs.html">get_PS_REV_costs()</a></code> and <code><a href="get_IN_REV_costs.html">get_IN_REV_costs()</a></code>:
+<code>CLM_PMT_AMT</code>, <code>CARR_CLM_PRMRY_PYR_PD_AMT</code>, <code>NCH_CLM_PRVDR_PMT_AMT</code>,
+<code>NCH_CLM_BENE_PMT_AMT</code>, <code>NCH_CARR_SBMT_CHRG_AMT</code>, <code>NCH_CARR_ALOW_CHRG_AMT</code>,
+<code>CARR_CLM_CASH_DDCTBL_APPLY_AMT</code>, <code>CLM_TOT</code>, <code>CLM_AMT</code>, <code>SBMTCH</code>, <code>ALOWCH</code>,
+<code>PMTAMT</code>, <code>REV_CH</code> and <code>REVPMT</code>, and the same columns with <code>_ADJUSTED</code>
+added by <code><a href="adjust_costs_for_inflation.html">adjust_costs_for_inflation()</a></code>. Other columns are kept unchanged
+on every day of the claim.</p>
+<p>A claim whose <code>CLM_FROM</code> or <code>CLM_THRU</code> is missing, or whose <code>CLM_THRU</code> is
+before its <code>CLM_FROM</code>, cannot be spread over days. It is left out of the
+result, with a warning giving how many claims were left out for each
+reason, so prorated totals can fall short of the input.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="fu">prorate_costs_by_day</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">claims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  USRDS_ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  CLM_FROM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2010-01-01"</span>, <span class="st">"2010-02-01"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  CLM_THRU <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2010-01-03"</span>, <span class="st">"2010-02-01"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  PMTAMT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">30</span>, <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">prorate_costs_by_day</span><span class="op">(</span><span class="va">claims</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   USRDS_ID   CLM_FROM   CLM_THRU service_date PMTAMT_PRORATED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        1 2010-01-01 2010-01-03   2010-01-01              10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        1 2010-01-01 2010-01-03   2010-01-02              10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        1 2010-01-01 2010-01-03   2010-01-03              10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        2 2010-02-01 2010-02-01   2010-02-01              20</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

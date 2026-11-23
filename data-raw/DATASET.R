@@ -28,7 +28,7 @@ icd_reference <- .parse_icd_reference(
 
 #Extract medical inflation data from
 
-medical_cpi <- bind_rows(blscrapeR::bls_api("CUUR0000SAM", startyear = 2006, endyear = 2015),
+medical_cpi <- dplyr::bind_rows(blscrapeR::bls_api("CUUR0000SAM", startyear = 2006, endyear = 2015),
                          blscrapeR::bls_api("CUUR0000SAM", startyear = 2016, endyear = 2025))
 
 usethis::use_data(IN_HCPCS,

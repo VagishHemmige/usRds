@@ -1,0 +1,108 @@
+# Sets a commit status, "ChatGPT review", on the head commit of every pull
+# request: pending until the automated ChatGPT review of that exact commit
+# has been posted, then success. Make the status required for master in a
+# branch ruleset, and GitHub will not merge a pull request whose latest push
+# has not been reviewed.
+#
+# A comment counts as the review of the head commit only if
+# - its first line is the review's heading ("Automated ChatGPT review" in
+#   bold or as a Markdown heading, with or without a suffix such as the model
+#   name) or the review's marker, and
+# - one of its lines is exactly the marker naming the current head:
+#   <!-- usrds-automated-review:<head sha>:<base sha> -->
+# A review of an earlier commit, or a reply that quotes a review, does not
+# count: every push needs its own review. After a pull request is retargeted
+# to another branch, only a review posted after the retarget counts.
+#
+# The marker's second sha (the revision the review was read against) is not
+# required to be master's current head, so merging another PR does not force
+# a new review. The gate cannot prove who wrote a comment: the review
+# automation and Claude post as the same account.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review, edited]
+  issue_comment:
+    types: [created, edited, deleted]
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: "Pull request number to recheck"
+        required: true
+
+name: chatgpt-review-gate.yaml
+
+permissions:
+  statuses: write
+  pull-requests: read
+  issues: read
+
+concurrency:
+  group: chatgpt-review-gate-${{ github.event.pull_request.number || github.event.issue.number || github.event.inputs.pr }}
+  # A running check is not cancelled; a newer queued run may still replace an
+  # older queued one. Each run reads the current state, so the last one to
+  # finish is right.
+  cancel-in-progress: false
+
+jobs:
+  gate:
+    # Comments on issues, as opposed to pull requests, are ignored.
+    if: github.event_name != 'issue_comment' || github.event.issue.pull_request
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const number = Number(
+              context.payload.pull_request?.number ??
+              context.payload.issue?.number ??
+              context.payload.inputs?.pr
+            );
+            const { owner, repo } = context.repo;
+
+            // Always read the current head: a comment event carries no sha,
+            // and a later push may have moved the head since this run began.
+            const { data: pr } = await github.rest.pulls.get({
+              owner, repo, pull_number: number
+            });
+            const sha = pr.head.sha;
+
+            const comments = await github.paginate(
+              github.rest.issues.listComments,
+              { owner, repo, issue_number: number, per_page: 100 }
+            );
+            const heading = /^(#{1,6}\s+|\*\*)Automated ChatGPT review/;
+            const anyMarker = /^<!-- usrds-automated-review:[0-9a-f]{40}:[0-9a-f]{40} -->$/;
+            const headMarker = new RegExp(
+              `^<!-- usrds-automated-review:${sha}:[0-9a-f]{40} -->$`
+            );
+            const isReview = body => {
+              const lines = body.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+              if (lines.length === 0) return false;
+              const first = lines[0];
+              return (heading.test(first) || anyMarker.test(first)) &&
+                lines.some(l => headMarker.test(l));
+            };
+
+            // After a retarget, only a review posted later counts.
+            const events = await github.paginate(
+              github.rest.issues.listEvents,
+              { owner, repo, issue_number: number, per_page: 100 }
+            );
+            const retargets = events
+              .filter(e => e.event === "base_ref_changed")
+              .map(e => Date.parse(e.created_at));
+            const since = retargets.length ? Math.max(...retargets) : 0;
+
+            const reviewed = comments.some(c =>
+              isReview(c.body || "") && Date.parse(c.created_at) > since
+            );
+
+            await github.rest.repos.createCommitStatus({
+              owner, repo, sha,
+              context: "ChatGPT review",
+              state: reviewed ? "success" : "pending",
+              description: reviewed
+                ? `Reviewed ${sha.slice(0, 7)}`
+                : `Waiting for the review of ${sha.slice(0, 7)}`
+            });
+            core.info(`PR #${number} at ${sha}: ${reviewed ? "reviewed" : "waiting"}`);

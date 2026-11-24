@@ -16,8 +16,13 @@
 #
 # The marker's second sha (the revision the review was read against) is not
 # required to be master's current head, so merging another PR does not force
-# a new review. The gate cannot prove who wrote a comment: the review
-# automation and Claude post as the same account.
+# a new review.
+#
+# Only comments from accounts with write access count (author association
+# OWNER, MEMBER or COLLABORATOR): on a public repository anyone can comment,
+# so anyone could otherwise copy the marker. Within those accounts the gate
+# still cannot prove who wrote a comment: the review automation and Claude
+# post as the same account.
 on:
   pull_request:
     types: [opened, synchronize, reopened, ready_for_review, edited]
@@ -93,7 +98,9 @@ jobs:
               .map(e => Date.parse(e.created_at));
             const since = retargets.length ? Math.max(...retargets) : 0;
 
+            const trusted = new Set(["OWNER", "MEMBER", "COLLABORATOR"]);
             const reviewed = comments.some(c =>
+              trusted.has(c.author_association) &&
               isReview(c.body || "") && Date.parse(c.created_at) > since
             );
 

@@ -19,3 +19,7 @@ articles:
   navbar: ~
   contents:
   - articles/data-protection
+- title: Working with cost variables
+  navbar: ~
+  contents:
+  - articles/costs

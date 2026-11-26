@@ -64,11 +64,9 @@ adjust_costs_for_inflation <- function(
   df <- cost_data_frame |>
     dplyr::mutate(
       .cpi_year = lubridate::year(.data$CLM_FROM),
-      .cpi_month = as.character(lubridate::month(
-        .data$CLM_FROM,
-        label = TRUE,
-        abbr = FALSE
-      ))
+      # English month names, as in medical_cpi$periodName, whatever the
+      # session's LC_TIME locale (#105)
+      .cpi_month = month.name[lubridate::month(.data$CLM_FROM)]
     )
 
   # attach CPI per row

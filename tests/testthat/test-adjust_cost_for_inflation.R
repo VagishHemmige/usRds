@@ -74,3 +74,20 @@ test_that("adjust_costs_for_inflation() adjusts prorated amounts", {
   expect_equal(result$CLM_PMT_AMT_PRORATED_ADJUSTED, 100 * ratio)
   expect_equal(result$REV_CH_PRORATED_ADJUSTED, 50 * ratio)
 })
+
+test_that("adjust_costs_for_inflation() matches months in a non-English locale (#105)", {
+  old <- Sys.getlocale("LC_TIME")
+  set <- suppressWarnings(Sys.setlocale("LC_TIME", "fr_FR.UTF-8"))
+  skip_if(identical(set, ""), "French locale not installed")
+  withr::defer(Sys.setlocale("LC_TIME", old))
+  claims <- data.frame(
+    USRDS_ID = 1,
+    CLM_FROM = as.Date("2010-06-15"),
+    PMTAMT = 100
+  )
+  ratio <- cpi_value(2015, "December") / cpi_value(2010, "June")
+
+  result <- expect_no_warning(adjust_costs_for_inflation(claims, "December", 2015))
+
+  expect_equal(result$PMTAMT_ADJUSTED, 100 * ratio)
+})

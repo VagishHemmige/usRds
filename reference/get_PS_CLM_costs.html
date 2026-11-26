@@ -73,9 +73,42 @@ Option to <code>remove_missing_values</code> defaults to TRUE</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with columns: <code>USRDS_ID</code>, <code>HCFASAF</code>, <code>CLM_FROM</code>, <code>CLM_THRU</code>, <code>CLM_PMT_AMT</code>,
-<code>CARR_CLM_PRMRY_PYR_PD_AMT</code>,<code>NCH_CLM_PRVDR_PMT_AMT</code>,<code>NCH_CLM_BENE_PMT_AMT</code>,<code>NCH_CARR_SBMT_CHRG_AMT</code>,
-<code>NCH_CARR_ALOW_CHRG_AMT</code>,<code>CARR_CLM_CASH_DDCTBL_APPLY_AMT</code></p>
+    <p>A data frame with one row per Physician/Supplier claim. Column
+descriptions are from Appendix B of the 2025 Researcher's Guide
+(table <code>PS_CLM_2023</code>):</p><dl><dt>USRDS_ID</dt>
+<dd><p>Patient ID</p></dd>
+
+<dt>HCFASAF</dt>
+<dd><p>Claim type (labelled factor)</p></dd>
+
+<dt>CLM_FROM, CLM_THRU</dt>
+<dd><p>From and through dates of service (Date)</p></dd>
+
+<dt>CLM_PMT_AMT</dt>
+<dd><p>Amount paid by Medicare</p></dd>
+
+<dt>CARR_CLM_PRMRY_PYR_PD_AMT</dt>
+<dd><p>Amount paid by primary payer (not
+Medicare)</p></dd>
+
+<dt>NCH_CLM_PRVDR_PMT_AMT</dt>
+<dd><p>Total payments to the provider</p></dd>
+
+<dt>NCH_CLM_BENE_PMT_AMT</dt>
+<dd><p>Total payment to beneficiary</p></dd>
+
+<dt>NCH_CARR_SBMT_CHRG_AMT</dt>
+<dd><p>Submitted charge amount</p></dd>
+
+<dt>NCH_CARR_ALOW_CHRG_AMT</dt>
+<dd><p>Allowed charge amount</p></dd>
+
+<dt>CARR_CLM_CASH_DDCTBL_APPLY_AMT</dt>
+<dd><p>Cash deductible amount</p></dd>
+
+
+</dl><p>These are claim totals: do not add them to line-item amounts from
+<code><a href="get_PS_REV_costs.html">get_PS_REV_costs()</a></code> for the same claims.</p>
     </div>
 
     <div class="section level2">

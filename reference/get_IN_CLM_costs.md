@@ -23,8 +23,13 @@ get_IN_CLM_costs(years, usrds_ids = NULL)
 ## Value
 
 A data frame with one row per claim and columns `USRDS_ID`, `CLM_FROM`
-and `CLM_THRU` (both `Date`), `CLM_TOT`, `CLM_AMT` and `HCFASAF` (claim
-type, as a factor). Dates stored as text that cannot be read become
+and `CLM_THRU` (both `Date`), `CLM_TOT` (total charges), `CLM_AMT`
+(Medicare payments) and `HCFASAF` (claim type, as a factor).
+Descriptions are from Appendix B of the 2025 Researcher's Guide (for
+example table `IP_CLM_2023`). These are claim totals: do not add them to
+revenue-line amounts from
+[`get_IN_REV_costs()`](https://vagishhemmige.github.io/usRds/reference/get_IN_REV_costs.md)
+for the same claims. Dates stored as text that cannot be read become
 `NA`, with a warning naming the file and column.
 
 ## Details

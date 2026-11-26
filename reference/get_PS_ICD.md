@@ -51,7 +51,7 @@ A data frame with one row per diagnosis claim, containing:
 
 - HCFASAF:
 
-  Source file
+  Claim type (labelled factor)
 
 ## Details
 

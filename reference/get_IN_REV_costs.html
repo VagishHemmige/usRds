@@ -64,7 +64,18 @@ Handles CSV, SAS, and Parquet formats.</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with columns: <code>USRDS_ID</code>, <code>CLM_FROM</code>, <code>HCPCS</code>, <code>REV_CH</code>, <code>REVPMT</code></p>
+    <p>A data frame with one row per revenue center line and columns
+<code>USRDS_ID</code>, <code>CLM_FROM</code> (Date), <code>REV_CH</code> (revenue center total charge),
+<code>REVPMT</code> (revenue center payment amount) and <code>HCFASAF</code> (claim type, as a
+factor). Descriptions are from Appendix B of the 2025 Researcher's Guide
+(for example table <code>OP_DET_2023</code>).</p>
+<p>It has no <code>CLM_THRU</code>, so it cannot go straight into
+<code><a href="prorate_costs_by_day.html">prorate_costs_by_day()</a></code> (GitHub #66). It also has no revenue center
+code. The 2025 Researcher's Guide (Section 5, "Institutional Claims
+Details and Revenue Center Details") warns that revenue center code
+<code>0001</code> holds the sum of the claim's other lines, so totals of <code>REV_CH</code>
+may count charges twice where those lines are present. Do not add these
+amounts to claim totals from <code><a href="get_IN_CLM_costs.html">get_IN_CLM_costs()</a></code> for the same claims.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

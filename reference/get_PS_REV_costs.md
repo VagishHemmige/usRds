@@ -26,8 +26,37 @@ get_PS_REV_costs(years, usrds_ids = NULL, remove_missing_values = TRUE)
 
 ## Value
 
-A data frame with columns: `USRDS_ID`, `HCFASAF`, `CLM_FROM`,
-`CLM_THRU`,`SBMTCH`, `ALOWCH`, `PMTAMT`
+A data frame with one row per Physician/Supplier claim line. Column
+descriptions are from Appendix B of the 2025 Researcher's Guide (table
+`PS_LINE_2023`):
+
+- USRDS_ID:
+
+  Patient ID
+
+- HCFASAF:
+
+  Claim type (labelled factor)
+
+- CLM_FROM, CLM_THRU:
+
+  From and through dates of service of the claim (Date)
+
+- SBMTCH:
+
+  Submitted charges
+
+- ALOWCH:
+
+  Allowed charges
+
+- PMTAMT:
+
+  Claim payment amount (for the line)
+
+These are line-item amounts: do not add them to claim totals from
+[`get_PS_CLM_costs()`](https://vagishhemmige.github.io/usRds/reference/get_PS_CLM_costs.md)
+for the same claims.
 
 ## Examples
 

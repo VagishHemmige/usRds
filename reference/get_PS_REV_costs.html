@@ -72,7 +72,30 @@ Option to <code>remove_missing_values</code> defaults to TRUE</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with columns: <code>USRDS_ID</code>, <code>HCFASAF</code>, <code>CLM_FROM</code>, <code>CLM_THRU</code>,<code>SBMTCH</code>, <code>ALOWCH</code>, <code>PMTAMT</code></p>
+    <p>A data frame with one row per Physician/Supplier claim line.
+Column descriptions are from Appendix B of the 2025 Researcher's Guide
+(table <code>PS_LINE_2023</code>):</p><dl><dt>USRDS_ID</dt>
+<dd><p>Patient ID</p></dd>
+
+<dt>HCFASAF</dt>
+<dd><p>Claim type (labelled factor)</p></dd>
+
+<dt>CLM_FROM, CLM_THRU</dt>
+<dd><p>From and through dates of service of the
+claim (Date)</p></dd>
+
+<dt>SBMTCH</dt>
+<dd><p>Submitted charges</p></dd>
+
+<dt>ALOWCH</dt>
+<dd><p>Allowed charges</p></dd>
+
+<dt>PMTAMT</dt>
+<dd><p>Claim payment amount (for the line)</p></dd>
+
+
+</dl><p>These are line-item amounts: do not add them to claim totals from
+<code><a href="get_PS_CLM_costs.html">get_PS_CLM_costs()</a></code> for the same claims.</p>
     </div>
 
     <div class="section level2">

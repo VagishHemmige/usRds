@@ -29,10 +29,53 @@ get_PS_CLM_costs(years, usrds_ids = NULL, remove_missing_values = TRUE)
 
 ## Value
 
-A data frame with columns: `USRDS_ID`, `HCFASAF`, `CLM_FROM`,
-`CLM_THRU`, `CLM_PMT_AMT`,
-`CARR_CLM_PRMRY_PYR_PD_AMT`,`NCH_CLM_PRVDR_PMT_AMT`,`NCH_CLM_BENE_PMT_AMT`,`NCH_CARR_SBMT_CHRG_AMT`,
-`NCH_CARR_ALOW_CHRG_AMT`,`CARR_CLM_CASH_DDCTBL_APPLY_AMT`
+A data frame with one row per Physician/Supplier claim. Column
+descriptions are from Appendix B of the 2025 Researcher's Guide (table
+`PS_CLM_2023`):
+
+- USRDS_ID:
+
+  Patient ID
+
+- HCFASAF:
+
+  Claim type (labelled factor)
+
+- CLM_FROM, CLM_THRU:
+
+  From and through dates of service (Date)
+
+- CLM_PMT_AMT:
+
+  Amount paid by Medicare
+
+- CARR_CLM_PRMRY_PYR_PD_AMT:
+
+  Amount paid by primary payer (not Medicare)
+
+- NCH_CLM_PRVDR_PMT_AMT:
+
+  Total payments to the provider
+
+- NCH_CLM_BENE_PMT_AMT:
+
+  Total payment to beneficiary
+
+- NCH_CARR_SBMT_CHRG_AMT:
+
+  Submitted charge amount
+
+- NCH_CARR_ALOW_CHRG_AMT:
+
+  Allowed charge amount
+
+- CARR_CLM_CASH_DDCTBL_APPLY_AMT:
+
+  Cash deductible amount
+
+These are claim totals: do not add them to line-item amounts from
+[`get_PS_REV_costs()`](https://vagishhemmige.github.io/usRds/reference/get_PS_REV_costs.md)
+for the same claims.
 
 ## Examples
 

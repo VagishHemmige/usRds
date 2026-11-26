@@ -65,18 +65,38 @@
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A data frame with costs adjusted for inflation, with the original variable name changed.</p>
+    <p>The input data frame with an <code>_ADJUSTED</code> copy of each amount
+column, in <code>baseline_month</code> <code>baseline_year</code> dollars. The original amount
+columns are kept unchanged.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The original cost variables will be retained, and new variables created that contain "_ADJUSTED" appended to them.</p>
+<p>Each claim is adjusted using the medical care consumer price index for
+the month and year of its <code>CLM_FROM</code> date (BLS series CUUR0000SAM, US city
+average, not seasonally adjusted, stored in the package). Claims whose
+month is not in that table get <code>NA</code> adjusted amounts and a warning.</p>
+<p>The amount columns adjusted are those returned by <code><a href="get_PS_CLM_costs.html">get_PS_CLM_costs()</a></code>,
+<code><a href="get_IN_CLM_costs.html">get_IN_CLM_costs()</a></code>, <code><a href="get_PS_REV_costs.html">get_PS_REV_costs()</a></code> and <code><a href="get_IN_REV_costs.html">get_IN_REV_costs()</a></code>:
+<code>CLM_PMT_AMT</code>, <code>CARR_CLM_PRMRY_PYR_PD_AMT</code>, <code>NCH_CLM_PRVDR_PMT_AMT</code>,
+<code>NCH_CLM_BENE_PMT_AMT</code>, <code>NCH_CARR_SBMT_CHRG_AMT</code>, <code>NCH_CARR_ALOW_CHRG_AMT</code>,
+<code>CARR_CLM_CASH_DDCTBL_APPLY_AMT</code>, <code>CLM_TOT</code>, <code>CLM_AMT</code>, <code>SBMTCH</code>, <code>ALOWCH</code>,
+<code>PMTAMT</code>, <code>REV_CH</code> and <code>REVPMT</code>, and the same columns with <code>_PRORATED</code>
+added by <code><a href="prorate_costs_by_day.html">prorate_costs_by_day()</a></code>. Other columns are returned unchanged.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="fu">adjust_costs_for_inflation</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">claims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  USRDS_ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  CLM_FROM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2010-06-01"</span>, <span class="st">"2015-12-01"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  PMTAMT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">adjust_costs_for_inflation</span><span class="op">(</span><span class="va">claims</span>, baseline_month <span class="op">=</span> <span class="st">"December"</span>,</span></span>
+<span class="r-in"><span>                           baseline_year <span class="op">=</span> <span class="fl">2015</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   USRDS_ID   CLM_FROM PMTAMT PMTAMT_ADJUSTED</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        1 2010-06-01    100        116.1961</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        2 2015-12-01    100        100.0000</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

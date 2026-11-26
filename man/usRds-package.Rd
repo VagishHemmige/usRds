@@ -21,6 +21,11 @@ Useful links:
 \author{
 \strong{Maintainer}: Vagish Hemmige \email{vagish.hemmige@gmail.com} (\href{https://orcid.org/0009-0006-6346-1826}{ORCID}) [copyright holder]
 
+Authors:
+\itemize{
+  \item Vagish Hemmige \email{vagish.hemmige@gmail.com} (\href{https://orcid.org/0009-0006-6346-1826}{ORCID}) [copyright holder]
+}
+
 Other contributors:
 \itemize{
   \item Miguel Cervera Hernandez \email{Miguel.Cerverahernandez@SanfordHealth.org} [contributor]

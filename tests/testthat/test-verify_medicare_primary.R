@@ -154,3 +154,77 @@ test_that("verify_medicare_primary() neither uses nor fills the cache with medic
   expect_null(.usrds_env$medicare_history)
   expect_equal(calls$n, 0)
 })
+
+test_that("verify_medicare_primary() merges a span nested inside an earlier one (#5)", {
+  # Spans 1-100, 10-20 and 50-200 (days of 2010) are one continuous spell:
+  # the first span already covers day 50.
+  history <- data.frame(
+    USRDS_ID = 1,
+    PAYER = medicare_ab,
+    BEGDATE = as.Date("2010-01-01") + c(0, 9, 49),
+    ENDDATE = as.Date("2010-01-01") + c(99, 19, 199)
+  )
+  patient <- data.frame(USRDS_ID = 1, index = as.Date("2010-01-01") + 149)
+
+  result <- verify_medicare_primary(
+    patient,
+    index_date = "index",
+    lookback_days = 120,
+    medicare_coverage_df = history,
+    coverage_start_variable = "coverage_start"
+  )
+
+  expect_true(result$medicare_primary_TF)
+  expect_equal(result$coverage_start, as.Date("2010-01-01"))
+})
+
+test_that("verify_medicare_primary() accepts payer codes as well as labels (#5)", {
+  coded <- payhist()
+  coded$PAYER <- c("MPAB", "MPAB", "MPAB", "MSP-EGHP")
+  labelled <- verify_medicare_primary(
+    patients(),
+    index_date = "index",
+    medicare_coverage_df = payhist()
+  )
+
+  result <- verify_medicare_primary(
+    patients(),
+    index_date = "index",
+    medicare_coverage_df = coded
+  )
+
+  expect_equal(result$medicare_primary_TF, labelled$medicare_primary_TF)
+  expect_equal(result$medicare_primary_TF, c(TRUE, FALSE, FALSE))
+})
+
+test_that("verify_medicare_primary() counts MPO, coded or labelled (#5)", {
+  history <- payhist()[1:2, ]
+  patient <- patients()[1, ]
+  history$PAYER <- "MPO"
+  coded <- verify_medicare_primary(patient, "index", medicare_coverage_df = history)
+  history$PAYER <- "MEDICARE FFS PRIMARY PAY, FOR OTHER"
+  labelled <- verify_medicare_primary(patient, "index", medicare_coverage_df = history)
+
+  expect_true(coded$medicare_primary_TF)
+  expect_true(labelled$medicare_primary_TF)
+})
+
+test_that("verify_medicare_primary() stops when coverage dates are not Dates (#5)", {
+  history <- payhist()
+  history$BEGDATE <- format(history$BEGDATE)
+
+  expect_snapshot(
+    error = TRUE,
+    verify_medicare_primary(patients(), "index", medicare_coverage_df = history)
+  )
+})
+
+test_that("verify_medicare_primary() warns about patients missing from payhist it loads (#5)", {
+  local_payhist_reader()
+  extra <- rbind(patients(), data.frame(USRDS_ID = 4, index = as.Date("2010-06-01")))
+
+  expect_snapshot(
+    result <- verify_medicare_primary(extra, index_date = "index")
+  )
+  expect_equal(result$medicare_primary_TF, c(TRUE, FALSE, FALSE, FALSE))
+})

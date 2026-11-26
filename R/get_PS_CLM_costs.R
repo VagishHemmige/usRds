@@ -58,9 +58,24 @@
 #'   `CLM_PMT_AMT` are always kept. Kept for consistency with
 #'   `get_PS_REV_costs()`; whether to drop them is undecided (see GitHub #54).
 #'
-#' @return A data frame with columns: `USRDS_ID`, `HCFASAF`, `CLM_FROM`, `CLM_THRU`, `CLM_PMT_AMT`,
-#' `CARR_CLM_PRMRY_PYR_PD_AMT`,`NCH_CLM_PRVDR_PMT_AMT`,`NCH_CLM_BENE_PMT_AMT`,`NCH_CARR_SBMT_CHRG_AMT`,
-#' `NCH_CARR_ALOW_CHRG_AMT`,`CARR_CLM_CASH_DDCTBL_APPLY_AMT`
+#' @return A data frame with one row per Physician/Supplier claim. Column
+#'   descriptions are from Appendix B of the 2025 Researcher's Guide
+#'   (table `PS_CLM_2023`):
+#'   \describe{
+#'     \item{USRDS_ID}{Patient ID}
+#'     \item{HCFASAF}{Claim type (labelled factor)}
+#'     \item{CLM_FROM, CLM_THRU}{From and through dates of service (Date)}
+#'     \item{CLM_PMT_AMT}{Amount paid by Medicare}
+#'     \item{CARR_CLM_PRMRY_PYR_PD_AMT}{Amount paid by primary payer (not
+#'       Medicare)}
+#'     \item{NCH_CLM_PRVDR_PMT_AMT}{Total payments to the provider}
+#'     \item{NCH_CLM_BENE_PMT_AMT}{Total payment to beneficiary}
+#'     \item{NCH_CARR_SBMT_CHRG_AMT}{Submitted charge amount}
+#'     \item{NCH_CARR_ALOW_CHRG_AMT}{Allowed charge amount}
+#'     \item{CARR_CLM_CASH_DDCTBL_APPLY_AMT}{Cash deductible amount}
+#'   }
+#'   These are claim totals: do not add them to line-item amounts from
+#'   [get_PS_REV_costs()] for the same claims.
 #' @export
 #'
 #' @examples

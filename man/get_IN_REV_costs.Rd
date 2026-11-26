@@ -12,7 +12,19 @@ get_IN_REV_costs(years, usrds_ids = NULL)
 \item{usrds_ids}{Optional vector of USRDS_IDs to filter to specific patients.}
 }
 \value{
-A data frame with columns: \code{USRDS_ID}, \code{CLM_FROM}, \code{HCPCS}, \code{REV_CH}, \code{REVPMT}
+A data frame with one row per revenue center line and columns
+\code{USRDS_ID}, \code{CLM_FROM} (Date), \code{REV_CH} (revenue center total charge),
+\code{REVPMT} (revenue center payment amount) and \code{HCFASAF} (claim type, as a
+factor). Descriptions are from Appendix B of the 2025 Researcher's Guide
+(for example table \code{OP_DET_2023}).
+
+It has no \code{CLM_THRU}, so it cannot go straight into
+\code{\link[=prorate_costs_by_day]{prorate_costs_by_day()}} (GitHub #66). It also has no revenue center
+code. The 2025 Researcher's Guide (Section 5, "Institutional Claims
+Details and Revenue Center Details") warns that revenue center code
+\code{0001} holds the sum of the claim's other lines, so totals of \code{REV_CH}
+may count charges twice where those lines are present. Do not add these
+amounts to claim totals from \code{\link[=get_IN_CLM_costs]{get_IN_CLM_costs()}} for the same claims.
 }
 \description{
 Searches institutional claim files for costs for specified USRDS_IDs in specified years.

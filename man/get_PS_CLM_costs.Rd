@@ -16,9 +16,24 @@ get_PS_CLM_costs(years, usrds_ids = NULL, remove_missing_values = TRUE)
 \code{get_PS_REV_costs()}; whether to drop them is undecided (see GitHub #54).}
 }
 \value{
-A data frame with columns: \code{USRDS_ID}, \code{HCFASAF}, \code{CLM_FROM}, \code{CLM_THRU}, \code{CLM_PMT_AMT},
-\code{CARR_CLM_PRMRY_PYR_PD_AMT},\code{NCH_CLM_PRVDR_PMT_AMT},\code{NCH_CLM_BENE_PMT_AMT},\code{NCH_CARR_SBMT_CHRG_AMT},
-\code{NCH_CARR_ALOW_CHRG_AMT},\code{CARR_CLM_CASH_DDCTBL_APPLY_AMT}
+A data frame with one row per Physician/Supplier claim. Column
+descriptions are from Appendix B of the 2025 Researcher's Guide
+(table \code{PS_CLM_2023}):
+\describe{
+\item{USRDS_ID}{Patient ID}
+\item{HCFASAF}{Claim type (labelled factor)}
+\item{CLM_FROM, CLM_THRU}{From and through dates of service (Date)}
+\item{CLM_PMT_AMT}{Amount paid by Medicare}
+\item{CARR_CLM_PRMRY_PYR_PD_AMT}{Amount paid by primary payer (not
+Medicare)}
+\item{NCH_CLM_PRVDR_PMT_AMT}{Total payments to the provider}
+\item{NCH_CLM_BENE_PMT_AMT}{Total payment to beneficiary}
+\item{NCH_CARR_SBMT_CHRG_AMT}{Submitted charge amount}
+\item{NCH_CARR_ALOW_CHRG_AMT}{Allowed charge amount}
+\item{CARR_CLM_CASH_DDCTBL_APPLY_AMT}{Cash deductible amount}
+}
+These are claim totals: do not add them to line-item amounts from
+\code{\link[=get_PS_REV_costs]{get_PS_REV_costs()}} for the same claims.
 }
 \description{
 Extracts all claims costs from physician/supplier billing data for the selected years,

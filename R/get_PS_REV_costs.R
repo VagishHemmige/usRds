@@ -57,7 +57,20 @@
 #' @param remove_missing_values If `TRUE` (the default), drop line items whose
 #'   `PMTAMT` is missing.
 #'
-#' @return A data frame with columns: `USRDS_ID`, `HCFASAF`, `CLM_FROM`, `CLM_THRU`,`SBMTCH`, `ALOWCH`, `PMTAMT`
+#' @return A data frame with one row per Physician/Supplier claim line.
+#'   Column descriptions are from Appendix B of the 2025 Researcher's Guide
+#'   (table `PS_LINE_2023`):
+#'   \describe{
+#'     \item{USRDS_ID}{Patient ID}
+#'     \item{HCFASAF}{Claim type (labelled factor)}
+#'     \item{CLM_FROM, CLM_THRU}{From and through dates of service of the
+#'       claim (Date)}
+#'     \item{SBMTCH}{Submitted charges}
+#'     \item{ALOWCH}{Allowed charges}
+#'     \item{PMTAMT}{Claim payment amount (for the line)}
+#'   }
+#'   These are line-item amounts: do not add them to claim totals from
+#'   [get_PS_CLM_costs()] for the same claims.
 #' @export
 #'
 #' @examples

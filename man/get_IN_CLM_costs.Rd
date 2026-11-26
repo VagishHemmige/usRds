@@ -13,8 +13,11 @@ get_IN_CLM_costs(years, usrds_ids = NULL)
 }
 \value{
 A data frame with one row per claim and columns \code{USRDS_ID},
-\code{CLM_FROM} and \code{CLM_THRU} (both \code{Date}), \code{CLM_TOT}, \code{CLM_AMT} and
-\code{HCFASAF} (claim type, as a factor). Dates stored as text that cannot
+\code{CLM_FROM} and \code{CLM_THRU} (both \code{Date}), \code{CLM_TOT} (total charges),
+\code{CLM_AMT} (Medicare payments) and \code{HCFASAF} (claim type, as a factor).
+Descriptions are from Appendix B of the 2025 Researcher's Guide (for
+example table \code{IP_CLM_2023}). These are claim totals: do not add them to
+revenue-line amounts from \code{\link[=get_IN_REV_costs]{get_IN_REV_costs()}} for the same claims. Dates stored as text that cannot
 be read become \code{NA}, with a warning naming the file and column.
 }
 \description{

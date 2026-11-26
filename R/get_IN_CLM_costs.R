@@ -55,8 +55,11 @@
 #' @param usrds_ids Optional vector of USRDS_IDs to filter to specific patients.
 #'
 #' @return A data frame with one row per claim and columns `USRDS_ID`,
-#'   `CLM_FROM` and `CLM_THRU` (both `Date`), `CLM_TOT`, `CLM_AMT` and
-#'   `HCFASAF` (claim type, as a factor). Dates stored as text that cannot
+#'   `CLM_FROM` and `CLM_THRU` (both `Date`), `CLM_TOT` (total charges),
+#'   `CLM_AMT` (Medicare payments) and `HCFASAF` (claim type, as a factor).
+#'   Descriptions are from Appendix B of the 2025 Researcher's Guide (for
+#'   example table `IP_CLM_2023`). These are claim totals: do not add them to
+#'   revenue-line amounts from [get_IN_REV_costs()] for the same claims. Dates stored as text that cannot
 #'   be read become `NA`, with a warning naming the file and column.
 #' @export
 #'
@@ -79,7 +82,7 @@ get_IN_CLM_costs <- function(years, usrds_ids = NULL) {
   .check_valid_years(
     years = years,
     file_keys = IN_CLM_COSTS$file_root,
-    label = "Institutional HCPCS files"
+    label = "Institutional claim cost files"
   )
 
   .usrds_env$file_list |>

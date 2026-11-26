@@ -228,3 +228,26 @@ test_that("verify_medicare_primary() warns about patients missing from payhist i
   )
   expect_equal(result$medicare_primary_TF, c(TRUE, FALSE, FALSE, FALSE))
 })
+
+test_that("verify_medicare_primary() keeps later spans after a missing end date (#5)", {
+  # From ChatGPT's review of #114: the first span has no end date; the next
+  # two touch (days 9-19 and 20-99), so the index on day 89 has 80 days.
+  history <- data.frame(
+    USRDS_ID = 1,
+    PAYER = "MPAB",
+    BEGDATE = as.Date("2010-01-01") + c(0, 9, 20),
+    ENDDATE = as.Date("2010-01-01") + c(NA, 19, 99)
+  )
+  patient <- data.frame(USRDS_ID = 1, index = as.Date("2010-01-01") + 89)
+
+  result <- verify_medicare_primary(
+    patient,
+    index_date = "index",
+    lookback_days = 75,
+    medicare_coverage_df = history,
+    coverage_start_variable = "coverage_start"
+  )
+
+  expect_true(result$medicare_primary_TF)
+  expect_equal(result$coverage_start, as.Date("2010-01-01") + 9)
+})

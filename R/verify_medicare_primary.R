@@ -276,15 +276,19 @@ verify_medicare_primary <- function(
       #row's, so a span nested inside an earlier one does not split it (#5).
       dplyr::group_by(.data$USRDS_ID) |>
       dplyr::arrange(.data$BEGDATE, .by_group = TRUE) |>
+      #Dates are compared as day numbers. A missing end date does not
+      #extend the spell, so (as before #5) the next span starts a new spell
+      #instead of every later span being split.
       dplyr::mutate(
+        end_day = as.numeric(.data$ENDDATE),
         prev_end = dplyr::lag(
-          as.Date(cummax(as.numeric(.data$ENDDATE)))
+          cummax(dplyr::if_else(is.na(.data$end_day), -Inf, .data$end_day))
         ),
 
         # start a new group if there is a gap
         new_group = dplyr::if_else(
           is.na(.data$prev_end) |
-            .data$BEGDATE > .data$prev_end + lubridate::days(1),
+            as.numeric(.data$BEGDATE) > .data$prev_end + 1,
           1L,
           0L
         ),

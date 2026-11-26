@@ -51,7 +51,19 @@
 #' @param years Integer vector of years to include.
 #' @param usrds_ids Optional vector of USRDS_IDs to filter to specific patients.
 #'
-#' @return A data frame with columns: `USRDS_ID`, `CLM_FROM`, `HCPCS`, `REV_CH`, `REVPMT`
+#' @return A data frame with one row per revenue center line and columns
+#'   `USRDS_ID`, `CLM_FROM` (Date), `REV_CH` (revenue center total charge),
+#'   `REVPMT` (revenue center payment amount) and `HCFASAF` (claim type, as a
+#'   factor). Descriptions are from Appendix B of the 2025 Researcher's Guide
+#'   (for example table `OP_DET_2023`).
+#'
+#'   It has no `CLM_THRU`, so it cannot go straight into
+#'   [prorate_costs_by_day()] (GitHub #66). It also has no revenue center
+#'   code. The 2025 Researcher's Guide (Section 5, "Institutional Claims
+#'   Details and Revenue Center Details") warns that revenue center code
+#'   `0001` holds the sum of the claim's other lines, so totals of `REV_CH`
+#'   may count charges twice where those lines are present. Do not add these
+#'   amounts to claim totals from [get_IN_CLM_costs()] for the same claims.
 #' @export
 #'
 #' @examples
@@ -65,7 +77,7 @@ get_IN_REV_costs <- function(years, usrds_ids = NULL) {
   .check_valid_years(
     years = years,
     file_keys = IN_REV_COSTS$file_root,
-    label = "Institutional HCPCS files"
+    label = "Institutional revenue center cost files"
   )
 
   .usrds_env$file_list |>

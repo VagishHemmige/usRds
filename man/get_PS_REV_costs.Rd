@@ -15,7 +15,20 @@ get_PS_REV_costs(years, usrds_ids = NULL, remove_missing_values = TRUE)
 \code{PMTAMT} is missing.}
 }
 \value{
-A data frame with columns: \code{USRDS_ID}, \code{HCFASAF}, \code{CLM_FROM}, \code{CLM_THRU},\code{SBMTCH}, \code{ALOWCH}, \code{PMTAMT}
+A data frame with one row per Physician/Supplier claim line.
+Column descriptions are from Appendix B of the 2025 Researcher's Guide
+(table \code{PS_LINE_2023}):
+\describe{
+\item{USRDS_ID}{Patient ID}
+\item{HCFASAF}{Claim type (labelled factor)}
+\item{CLM_FROM, CLM_THRU}{From and through dates of service of the
+claim (Date)}
+\item{SBMTCH}{Submitted charges}
+\item{ALOWCH}{Allowed charges}
+\item{PMTAMT}{Claim payment amount (for the line)}
+}
+These are line-item amounts: do not add them to claim totals from
+\code{\link[=get_PS_CLM_costs]{get_PS_CLM_costs()}} for the same claims.
 }
 \description{
 Extracts all line-item costs from physician/supplier billing data for the selected years,

@@ -81,7 +81,7 @@
 #'     \item{DIAG}{ICD diagnosis code (character)}
 #'     \item{CLM_FROM}{Claim start date (Date)}
 #'     \item{CLM_THRU}{Claim end date (Date)}
-#'     \item{HCFASAF}{Source file}
+#'     \item{HCFASAF}{Claim type (labelled factor)}
 #'   }
 #'
 #' @export

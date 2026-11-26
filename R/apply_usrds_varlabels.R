@@ -12,6 +12,15 @@
 #'
 #'
 #' @examples
+#' # Made-up payer history
+#' payer_history <- data.frame(
+#'   USRDS_ID = c(1, 2),
+#'   PAYER = c("MPAB", "MPO"),
+#'   BEGDATE = as.Date(c("2010-01-01", "2011-01-01"))
+#' )
+#' labelled_history <- apply_usrds_varlabels(payer_history, file_key = "PAYHIST")
+#' labelled::var_label(labelled_history)
+#'
 #' \dontrun{
 #' df <- load_usrds_file("PATIENTS", var_labels = TRUE)
 #' labelled::var_label(df$CDEATH)

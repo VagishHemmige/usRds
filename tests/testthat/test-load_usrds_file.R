@@ -110,3 +110,100 @@ test_that("col_select gives the same columns from SAS files (#22)", {
     c("CDEATH", "CDTYPE")
   )
 })
+
+# ---- Other behaviour, on made-up CSV files ----
+
+local_csv_file <- function(file_root, rows, env = parent.frame()) {
+  dir <- withr::local_tempdir(.local_envir = env)
+  path <- file.path(dir, paste0(file_root, ".csv"))
+  utils::write.csv(rows, path, row.names = FALSE)
+  old <- .usrds_env$file_list
+  .usrds_env$file_list <- data.frame(
+    file_path = path,
+    file_name = basename(path),
+    file_root = file_root,
+    file_suffix = "csv",
+    Year = NA,
+    file_directory = "Core"
+  )
+  withr::defer(.usrds_env$file_list <- old, envir = env)
+  path
+}
+
+made_up_payhist <- function() {
+  data.frame(
+    usrds_id = c(1, 2, 3),
+    payer = c("MPAB", "MPO", "MSP-EGHP")
+  )
+}
+
+test_that("load_usrds_file() upper-cases names and filters by USRDS_ID", {
+  local_csv_file("payhist", made_up_payhist())
+
+  result <- load_usrds_file(
+    "PAYHIST",
+    factor_labels = FALSE,
+    usrds_ids = c(1, 3),
+    show_col_types = FALSE
+  )
+
+  expect_named(result, c("USRDS_ID", "PAYER"))
+  expect_equal(result$USRDS_ID, c(1, 3))
+  expect_equal(result$PAYER, c("MPAB", "MSP-EGHP"))
+})
+
+test_that("load_usrds_file() finds the file whatever the case of file_key", {
+  local_csv_file("payhist", made_up_payhist())
+
+  result <- load_usrds_file("payhist", factor_labels = FALSE, show_col_types = FALSE)
+
+  expect_equal(nrow(result), 3)
+})
+
+test_that("load_usrds_file() applies Appendix C labels by default", {
+  local_csv_file("payhist", made_up_payhist())
+
+  labelled_payers <- load_usrds_file("PAYHIST", show_col_types = FALSE)
+
+  expect_equal(
+    as.character(labelled_payers$PAYER[1:2]),
+    c(
+      "MEDICARE FFS PRIMARY PAY, FOR BOTH PART A AND PART B",
+      "MEDICARE FFS PRIMARY PAY, FOR OTHER"
+    )
+  )
+})
+
+test_that("load_usrds_file() adds Appendix B variable labels on request", {
+  local_csv_file("payhist", made_up_payhist())
+
+  result <- load_usrds_file(
+    "PAYHIST",
+    factor_labels = FALSE,
+    var_labels = TRUE,
+    show_col_types = FALSE
+  )
+
+  expect_equal(labelled::var_label(result$PAYER), "Payer Category")
+})
+
+test_that("load_usrds_file() stops when no files are mapped", {
+  old <- .usrds_env$file_list
+  withr::defer(.usrds_env$file_list <- old)
+  .usrds_env$file_list <- NULL
+
+  expect_snapshot(error = TRUE, load_usrds_file("PAYHIST"))
+})
+
+test_that("load_usrds_file() stops on an unknown file key", {
+  local_csv_file("payhist", made_up_payhist())
+
+  expect_snapshot(error = TRUE, load_usrds_file("NOT_A_FILE"))
+})
+
+test_that("load_usrds_file() stops when the mapped file has gone", {
+  path <- local_csv_file("payhist", made_up_payhist())
+  unlink(path)
+
+  expect_error(load_usrds_file("PAYHIST"), "File not found", fixed = TRUE)
+})

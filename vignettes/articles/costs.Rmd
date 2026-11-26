@@ -112,18 +112,24 @@ yet ([#65](https://github.com/VagishHemmige/usRds/issues/65)).
 - **Charges:** rarely the right measure of cost, because they reflect
   providers' list prices rather than what anyone paid.
 
-Two rules apply whatever you choose:
+Two more points:
 
 1. **Don't add claim totals and line amounts for the same claims.** The line
    amounts are a breakdown of the claim totals, so adding both counts the
-   same money twice.
-2. **Use only periods when Medicare was the primary fee-for-service payer.**
-   When Medicare is a secondary payer, or the patient is in a Medicare
-   Advantage plan, the claims do not show the full cost. The Annual Data
-   Report's per-person-per-year costs count only fee-for-service claims, and
-   only time when Medicare was the primary payer (2017 ADR, Volume 2, ESRD
-   Analytical Methods, Chapter 9). `verify_medicare_primary()` checks this
-   at an index date.
+   same money twice. This applies whatever you measure.
+2. **Choose the payer restriction to fit the question.** When Medicare is a
+   secondary payer, or the patient is in a Medicare Advantage plan, the
+   claims do not show the full cost of care. So the Annual Data Report's
+   per-person-per-year costs count only fee-for-service claims, during time
+   when Medicare was the primary payer (2017 ADR, Volume 2, ESRD Analytical
+   Methods, Chapter 9). Use the same restriction when you need complete
+   costs per person. A total of what Medicare spent is a different question,
+   and may rightly include Medicare's payments as a secondary payer.
+
+   `verify_medicare_primary()` checks Medicare-primary coverage on one index
+   date and the lookback before it. It does not check coverage over the
+   whole follow-up, so periods of coverage during follow-up need their own
+   check ([#23](https://github.com/VagishHemmige/usRds/issues/23)).
 
 ## Adjusting and spreading amounts
 

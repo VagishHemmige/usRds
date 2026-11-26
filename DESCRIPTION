@@ -1,18 +1,24 @@
 Package: usRds
 Type: Package
-Title: A Package to Automate Processing and Access to the USRDS
+Title: Load, Label and Analyze United States Renal Data System Files
 Version: 0.1.0
 Authors@R: 
     c(
-        person("Vagish", "Hemmige", email = "vagish.hemmige@gmail.com", role = c("aut", "cre"),
+        person("Vagish", "Hemmige", email = "vagish.hemmige@gmail.com", role = c("aut", "cre", "cph"),
                comment = c(ORCID = "0009-0006-6346-1826")),
         person("Miguel", "Cervera Hernandez", email = "Miguel.Cerverahernandez@SanfordHealth.org", role = "ctb")
     )
-Description: 
-    Provides tools to simplify access to and processing of data from the United States Renal Data System (USRDS). 
-    Supports multiple raw formats (SAS, CSV, Parquet), automated file detection, optional value and variable labeling 
-    using USRDS appendices, and functions to filter claims data by diagnosis and procedure codes. Designed for 
-    reproducible, large-scale cohort construction and longitudinal analysis.
+Description: Load, label and analyze files from the United States Renal
+    Data System (USRDS), the national data system on chronic kidney disease
+    and end-stage kidney disease in the United States. Users supply USRDS
+    files they have obtained, in 'SAS', comma-separated values (CSV) or
+    'Parquet' format; the package finds them, chooses one file for each file
+    name and year, and reads them with upper-case column names. Variables and
+    values can be labelled from the appendices of the USRDS Researcher's
+    Guide. Medicare claims can be extracted by diagnosis, procedure and
+    provider specialty codes, and used to date diagnoses, build cohorts, and
+    compute claim costs with daily proration and medical care inflation
+    adjustment.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

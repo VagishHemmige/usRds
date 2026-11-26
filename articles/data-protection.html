@@ -208,9 +208,23 @@ default <code>permanent = FALSE</code>, nothing is written.</li>
 <strong>Results stay in your R session</strong> until you save them.
 Data frames returned by the <code>get_*()</code> and cohort functions
 are patient-level.</li>
+<li>
+<strong>It can check a project for data files.</strong>
+<code><a href="../reference/check_repo_for_usrds_data.html">check_repo_for_usrds_data()</a></code> lists files in a project folder
+that look like USRDS data: data file types such as
+<code>.sas7bdat</code> and <code>.parquet</code>, files named like USRDS
+files, and text files with a <code>USRDS_ID</code> column. In a git
+repository it checks the files git would commit, so untracked files
+listed in <code>.gitignore</code> are not reported. A file git already
+tracks is still reported: <code>.gitignore</code> does not untrack it,
+so remove it from git with <code>git rm --cached</code>, and treat data
+that was already pushed as a disclosure. It reads file names and header
+lines only, and reports paths only. Run it before each commit until the
+automatic checks below exist.</li>
 </ul>
 <p>What it does not do yet: usRds does not check whether your folders
-are synced or shared, whether data sits inside a git repository, or
+are synced or shared, does not check for data in a git repository unless
+you run <code><a href="../reference/check_repo_for_usrds_data.html">check_repo_for_usrds_data()</a></code>, and does not check
 whether a result has small cells. Those checks are your responsibility
 for now.</p>
 </div>
@@ -227,9 +241,6 @@ about data-like files that would be committed; turn it off with
 <code>options(usRds.safety_check = FALSE)</code>;</li>
 <li>the same check in <code><a href="../reference/set_USRDS_wd.html">set_USRDS_wd()</a></code> and
 <code><a href="../reference/convert_usrds_to_parquet.html">convert_usrds_to_parquet()</a></code>;</li>
-<li>
-<code>check_repo_for_usrds_data()</code>, which scans a folder for
-files that look like USRDS data;</li>
 <li>opt-in helpers to add ignore rules and a pre-commit check to a
 project;</li>
 <li>

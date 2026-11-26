@@ -20,6 +20,9 @@
 - [`apply_usrds_varlabels()`](https://vagishhemmige.github.io/usRds/reference/apply_usrds_varlabels.md)
   : Apply USRDS variable labels to a data frame
 
+- [`check_repo_for_usrds_data()`](https://vagishhemmige.github.io/usRds/reference/check_repo_for_usrds_data.md)
+  : Check a project folder for files that look like USRDS data
+
 - [`convert_usrds_to_parquet()`](https://vagishhemmige.github.io/usRds/reference/convert_usrds_to_parquet.md)
   : Convert all USRDS raw files in a directory to Parquet
 

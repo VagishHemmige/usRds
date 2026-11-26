@@ -114,10 +114,25 @@ help.
     `permanent = FALSE`, nothing is written.
 - **Results stay in your R session** until you save them. Data frames
   returned by the `get_*()` and cohort functions are patient-level.
+- **It can check a project for data files.**
+  [`check_repo_for_usrds_data()`](https://vagishhemmige.github.io/usRds/reference/check_repo_for_usrds_data.md)
+  lists files in a project folder that look like USRDS data: data file
+  types such as `.sas7bdat` and `.parquet`, files named like USRDS
+  files, and text files with a `USRDS_ID` column. In a git repository it
+  checks the files git would commit, so untracked files listed in
+  `.gitignore` are not reported. A file git already tracks is still
+  reported: `.gitignore` does not untrack it, so remove it from git with
+  `git rm --cached`, and treat data that was already pushed as a
+  disclosure. It reads file names and header lines only, and reports
+  paths only. Run it before each commit until the automatic checks below
+  exist.
 
 What it does not do yet: usRds does not check whether your folders are
-synced or shared, whether data sits inside a git repository, or whether
-a result has small cells. Those checks are your responsibility for now.
+synced or shared, does not check for data in a git repository unless you
+run
+[`check_repo_for_usrds_data()`](https://vagishhemmige.github.io/usRds/reference/check_repo_for_usrds_data.md),
+and does not check whether a result has small cells. Those checks are
+your responsibility for now.
 
 ## Planned protections
 
@@ -133,8 +148,6 @@ the package itself. Names are provisional and none of these exist yet:
   [`set_USRDS_wd()`](https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.md)
   and
   [`convert_usrds_to_parquet()`](https://vagishhemmige.github.io/usRds/reference/convert_usrds_to_parquet.md);
-- `check_repo_for_usrds_data()`, which scans a folder for files that
-  look like USRDS data;
 - opt-in helpers to add ignore rules and a pre-commit check to a
   project;
 - `check_small_cells()`, which reports cells below a threshold (fewer

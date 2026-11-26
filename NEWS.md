@@ -1,4 +1,4 @@
-# usRds (development version)
+# usRds 0.1.0.9000
 
 * `NEWS.md` added to record user-facing changes from here on. Earlier changes
   are described in the pull requests on GitHub

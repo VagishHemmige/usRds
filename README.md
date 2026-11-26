@@ -5,6 +5,10 @@
 
 <!-- badges: start -->
 
+[![R-CMD-check](https://github.com/VagishHemmige/usRds/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/VagishHemmige/usRds/actions/workflows/R-CMD-check.yaml)
+![Lifecycle:
+experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 <!-- badges: end -->
 
 This is a prototype of an R package to facilitate analysis of the United

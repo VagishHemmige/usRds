@@ -38,7 +38,18 @@ dataset will be converted.
 ## Examples
 
 ``` r
+# Made-up payer history, coded as in the USRDS files
+payer_history <- data.frame(
+  USRDS_ID = c(1, 2),
+  PAYER = c("MPAB", "MPO")
+)
+apply_usrds_factors(payer_history, file_key = "PAYHIST")
+#>   USRDS_ID                                                PAYER
+#> 1        1 MEDICARE FFS PRIMARY PAY, FOR BOTH PART A AND PART B
+#> 2        2                  MEDICARE FFS PRIMARY PAY, FOR OTHER
+
 if (FALSE) { # \dontrun{
+# load_usrds_file() applies the labels itself by default
 df <- load_usrds_file("PATIENTS", factor_labels = TRUE)
 } # }
 ```

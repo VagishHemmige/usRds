@@ -76,7 +76,22 @@ the result, naming the diagnosis being dated (for example <code>"cryptococcus"</
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Made-up claims: patient 1 has two outpatient claims, patient 2 one</span></span></span>
+<span class="r-in"><span><span class="co"># inpatient claim, and patient 3 a single outpatient claim, which is not</span></span></span>
+<span class="r-in"><span><span class="co"># enough to establish the diagnosis.</span></span></span>
+<span class="r-in"><span><span class="va">claims</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  USRDS_ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  CLM_FROM <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"2015-01-01"</span>, <span class="st">"2015-03-01"</span>, <span class="st">"2015-02-01"</span>, <span class="st">"2015-04-01"</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  HCFASAF <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Outpatient"</span>, <span class="st">"Outpatient"</span>, <span class="st">"Inpatient"</span>, <span class="st">"Outpatient"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">establish_dx_date</span><span class="op">(</span><span class="va">claims</span>, diagnosis_established <span class="op">=</span> <span class="st">"cryptococcus"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 2 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   USRDS_ID diagnosis    date_established</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;date&gt;</span>          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>        1 cryptococcus 2015-03-01      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>        2 cryptococcus 2015-02-01      </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="co"># Codes are matched exactly, so list every billable code (#3):</span></span></span>
 <span class="r-in"><span><span class="co"># ICD-9 117.5 and ICD-10-CM B45.0-B45.3, B45.7-B45.9, without periods</span></span></span>
 <span class="r-in"><span><span class="va">cryptococcus_icd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>

@@ -27,3 +27,15 @@ convert_usrds_to_parquet(source_dir, target_dir, overwrite = FALSE)
 ## Value
 
 Invisibly returns a tibble with source and target file paths.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Needs USRDS files; writes only to target_dir
+convert_usrds_to_parquet(
+  source_dir = "path/to/usrds/sas_files",
+  target_dir = "path/to/usrds/parquet"
+)
+} # }
+```

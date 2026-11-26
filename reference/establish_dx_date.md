@@ -30,6 +30,21 @@ diagnosis has been made
 ## Examples
 
 ``` r
+# Made-up claims: patient 1 has two outpatient claims, patient 2 one
+# inpatient claim, and patient 3 a single outpatient claim, which is not
+# enough to establish the diagnosis.
+claims <- data.frame(
+  USRDS_ID = c(1, 1, 2, 3),
+  CLM_FROM = as.Date(c("2015-01-01", "2015-03-01", "2015-02-01", "2015-04-01")),
+  HCFASAF = c("Outpatient", "Outpatient", "Inpatient", "Outpatient")
+)
+establish_dx_date(claims, diagnosis_established = "cryptococcus")
+#> # A tibble: 2 × 3
+#>   USRDS_ID diagnosis    date_established
+#>      <dbl> <chr>        <date>          
+#> 1        1 cryptococcus 2015-03-01      
+#> 2        2 cryptococcus 2015-02-01      
+
 if (FALSE) { # \dontrun{
 # Codes are matched exactly, so list every billable code (#3):
 # ICD-9 117.5 and ICD-10-CM B45.0-B45.3, B45.7-B45.9, without periods

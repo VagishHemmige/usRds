@@ -81,7 +81,18 @@ with a dollar sign (e.g., $REMCD.) and present in the dataset will be converted.
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Made-up payer history, coded as in the USRDS files</span></span></span>
+<span class="r-in"><span><span class="va">payer_history</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>  USRDS_ID <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>  PAYER <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"MPAB"</span>, <span class="st">"MPO"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">apply_usrds_factors</span><span class="op">(</span><span class="va">payer_history</span>, file_key <span class="op">=</span> <span class="st">"PAYHIST"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   USRDS_ID                                                PAYER</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        1 MEDICARE FFS PRIMARY PAY, FOR BOTH PART A AND PART B</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        2                  MEDICARE FFS PRIMARY PAY, FOR OTHER</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># load_usrds_file() applies the labels itself by default</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="load_usrds_file.html">load_usrds_file</a></span><span class="op">(</span><span class="st">"PATIENTS"</span>, factor_labels <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>

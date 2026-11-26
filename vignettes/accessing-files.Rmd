@@ -95,7 +95,7 @@ ps <- get_PS_HCPCS(hcpcs_codes = "81003", years = 2006)
 subset <- get_PS_ICD(
   icd_codes = "25000",
   years = 2012,
-  usrds_ids = c("100001234", "100005678")
+  usrds_ids = c(1, 2)
 )
 ```
 

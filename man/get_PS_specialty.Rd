@@ -29,3 +29,10 @@ A tibble with filtered and selected PS HCPCS data.
 \description{
 Returns claims filtered by specialty code from the PS HCPCS dataset.
 }
+\examples{
+\dontrun{
+# Needs USRDS files (see set_USRDS_wd()). Appendix C $PROVSP. codes:
+# 39 = nephrology, 44 = infectious disease
+get_PS_specialty(c("39", "44"), yearlist = 2015:2016, HCPCS = TRUE)
+}
+}

@@ -20,3 +20,12 @@ Invisibly returns a tibble with source and target file paths.
 Converts all \code{.csv} and \code{.sas7bdat} files under a source directory into \code{.parquet}
 files, preserving relative folder structure. Uses Arrow to read and convert data.
 }
+\examples{
+\dontrun{
+# Needs USRDS files; writes only to target_dir
+convert_usrds_to_parquet(
+  source_dir = "path/to/usrds/sas_files",
+  target_dir = "path/to/usrds/parquet"
+)
+}
+}

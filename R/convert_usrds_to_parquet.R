@@ -112,6 +112,15 @@
 #'
 #' @return Invisibly returns a tibble with source and target file paths.
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Needs USRDS files; writes only to target_dir
+#' convert_usrds_to_parquet(
+#'   source_dir = "path/to/usrds/sas_files",
+#'   target_dir = "path/to/usrds/parquet"
+#' )
+#' }
 convert_usrds_to_parquet <- function(
   source_dir,
   target_dir,

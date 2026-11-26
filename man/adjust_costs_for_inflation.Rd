@@ -14,17 +14,36 @@ adjust_costs_for_inflation(cost_data_frame, baseline_month, baseline_year)
 \item{baseline_year}{is a year in the 2006-2025 range.}
 }
 \value{
-A data frame with costs adjusted for inflation, with the original variable name changed.
+The input data frame with an \verb{_ADJUSTED} copy of each amount
+column, in \code{baseline_month} \code{baseline_year} dollars. The original amount
+columns are kept unchanged.
 }
 \description{
 Given a data frame of claims with cost data and a month and year, adjust all costs to that month and year using CPI-M.
 }
 \details{
 The original cost variables will be retained, and new variables created that contain "_ADJUSTED" appended to them.
+
+Each claim is adjusted using the medical care consumer price index for
+the month and year of its \code{CLM_FROM} date (BLS series CUUR0000SAM, US city
+average, not seasonally adjusted, stored in the package). Claims whose
+month is not in that table get \code{NA} adjusted amounts and a warning.
+
+The amount columns adjusted are those returned by \code{\link[=get_PS_CLM_costs]{get_PS_CLM_costs()}},
+\code{\link[=get_IN_CLM_costs]{get_IN_CLM_costs()}}, \code{\link[=get_PS_REV_costs]{get_PS_REV_costs()}} and \code{\link[=get_IN_REV_costs]{get_IN_REV_costs()}}:
+\code{CLM_PMT_AMT}, \code{CARR_CLM_PRMRY_PYR_PD_AMT}, \code{NCH_CLM_PRVDR_PMT_AMT},
+\code{NCH_CLM_BENE_PMT_AMT}, \code{NCH_CARR_SBMT_CHRG_AMT}, \code{NCH_CARR_ALOW_CHRG_AMT},
+\code{CARR_CLM_CASH_DDCTBL_APPLY_AMT}, \code{CLM_TOT}, \code{CLM_AMT}, \code{SBMTCH}, \code{ALOWCH},
+\code{PMTAMT}, \code{REV_CH} and \code{REVPMT}, and the same columns with \verb{_PRORATED}
+added by \code{\link[=prorate_costs_by_day]{prorate_costs_by_day()}}. Other columns are returned unchanged.
 }
 \examples{
-\dontrun{
-adjust_costs_for_inflation()
-}
+claims <- data.frame(
+  USRDS_ID = c(1, 2),
+  CLM_FROM = as.Date(c("2010-06-01", "2015-12-01")),
+  PMTAMT = c(100, 100)
+)
+adjust_costs_for_inflation(claims, baseline_month = "December",
+                           baseline_year = 2015)
 
 }

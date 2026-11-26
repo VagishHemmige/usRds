@@ -111,10 +111,12 @@ values removed, and made-up example data are safer ways to get help.
   `check_repo_for_usrds_data()` lists files in a project folder that look
   like USRDS data: data file types such as `.sas7bdat` and `.parquet`, files
   named like USRDS files, and text files with a `USRDS_ID` column. In a git
-  repository it checks the files git would commit, so files listed in
-  `.gitignore` are not reported. It reads file names and header lines only,
-  and reports paths only. Run it before each commit until the automatic
-  checks below exist.
+  repository it checks the files git would commit, so untracked files listed
+  in `.gitignore` are not reported. A file git already tracks is still
+  reported: `.gitignore` does not untrack it, so remove it from git with
+  `git rm --cached`, and treat data that was already pushed as a disclosure.
+  It reads file names and header lines only, and reports paths only. Run it
+  before each commit until the automatic checks below exist.
 
 What it does not do yet: usRds does not check whether your folders are
 synced or shared, does not check for data in a git repository unless you

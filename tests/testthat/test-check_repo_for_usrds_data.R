@@ -119,3 +119,52 @@ test_that("check_repo_for_usrds_data() stops on a missing folder", {
 
   expect_snapshot(error = TRUE, check_repo_for_usrds_data("no-such-folder"))
 })
+
+local_git_repo <- function(files, env = parent.frame()) {
+  skip_if(Sys.which("git") == "", "git not available")
+  dir <- local_project(files, env = env)
+  system2("git", c("-C", shQuote(dir), "init", "-q"))
+  dir
+}
+
+test_that("check_repo_for_usrds_data() reads git paths with unusual characters exactly", {
+  names <- "with space.parquet"
+  if (isTRUE(l10n_info()[["UTF-8"]])) names <- c(names, "caf\u00e9.parquet")
+  if (.Platform$OS.type != "windows") names <- c(names, "quo\"te.parquet")
+  files <- stats::setNames(as.list(rep("x", length(names))), names)
+  dir <- local_git_repo(files)
+
+  result <- check_repo_for_usrds_data(dir, quiet = TRUE)
+
+  expect_setequal(result$path, enc2utf8(names))
+  expect_equal(attr(result, "scan"), "git")
+})
+
+test_that("check_repo_for_usrds_data() scans a subfolder of a git repository", {
+  dir <- local_git_repo(list(
+    "top.parquet" = "x",
+    "analysis/out/cohort.parquet" = "x"
+  ))
+
+  result <- check_repo_for_usrds_data(file.path(dir, "analysis"), quiet = TRUE)
+
+  expect_equal(result$path, "out/cohort.parquet")
+})
+
+test_that("check_repo_for_usrds_data() still reports tracked files that .gitignore lists", {
+  dir <- local_git_repo(list("cohort.parquet" = "x"))
+  system2("git", c("-C", shQuote(dir), "add", "cohort.parquet"))
+  writeLines("cohort.parquet", file.path(dir, ".gitignore"))
+
+  result <- check_repo_for_usrds_data(dir, quiet = TRUE)
+
+  expect_equal(result$path, "cohort.parquet")
+})
+
+test_that("check_repo_for_usrds_data() prints file names with braces as they are", {
+  dir <- local_project(list("{not_code}.parquet" = "x"))
+  withr::local_dir(dir)
+  withr::local_envvar(GIT_CEILING_DIRECTORIES = dirname(dir))
+
+  expect_snapshot(check_repo_for_usrds_data("."))
+})

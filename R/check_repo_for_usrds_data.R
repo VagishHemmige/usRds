@@ -15,7 +15,8 @@
 #'   `id_columns` (case ignored).
 #'
 #' Inside a git repository, the files checked are those git would commit:
-#' tracked files, and untracked files that `.gitignore` does not exclude.
+#' tracked files, and untracked files that `.gitignore` does not exclude. A
+#' file git already tracks is checked even if `.gitignore` lists it.
 #' Outside one, or when git is not installed, every file under `path` is
 #' checked, apart from the `.git` folder. Files under
 #' `tests/testthat/fixtures/` whose names start with `synthetic-` are
@@ -105,13 +106,16 @@ check_repo_for_usrds_data <- function(
         "i" = "Checked {length(files)} file{?s}: {scope}."
       ))
     } else {
-      lines <- paste0(result$path, ": ", result$reason)
+      # Braces in file names would be read as cli expressions; double them
+      # so each name prints as it is.
+      lines <- gsub("([{}])", "\\1\\1", paste0(result$path, ": ", result$reason))
       names(lines) <- rep("*", length(lines))
       cli::cli_warn(c(
         "{nrow(result)} file{?s} in {.path {path}} may be USRDS data:",
         lines,
         "i" = "Checked {scope}.",
-        "i" = "Remove these files, or move them outside the project, or list them in {.file .gitignore}."
+        "i" = "Move these files outside the project, or list untracked ones in {.file .gitignore}.",
+        "i" = "{.file .gitignore} does not stop git tracking a file it already tracks; remove such files from git with {.code git rm --cached <file>}. Data already pushed needs separate remediation."
       ))
     }
   }
@@ -130,35 +134,45 @@ check_repo_for_usrds_data <- function(
       stderr = FALSE
     ))
     if (identical(inside, "true")) {
-      files <- suppressWarnings(system2(
+      # -z gives each path exactly, separated by NUL bytes; without it, git
+      # quotes paths with unusual characters. Paths are relative to `path`.
+      listing <- tempfile("usrds-ls-files-")
+      on.exit(unlink(listing), add = TRUE)
+      status <- suppressWarnings(system2(
         git,
         c(
-          "-C", shQuote(path), "ls-files", "--cached", "--others",
-          "--exclude-standard", "--full-name", "--", "."
+          "-C", shQuote(path), "ls-files", "-z", "--cached", "--others",
+          "--exclude-standard", "--", "."
         ),
-        stdout = TRUE,
+        stdout = listing,
         stderr = FALSE
       ))
-      status <- attr(files, "status")
-      if (is.null(status) || status == 0) {
-        prefix <- suppressWarnings(system2(
-          git,
-          c("-C", shQuote(path), "rev-parse", "--show-prefix"),
-          stdout = TRUE,
-          stderr = FALSE
-        ))
-        prefix <- if (length(prefix) == 1) prefix else ""
-        files <- unique(files)
-        if (nzchar(prefix)) {
-          files <- substring(files, nchar(prefix) + 1)
-        }
-        return(list(files = files, scan = "git"))
+      if (identical(as.integer(status), 0L)) {
+        return(list(files = .split_nul(listing), scan = "git"))
       }
     }
   }
   files <- list.files(path, recursive = TRUE, all.files = TRUE, no.. = TRUE)
   files <- files[!grepl("(^|/)\\.git/", files)]
   list(files = files, scan = "folder")
+}
+
+# The NUL-separated UTF-8 paths in `file`.
+.split_nul <- function(file) {
+  bytes <- readBin(file, "raw", n = file.size(file))
+  if (length(bytes) == 0) {
+    return(character())
+  }
+  ends <- which(bytes == as.raw(0))
+  starts <- c(1L, utils::head(ends, -1L) + 1L)
+  paths <- mapply(
+    function(from, to) rawToChar(bytes[seq.int(from, length.out = to - from)]),
+    starts,
+    ends,
+    USE.NAMES = FALSE
+  )
+  Encoding(paths) <- "UTF-8"
+  unique(paths)
 }
 
 .usrds_data_types <- c(
@@ -202,7 +216,7 @@ check_repo_for_usrds_data <- function(
   if (length(first) == 0) {
     return(character())
   }
-  first <- sub("^﻿", "", first)
+  first <- sub("^\ufeff", "", first)
   columns <- strsplit(first, "[,\t;|]")[[1]]
   trimws(gsub("[\"']", "", columns))
 }

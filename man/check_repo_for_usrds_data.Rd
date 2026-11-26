@@ -41,7 +41,8 @@ claim file the package reads), with a \code{.csv}, \code{.tsv}, \code{.txt}, \co
 }
 
 Inside a git repository, the files checked are those git would commit:
-tracked files, and untracked files that \code{.gitignore} does not exclude.
+tracked files, and untracked files that \code{.gitignore} does not exclude. A
+file git already tracks is checked even if \code{.gitignore} lists it.
 Outside one, or when git is not installed, every file under \code{path} is
 checked, apart from the \code{.git} folder. Files under
 \verb{tests/testthat/fixtures/} whose names start with \verb{synthetic-} are

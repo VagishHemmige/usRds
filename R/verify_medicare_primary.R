@@ -22,8 +22,8 @@
 #' the payers in `payers` from `lookback_days` before the index date through
 #' the index date. With the default payers, `MPAB` (Medicare fee-for-service
 #' primary pay for both Part A and Part B) and `MPO` (Medicare
-#' fee-for-service primary pay for other, that is Part A or Part B alone),
-#' that is Medicare primary coverage: the Researcher's Guide 2025 uses these
+#' fee-for-service primary pay, for other), that is Medicare primary
+#' coverage: the Researcher's Guide 2025 uses these
 #' two codes for a Medicare-primary cohort (Example 8) and notes that
 #' Medicare claims are complete only for Medicare-primary enrollees (Section
 #' 4, "Payer History", Table 7). Use `payers = "MPAB"` to require both Part A
@@ -289,8 +289,10 @@ verify_medicare_primary <- function(
   use_cache <- cache && is.null(medicare_coverage_df)
 
   if (prepared) {
-    .check_disjoint_spells(medicare_coverage_df)
-    medicare_history <- medicare_coverage_df
+    medicare_history <- medicare_coverage_df[
+      medicare_coverage_df$USRDS_ID %in% usrds_ids,
+    ]
+    .check_disjoint_spells(medicare_history)
   } else if (use_cache && .medicare_cache_covers(usrds_ids, payers)) {
     medicare_history <- .usrds_env$medicare_history$data
   } else {

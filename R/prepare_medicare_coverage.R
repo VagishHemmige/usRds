@@ -13,8 +13,8 @@
 #'   their labels.
 #' @param payers Payers whose spans make up the coverage, as Appendix C
 #'   `$PAYCAT.` codes or their labels. The default, `c("MPAB", "MPO")`, is
-#'   Medicare fee-for-service primary pay for both Part A and Part B, or for
-#'   one of them: Medicare primary coverage (Researcher's Guide 2025, Example
+#'   Medicare fee-for-service primary pay for both Part A and Part B, or
+#'   "for other" (Appendix C `$PAYCAT.` labels): Medicare primary coverage (Researcher's Guide 2025, Example
 #'   8 and Section 4, Table 7). `"MPAB"` alone requires both parts. Secondary
 #'   payer (`MSP-EGHP`, `MSP-nonEGHP`), `HMO` and `WAIT` spans are not
 #'   Medicare primary, and claims are incomplete for them; see

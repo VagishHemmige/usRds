@@ -4,6 +4,11 @@
   are described in the pull requests on GitHub
   (<https://github.com/VagishHemmige/usRds/pulls?q=is%3Apr+is%3Amerged>).
 
+* Claim extractors label `HCFASAF` code `E` as "Durable Medical Equipment";
+  it used to become `NA`, and `establish_dx_date()` then dropped those
+  claims. Code `Q` is now "Quarterly dialysis (PMMIS)", as in Appendix C,
+  and unknown codes give a warning (#27).
+
 * `adjust_costs_for_inflation()` now finds the CPI for each claim's month in
   any locale; in a non-English session every `_ADJUSTED` amount used to be
   `NA` (#105).

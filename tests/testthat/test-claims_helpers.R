@@ -83,3 +83,30 @@ test_that(".parse_claim_dates() reads numbers as 1970-based days only when asked
     class = "usrds_unparsed_dates"
   )
 })
+
+test_that(".hcfasaf_factor() labels every Appendix C claim type, including DME (#27)", {
+  codes <- c("I", "M", "O", "D", "N", "H", "S", "Q", "P", "E")
+
+  result <- .hcfasaf_factor(codes)
+
+  expect_s3_class(result, "factor")
+  expect_false(anyNA(result))
+  expect_equal(as.character(result[codes == "E"]), "Durable Medical Equipment")
+  expect_equal(as.character(result[codes == "Q"]), "Quarterly dialysis (PMMIS)")
+  expect_equal(as.character(result[codes == "M"]), "Inpatient (REBUS)")
+})
+
+test_that(".hcfasaf_factor() warns about codes not in Appendix C (#27)", {
+  expect_snapshot(result <- .hcfasaf_factor(c("I", "Z", NA)))
+  expect_equal(as.character(result), c("Inpatient", NA, NA))
+})
+
+test_that("establish_dx_date() keeps patients with DME claims (#27)", {
+  claims <- data.frame(
+    USRDS_ID = c(1, 1),
+    CLM_FROM = as.Date(c("2015-01-01", "2015-02-01")),
+    HCFASAF = .hcfasaf_factor(c("E", "P"))
+  )
+
+  expect_equal(establish_dx_date(claims)$USRDS_ID, 1)
+})

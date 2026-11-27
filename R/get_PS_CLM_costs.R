@@ -124,21 +124,7 @@ get_PS_CLM_costs <- function(
     dplyr::bind_rows() |>
     #   (\(df) if (remove_missing_values==TRUE) dplyr::filter(df, !is.na(PMTAMT)) else df)()|>
     dplyr::mutate(
-      HCFASAF = factor(
-        .data$HCFASAF,
-        levels = c("I", "M", "O", "D", "N", "H", "S", "Q", "P"),
-        labels = c(
-          "Inpatient",
-          "Inpatient (REBUS)",
-          "Outpatient",
-          "Dialysis",
-          "Skilled Nursing Facility",
-          "Home Health",
-          "Hospice",
-          "Non-claim / auxiliary",
-          "Physician/Supplier"
-        )
-      )
+      HCFASAF = .hcfasaf_factor(.data$HCFASAF)
     ) |>
     labelled::set_variable_labels(
       USRDS_ID = "USRDS patient ID number",

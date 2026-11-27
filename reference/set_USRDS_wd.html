@@ -55,7 +55,8 @@ maps the USRDS files found there.</p>
 <span>  <span class="va">path</span>,</span>
 <span>  permanent <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  format_preference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"parquet"</span>, <span class="st">"sas7bdat"</span>, <span class="st">"csv"</span><span class="op">)</span>,</span>
-<span>  on_incomplete <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"warn"</span>, <span class="st">"error"</span><span class="op">)</span></span>
+<span>  on_incomplete <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"warn"</span>, <span class="st">"error"</span><span class="op">)</span>,</span>
+<span>  exclude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">getOption</a></span><span class="op">(</span><span class="st">"usRds.exclude"</span>, <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">character</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -81,6 +82,18 @@ ignored. Applies for the rest of the session.</p></dd>
 <dd><p>What to do when only part of a year's claim-file group
 is present: <code>"warn"</code> (the default) or <code>"error"</code>.</p></dd>
 
+
+<dt id="arg-exclude">exclude<a class="anchor" aria-label="anchor" href="#arg-exclude"></a></dt>
+<dd><p>Names of folders to skip, anywhere under <code>path</code>, compared
+without regard to case with each folder in a file's path: <code>"backup"</code>
+skips <code>old/Backup/ps2015a.parquet</code> but not <code>backups/ps2015a.parquet</code>.
+Files directly in <code>path</code> are never skipped. The default,
+<code>getOption("usRds.exclude")</code>, lets you set it once in a project's
+<code>.Rprofile</code>, for example <code>options(usRds.exclude = c("backup", "old"))</code>,
+so it also applies when usRds maps the folder on loading. An explicit
+value replaces the option; <code><a href="https://rdrr.io/r/base/character.html" class="external-link">character()</a></code> skips nothing. Applies for the
+rest of the session.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -91,10 +104,19 @@ is present: <code>"warn"</code> (the default) or <code>"error"</code>.</p></dd>
     <p>The map keeps one file per USRDS file and year. Files are recognised by
 name (the file names in Appendix B and the package's claim-file tables),
 wherever they sit under <code>path</code>, without regard to case. Files with other
-names are counted and set aside. When a file exists in
-more than one format, the first format in <code>format_preference</code> is used by
-every function that reads it. Two copies of a file in the same format are
-an error. If only part of a year's group of claim files is present (for
+names are counted and set aside (<code><a href="usrds_files.html">usrds_files()</a></code> lists them). Folders
+named in <code>exclude</code> are skipped.</p>
+<p><strong>Which copy is read.</strong> For each file and year, the first format in
+<code>format_preference</code> that is present is read by every function that reads
+that file, and copies in other formats are only reported. So a CSV export
+next to a Parquet file is harmless, but two copies in the format that
+will be read (for example a second <code>ps2015a.parquet</code> in a backup folder)
+are an error, because reading both would count their claims twice. The
+error lists the copies; <code>usrds_files("duplicates")</code> lists all of them, even
+after the error. Move the extra copies out of <code>path</code>, or skip their
+folders with <code>exclude</code>. usRds never chooses between same-format copies
+itself.</p>
+<p>If only part of a year's group of claim files is present (for
 example some, but not all, of the 2007 institutional files), the years and
 missing files are reported.</p>
     </div>
@@ -104,6 +126,10 @@ missing files are reported.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span><span class="fu">set_USRDS_wd</span><span class="op">(</span><span class="st">"C:/Data/USRDS"</span><span class="op">)</span>          <span class="co"># Session only</span></span></span>
 <span class="r-in"><span><span class="fu">set_USRDS_wd</span><span class="op">(</span><span class="st">"C:/Data/USRDS"</span>, <span class="cn">TRUE</span><span class="op">)</span>    <span class="co"># Persistent across sessions</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Skip folders that hold stray copies</span></span></span>
+<span class="r-in"><span><span class="fu">set_USRDS_wd</span><span class="op">(</span><span class="st">"C:/Data/USRDS"</span>, exclude <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"backup"</span>, <span class="st">"old exports"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="usrds_files.html">usrds_files</a></span><span class="op">(</span><span class="st">"excluded"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Use SAS files where both SAS and Parquet exist</span></span></span>
 <span class="r-in"><span><span class="fu">set_USRDS_wd</span><span class="op">(</span><span class="st">"C:/Data/USRDS"</span>, format_preference <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sas7bdat"</span>, <span class="st">"parquet"</span><span class="op">)</span><span class="op">)</span></span></span>

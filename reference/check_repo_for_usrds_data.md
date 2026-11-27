@@ -71,7 +71,7 @@ dir.create(project)
 writeLines(c("USRDS_ID,age", "1,50"), file.path(project, "cohort.csv"))
 writeLines("x <- 1", file.path(project, "analysis.R"))
 check_repo_for_usrds_data(project)
-#> Warning: 1 file in /tmp/RtmpzbJt4J/project19a84f8b799 may be USRDS data:
+#> Warning: 1 file in /tmp/RtmpTFqPv3/project198f2dce61d3 may be USRDS data:
 #> • cohort.csv: identifier column (USRDS_ID)
 #> ℹ Checked all files (not a git repository, or git not found).
 #> ℹ Move these files outside the project, or list untracked ones in .gitignore.

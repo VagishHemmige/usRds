@@ -49,7 +49,8 @@ the files the package reads, and the files it set aside or flagged.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">usrds_files</span><span class="op">(</span></span>
-<span>  which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mapped"</span>, <span class="st">"other_formats"</span>, <span class="st">"unrecognised"</span>, <span class="st">"unread_duplicates"</span>, <span class="st">"incomplete"</span><span class="op">)</span></span>
+<span>  which <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"mapped"</span>, <span class="st">"other_formats"</span>, <span class="st">"unrecognised"</span>, <span class="st">"unread_duplicates"</span>, <span class="st">"incomplete"</span>,</span>
+<span>    <span class="st">"duplicates"</span>, <span class="st">"excluded"</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -68,12 +69,24 @@ would never be read.</p></li>
 is not being read.</p></li>
 <li><p><code>"incomplete"</code>: years where only part of a claim-file group is present,
 with the missing files in the <code>missing</code> list column.</p></li>
-</ul></dd>
+<li><p><code>"duplicates"</code>: every copy of a file that has more than one copy in
+the format being read, one row per copy. These stop
+<code><a href="set_USRDS_wd.html">set_USRDS_wd()</a></code>; move the extra copies or skip their folders with
+<code>exclude</code>.</p></li>
+<li><p><code>"excluded"</code>: files skipped because they sit in a folder named in
+<code>exclude</code>.</p></li>
+</ul><p><code>"unrecognised"</code>, <code>"duplicates"</code> and <code>"excluded"</code> describe the latest
+scan even when it stopped with an error, so you can see why. After a stop
+on same-format copies, no files are mapped and the other lists are not
+available. After a stop on an incomplete claim-file group
+(<code>on_incomplete = "error"</code>), the files found are still mapped and can be
+read, so check <code>usrds_files("incomplete")</code> before using them.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A tibble.</p>
+    <p>A tibble. Paths in <code>relative_path</code> are relative to the USRDS
+folder.</p>
     </div>
 
     <div class="section level2">
@@ -82,6 +95,7 @@ with the missing files in the <code>missing</code> list column.</p></li>
 <span class="r-in"><span><span class="fu"><a href="set_USRDS_wd.html">set_USRDS_wd</a></span><span class="op">(</span><span class="st">"C:/Data/USRDS"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">usrds_files</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">usrds_files</span><span class="op">(</span><span class="st">"unrecognised"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">usrds_files</span><span class="op">(</span><span class="st">"duplicates"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

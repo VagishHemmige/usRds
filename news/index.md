@@ -59,6 +59,16 @@
   matching loop slow
   ([\#5](https://github.com/VagishHemmige/usRds/issues/5)).
 
+- [`set_USRDS_wd()`](https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.md)
+  gains `exclude`, folder names to skip (default
+  `getOption("usRds.exclude")`, also used when usRds maps the folder on
+  loading), and its help explains which copy of a file is read.
+  [`usrds_files()`](https://vagishhemmige.github.io/usRds/reference/usrds_files.md)
+  gains `"duplicates"` (every same-format copy that stops the map) and
+  `"excluded"`; these and `"unrecognised"` are available even after a
+  failed scan
+  ([\#125](https://github.com/VagishHemmige/usRds/issues/125)).
+
 - [`verify_medicare_primary()`](https://vagishhemmige.github.io/usRds/reference/verify_medicare_primary.md)
   gains `payers`, the payers that count as Medicare primary, as codes or
   labels; the default is still `MPAB` and `MPO`

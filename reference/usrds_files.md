@@ -9,7 +9,8 @@ and the files it set aside or flagged.
 
 ``` r
 usrds_files(
-  which = c("mapped", "other_formats", "unrecognised", "unread_duplicates", "incomplete")
+  which = c("mapped", "other_formats", "unrecognised", "unread_duplicates", "incomplete",
+    "duplicates", "excluded")
 )
 ```
 
@@ -34,9 +35,24 @@ usrds_files(
   - `"incomplete"`: years where only part of a claim-file group is
     present, with the missing files in the `missing` list column.
 
+  - `"duplicates"`: every copy of a file that has more than one copy in
+    the format being read, one row per copy. These stop
+    [`set_USRDS_wd()`](https://vagishhemmige.github.io/usRds/reference/set_USRDS_wd.md);
+    move the extra copies or skip their folders with `exclude`.
+
+  - `"excluded"`: files skipped because they sit in a folder named in
+    `exclude`.
+
+  `"unrecognised"`, `"duplicates"` and `"excluded"` describe the latest
+  scan even when it stopped with an error, so you can see why. After a
+  stop on same-format copies, no files are mapped and the other lists
+  are not available. After a stop on an incomplete claim-file group
+  (`on_incomplete = "error"`), the files found are still mapped and can
+  be read, so check `usrds_files("incomplete")` before using them.
+
 ## Value
 
-A tibble.
+A tibble. Paths in `relative_path` are relative to the USRDS folder.
 
 ## Examples
 
@@ -45,5 +61,6 @@ if (FALSE) { # \dontrun{
 set_USRDS_wd("C:/Data/USRDS")
 usrds_files()
 usrds_files("unrecognised")
+usrds_files("duplicates")
 } # }
 ```

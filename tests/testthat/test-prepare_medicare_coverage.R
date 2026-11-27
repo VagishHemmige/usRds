@@ -179,3 +179,45 @@ test_that("payers accepts Appendix C labels as well as codes", {
   expect_equal(attr(by_label, "payers"), "MPAB")
   expect_equal(mixed$medicare_primary_TF, c(TRUE, FALSE, FALSE, TRUE))
 })
+
+test_that("verify_medicare_primary() rereads payhist when payers change, despite the cache", {
+  calls <- new.env()
+  calls$n <- 0
+  local_mocked_bindings(
+    load_usrds_file = function(file_key, usrds_ids = NULL, ...) {
+      calls$n <- calls$n + 1
+      rows <- coverage_payhist()
+      rows[rows$USRDS_ID %in% usrds_ids, ]
+    }
+  )
+  withr::local_envvar(USRDS_WD = "/usrds/folder-a")
+  old <- .usrds_env$medicare_history
+  withr::defer(.usrds_env$medicare_history <- old)
+  .usrds_env$medicare_history <- NULL
+
+  both <- suppressMessages(
+    verify_medicare_primary(coverage_patients(), "index", cache = TRUE)
+  )
+  ab_only <- suppressMessages(
+    verify_medicare_primary(coverage_patients(), "index", cache = TRUE, payers = "MPAB")
+  )
+
+  expect_equal(calls$n, 2)
+  expect_equal(both$medicare_primary_TF[4], TRUE)
+  expect_equal(ab_only$medicare_primary_TF[4], FALSE)
+})
+
+test_that("verify_medicare_primary() stops on overlapping spells in prepared coverage", {
+  coverage <- prepare_medicare_coverage(coverage_payhist())
+  edited <- coverage[c(1, 1, 2, 3), ]
+  patients <- data.frame(USRDS_ID = c(1, 1), index = as.Date(c("2010-06-01", "2010-07-01")))
+
+  expect_snapshot(
+    error = TRUE,
+    verify_medicare_primary(patients, "index", medicare_coverage_df = edited)
+  )
+  expect_equal(
+    nrow(verify_medicare_primary(patients, "index", medicare_coverage_df = coverage)),
+    2
+  )
+})

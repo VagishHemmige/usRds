@@ -26,3 +26,12 @@
       Warning:
       1 USRDS_ID(s) in `df` are not present in `medicare_coverage_df`.
 
+# verify_medicare_primary() stops on overlapping spells in prepared coverage
+
+    Code
+      verify_medicare_primary(patients, "index", medicare_coverage_df = edited)
+    Condition
+      Error in `verify_medicare_primary()`:
+      ! `medicare_coverage_df` has overlapping spells for 1 patient.
+      i Build it with `prepare_medicare_coverage()` and pass it without changing its rows.
+

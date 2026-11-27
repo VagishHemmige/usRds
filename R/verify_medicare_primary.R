@@ -18,14 +18,21 @@
 #' `medicare_coverage_df` is never cached; use [prepare_medicare_coverage()]
 #' instead.
 #'
-#' Medicare primary coverage means a `PAYER` listed in `payers`. By default
-#' that is `MPAB` (Medicare fee-for-service primary pay for both Part A and
-#' Part B) or `MPO` (Medicare fee-for-service primary pay for other), from the
-#' Appendix C `$PAYCAT.` format; the Researcher's Guide 2025 (Section 4,
-#' "Payer History") notes that Medicare claims are complete only for
-#' Medicare-primary enrollees. `PAYER` may hold these codes or their Appendix
-#' C labels, so payer history loaded with or without `factor_labels` gives the
-#' same result.
+#' `medicare_primary_TF` is `TRUE` when the patient is continuously covered by
+#' the payers in `payers` from `lookback_days` before the index date through
+#' the index date. With the default payers, `MPAB` (Medicare fee-for-service
+#' primary pay for both Part A and Part B) and `MPO` (Medicare
+#' fee-for-service primary pay for other, that is Part A or Part B alone),
+#' that is Medicare primary coverage: the Researcher's Guide 2025 uses these
+#' two codes for a Medicare-primary cohort (Example 8) and notes that
+#' Medicare claims are complete only for Medicare-primary enrollees (Section
+#' 4, "Payer History", Table 7). Use `payers = "MPAB"` to require both Part A
+#' and Part B. Other codes change what the flag means: `MSP-EGHP` and
+#' `MSP-nonEGHP` are Medicare as secondary payer, `HMO` is Medicare
+#' Advantage and `WAIT` the 90-day waiting period, and claims are incomplete
+#' for all of them. `PAYER` may hold codes or their Appendix C labels, so
+#' payer history loaded with or without `factor_labels` gives the same
+#' result.
 #'
 #' When `verify_medicare_primary()` is called many times, for example once
 #' per risk set in a matching loop, build the coverage spells once with
@@ -282,6 +289,7 @@ verify_medicare_primary <- function(
   use_cache <- cache && is.null(medicare_coverage_df)
 
   if (prepared) {
+    .check_disjoint_spells(medicare_coverage_df)
     medicare_history <- medicare_coverage_df
   } else if (use_cache && .medicare_cache_covers(usrds_ids, payers)) {
     medicare_history <- .usrds_env$medicare_history$data
@@ -321,6 +329,7 @@ verify_medicare_primary <- function(
   )
 
   #Join patient cohort to medicare history data
+  #Spells are disjoint, so each patient row matches at most one spell
   patients_clean <- dplyr::left_join(
     df,
     medicare_history,
@@ -331,7 +340,8 @@ verify_medicare_primary <- function(
         "usrds_package_medicare_begdate",
         "usrds_package_medicare_enddate"
       )
-    )
+    ),
+    relationship = "many-to-one"
   )
 
   #Create variable that marks FFS coverage on day of claim through 365 days prior

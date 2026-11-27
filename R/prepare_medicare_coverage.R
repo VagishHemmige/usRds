@@ -11,11 +11,14 @@
 #'   `USRDS_ID`, `PAYER`, `BEGDATE` and `ENDDATE`. `BEGDATE` and `ENDDATE`
 #'   must be of class `Date`. `PAYER` may hold Appendix C `$PAYCAT.` codes or
 #'   their labels.
-#' @param payers Payers that count as Medicare primary, as Appendix C
-#'   `$PAYCAT.` codes or their labels. The default, `c("MPAB", "MPO")`, is Medicare
-#'   fee-for-service primary pay for both Part A and Part B, or for other.
-#'   The Researcher's Guide 2025 (Section 4, "Payer History") notes that
-#'   Medicare claims are complete only for Medicare-primary enrollees.
+#' @param payers Payers whose spans make up the coverage, as Appendix C
+#'   `$PAYCAT.` codes or their labels. The default, `c("MPAB", "MPO")`, is
+#'   Medicare fee-for-service primary pay for both Part A and Part B, or for
+#'   one of them: Medicare primary coverage (Researcher's Guide 2025, Example
+#'   8 and Section 4, Table 7). `"MPAB"` alone requires both parts. Secondary
+#'   payer (`MSP-EGHP`, `MSP-nonEGHP`), `HMO` and `WAIT` spans are not
+#'   Medicare primary, and claims are incomplete for them; see
+#'   [verify_medicare_primary()].
 #'
 #' @return A data frame of class `usrds_medicare_coverage`, with one row per
 #'   spell and columns `USRDS_ID`, `BEGDATE` and `ENDDATE`. Attributes record
@@ -163,4 +166,27 @@ prepare_medicare_coverage <- function(payhist, payers = c("MPAB", "MPO")) {
       .groups = "drop"
     ) |>
     dplyr::select(-"group_id")
+}
+
+# Prepared coverage can be edited after prepare_medicare_coverage() built it;
+# overlapping spells would make a patient row match two spells.
+.check_disjoint_spells <- function(coverage, call = rlang::caller_env()) {
+  ordered <- coverage[order(coverage$USRDS_ID, coverage$BEGDATE), ]
+  same_patient <- ordered$USRDS_ID[-1] == ordered$USRDS_ID[-nrow(ordered)]
+  overlaps <- same_patient &
+    as.numeric(ordered$BEGDATE[-1]) <= as.numeric(ordered$ENDDATE[-nrow(ordered)])
+  overlaps[is.na(overlaps)] <- FALSE
+  if (any(overlaps)) {
+    ids <- unique(ordered$USRDS_ID[-1][overlaps])
+    cli::cli_abort(
+      c(
+        "{.arg medicare_coverage_df} has overlapping spells for
+        {length(ids)} patient{?s}.",
+        "i" = "Build it with {.fn prepare_medicare_coverage} and pass it
+        without changing its rows."
+      ),
+      call = call
+    )
+  }
+  invisible(coverage)
 }

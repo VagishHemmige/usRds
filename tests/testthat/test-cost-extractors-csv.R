@@ -245,3 +245,48 @@ test_that("get_IN_REV_costs() output prorates with totals kept (#66)", {
 
   expect_equal(sum(prorated$REVPMT_PRORATED), sum(lines$REVPMT))
 })
+
+test_that("revenue lines read as date-times give Dates that prorate one day at a time", {
+  lines <- data.frame(
+    USRDS_ID = 1,
+    HCFASAF = "O",
+    CLM_FROM = as.POSIXct("2010-01-01", tz = "UTC"),
+    CLM_THRU = as.POSIXct("2010-01-03", tz = "UTC"),
+    REV_DT = as.POSIXct("2010-01-01", tz = "UTC"),
+    CODE = "0300",
+    REV_CH = 90,
+    REVPMT = 30
+  )
+
+  standard <- .standardise_revenue_lines(lines, "rev2010a.sas7bdat")
+  standard$.usrds_revenue_line <- NULL
+  prorated <- prorate_costs_by_day(standard)
+
+  expect_s3_class(standard$CLM_FROM, "Date")
+  expect_s3_class(standard$CLM_THRU, "Date")
+  expect_s3_class(standard$REV_DT, "Date")
+  expect_equal(
+    sort(unique(prorated$service_date)),
+    as.Date(c("2010-01-01", "2010-01-02", "2010-01-03"))
+  )
+  expect_equal(sum(prorated$REVPMT_PRORATED), 30)
+})
+
+test_that("get_IN_REV_costs() leaves diagnosis and procedure lines of mixed det files alone", {
+  rows <- data.frame(
+    USRDS_ID = 1,
+    HCFASAF = "O",
+    CLM_FROM = "01JAN2007",
+    CLM_THRU = "03JAN2007",
+    CDTYPE = c("R", "R", "R", "I"),
+    CODE = c("300", "636", "1", "0001"),
+    REV_CH = c(120, 80, 200, NA),
+    REVPMT = c(60, 40, 100, NA)
+  )
+  local_cost_csv("rev2010a", 2010, rows)
+
+  result <- suppressMessages(get_IN_REV_costs(years = 2010))
+
+  expect_equal(result$CODE, c("0300", "0636", "0001"), ignore_attr = "label")
+  expect_false("CDTYPE" %in% names(result))
+})

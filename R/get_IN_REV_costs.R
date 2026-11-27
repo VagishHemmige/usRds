@@ -52,13 +52,25 @@
     stop("Unsupported file type: ", file_suffix)
   }
 
-  .standardise_revenue_lines(file_data)
+  .standardise_revenue_lines(file_data, file_path)
 }
 
 # Gives every file the same columns and types, so files that lack a column
-# (older layouts) bind with the others: missing dates and codes become typed
-# NA, and CODE is text with its leading zeros.
-.standardise_revenue_lines <- function(file_data) {
+# (older layouts) bind with the others. Dates become Date in every format: a
+# SAS datetime becomes its date, and a number with no date format is
+# reported, not guessed. Missing dates and codes become typed NA.
+#
+# Before 2008 the det files mix revenue center lines (CDTYPE "R") with
+# diagnosis and procedure lines, whose CODE is an ICD code (Researcher's
+# Guide 2025, Section 5, "CDTYPE and CODE Variables"). Only revenue center
+# lines, or lines in files without CDTYPE, are padded and can be dropped as
+# 0001 totals; `.usrds_revenue_line` marks them until the lines are bound.
+.standardise_revenue_lines <- function(file_data, file_path) {
+  file_data <- .parse_claim_dates(
+    file_data,
+    c("CLM_FROM", "CLM_THRU", "REV_DT"),
+    file_path
+  )
   for (col in c("CLM_FROM", "CLM_THRU", "REV_DT")) {
     if (!col %in% names(file_data)) {
       file_data[[col]] <- as.Date(NA)
@@ -67,7 +79,16 @@
   if (!"CODE" %in% names(file_data)) {
     file_data$CODE <- NA_character_
   }
-  file_data$CODE <- .pad_revenue_code(file_data$CODE)
+  cdtype <- if ("CDTYPE" %in% names(file_data)) {
+    trimws(as.character(file_data$CDTYPE))
+  } else {
+    rep(NA_character_, nrow(file_data))
+  }
+  revenue_line <- is.na(cdtype) | cdtype %in% c("", "R")
+  file_data$CODE <- as.character(file_data$CODE)
+  file_data$CODE[revenue_line] <- .pad_revenue_code(file_data$CODE[revenue_line])
+  file_data$.usrds_revenue_line <- revenue_line
+  file_data$CDTYPE <- NULL
   file_data
 }
 
@@ -95,8 +116,13 @@
 #' @param drop_total_lines If `TRUE` (the default), drop lines with revenue
 #'   center code `0001`. The 2025 Researcher's Guide (Section 5,
 #'   "Institutional Claims Details and Revenue Center Details") reports that
-#'   the `0001` line holds the sum of the claim's other lines, so keeping it
-#'   counts the claim twice. Lines whose code is missing are kept.
+#'   the `0001` line's `REV_CH` is the sum of the claim's other lines'
+#'   `REV_CH`, so keeping it counts the charges twice. The Guide does not
+#'   describe `REVPMT` on that line; dropping the line removes its `REVPMT`
+#'   too. Lines whose code is missing are kept. In files that have `CDTYPE`
+#'   (det files before 2008, which also hold diagnosis and procedure lines),
+#'   only revenue center lines (`CDTYPE` `"R"`) are dropped or have their
+#'   codes padded; the other lines are returned unchanged for now.
 #'
 #' @return A data frame with one row per revenue center line and columns
 #'   `USRDS_ID`, `CLM_FROM` and `CLM_THRU` (claim from and through dates),
@@ -128,6 +154,7 @@ get_IN_REV_costs <- function(years, usrds_ids = NULL, drop_total_lines = TRUE) {
     "CLM_THRU",
     "REV_DT",
     "CODE",
+    "CDTYPE",
     "REV_CH",
     "REVPMT",
     "HCFASAF"
@@ -153,10 +180,12 @@ get_IN_REV_costs <- function(years, usrds_ids = NULL, drop_total_lines = TRUE) {
     dplyr::bind_rows() |>
     (\(lines) {
       if (drop_total_lines) {
-        dplyr::filter(lines, is.na(.data$CODE) | .data$CODE != "0001")
-      } else {
-        lines
+        lines <- dplyr::filter(
+          lines,
+          !(.data$.usrds_revenue_line & .data$CODE %in% "0001")
+        )
       }
+      dplyr::select(lines, -".usrds_revenue_line")
     })() |>
     dplyr::mutate(
       HCFASAF = factor(

@@ -68,14 +68,21 @@ processed coverage for later calls. Payer history passed as
 \code{medicare_coverage_df} is never cached; use \code{\link[=prepare_medicare_coverage]{prepare_medicare_coverage()}}
 instead.
 
-Medicare primary coverage means a \code{PAYER} listed in \code{payers}. By default
-that is \code{MPAB} (Medicare fee-for-service primary pay for both Part A and
-Part B) or \code{MPO} (Medicare fee-for-service primary pay for other), from the
-Appendix C \verb{$PAYCAT.} format; the Researcher's Guide 2025 (Section 4,
-"Payer History") notes that Medicare claims are complete only for
-Medicare-primary enrollees. \code{PAYER} may hold these codes or their Appendix
-C labels, so payer history loaded with or without \code{factor_labels} gives the
-same result.
+\code{medicare_primary_TF} is \code{TRUE} when the patient is continuously covered by
+the payers in \code{payers} from \code{lookback_days} before the index date through
+the index date. With the default payers, \code{MPAB} (Medicare fee-for-service
+primary pay for both Part A and Part B) and \code{MPO} (Medicare
+fee-for-service primary pay for other, that is Part A or Part B alone),
+that is Medicare primary coverage: the Researcher's Guide 2025 uses these
+two codes for a Medicare-primary cohort (Example 8) and notes that
+Medicare claims are complete only for Medicare-primary enrollees (Section
+4, "Payer History", Table 7). Use \code{payers = "MPAB"} to require both Part A
+and Part B. Other codes change what the flag means: \code{MSP-EGHP} and
+\code{MSP-nonEGHP} are Medicare as secondary payer, \code{HMO} is Medicare
+Advantage and \code{WAIT} the 90-day waiting period, and claims are incomplete
+for all of them. \code{PAYER} may hold codes or their Appendix C labels, so
+payer history loaded with or without \code{factor_labels} gives the same
+result.
 
 When \code{verify_medicare_primary()} is called many times, for example once
 per risk set in a matching loop, build the coverage spells once with

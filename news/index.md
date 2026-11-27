@@ -43,6 +43,20 @@
   a missing `CLM_PMT_AMT`; the argument had no effect before
   ([\#54](https://github.com/VagishHemmige/usRds/issues/54)).
 
+- New
+  [`prepare_medicare_coverage()`](https://vagishhemmige.github.io/usRds/reference/prepare_medicare_coverage.md)
+  builds the Medicare-primary coverage spells from the payer history
+  once. Passing its result to
+  [`verify_medicare_primary()`](https://vagishhemmige.github.io/usRds/reference/verify_medicare_primary.md)
+  skips rebuilding them on every call, which made checks inside a
+  matching loop slow
+  ([\#5](https://github.com/VagishHemmige/usRds/issues/5)).
+
+- [`verify_medicare_primary()`](https://vagishhemmige.github.io/usRds/reference/verify_medicare_primary.md)
+  gains `payers`, the payers that count as Medicare primary, as codes or
+  labels; the default is still `MPAB` and `MPO`
+  ([\#5](https://github.com/VagishHemmige/usRds/issues/5)).
+
 - [`verify_medicare_primary()`](https://vagishhemmige.github.io/usRds/reference/verify_medicare_primary.md)
   accepts payer codes (`MPAB`, `MPO`) as well as their labels, merges
   coverage spans nested inside earlier ones, stops when coverage dates

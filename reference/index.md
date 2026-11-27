@@ -68,6 +68,9 @@
 - [`load_usrds_file()`](https://vagishhemmige.github.io/usRds/reference/load_usrds_file.md)
   : Load a USRDS file and optionally apply labels
 
+- [`prepare_medicare_coverage()`](https://vagishhemmige.github.io/usRds/reference/prepare_medicare_coverage.md)
+  : Build Medicare-primary coverage spells once, for repeated checks
+
 - [`prorate_costs_by_day()`](https://vagishhemmige.github.io/usRds/reference/prorate_costs_by_day.md)
   : Prorate costs by day
 

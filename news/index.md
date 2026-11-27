@@ -25,6 +25,10 @@
   the files git would commit
   ([\#49](https://github.com/VagishHemmige/usRds/issues/49)).
 
+- `get_PS_CLM_costs(remove_missing_values = TRUE)` now drops claims with
+  a missing `CLM_PMT_AMT`; the argument had no effect before
+  ([\#54](https://github.com/VagishHemmige/usRds/issues/54)).
+
 - [`verify_medicare_primary()`](https://vagishhemmige.github.io/usRds/reference/verify_medicare_primary.md)
   accepts payer codes (`MPAB`, `MPO`) as well as their labels, merges
   coverage spans nested inside earlier ones, stops when coverage dates

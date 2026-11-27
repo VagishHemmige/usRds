@@ -1,8 +1,7 @@
 # Retrieve claims costs from Physician/Supplier claims
 
 Extracts all claims costs from physician/supplier billing data for the
-selected years, optionally filtering by USRDS_IDs. Option to
-`remove_missing_values` defaults to TRUE
+selected years, optionally filtering by USRDS_IDs.
 
 ## Usage
 
@@ -22,10 +21,11 @@ get_PS_CLM_costs(years, usrds_ids = NULL, remove_missing_values = TRUE)
 
 - remove_missing_values:
 
-  Currently has no effect: claims with a missing `CLM_PMT_AMT` are
-  always kept. Kept for consistency with
-  [`get_PS_REV_costs()`](https://vagishhemmige.github.io/usRds/reference/get_PS_REV_costs.md);
-  whether to drop them is undecided (see GitHub \#54).
+  If `TRUE` (the default), drop claims whose `CLM_PMT_AMT` is missing: a
+  missing payment is an unknown amount, not a payment of zero (#54).
+  This matches
+  [`get_PS_REV_costs()`](https://vagishhemmige.github.io/usRds/reference/get_PS_REV_costs.md),
+  which drops lines with a missing `PMTAMT`.
 
 ## Value
 

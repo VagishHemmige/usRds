@@ -72,8 +72,8 @@ instead.
 the payers in \code{payers} from \code{lookback_days} before the index date through
 the index date. With the default payers, \code{MPAB} (Medicare fee-for-service
 primary pay for both Part A and Part B) and \code{MPO} (Medicare
-fee-for-service primary pay for other, that is Part A or Part B alone),
-that is Medicare primary coverage: the Researcher's Guide 2025 uses these
+fee-for-service primary pay, for other), that is Medicare primary
+coverage: the Researcher's Guide 2025 uses these
 two codes for a Medicare-primary cohort (Example 8) and notes that
 Medicare claims are complete only for Medicare-primary enrollees (Section
 4, "Payer History", Table 7). Use \code{payers = "MPAB"} to require both Part A

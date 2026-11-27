@@ -14,8 +14,8 @@ their labels.}
 
 \item{payers}{Payers whose spans make up the coverage, as Appendix C
 \verb{$PAYCAT.} codes or their labels. The default, \code{c("MPAB", "MPO")}, is
-Medicare fee-for-service primary pay for both Part A and Part B, or for
-one of them: Medicare primary coverage (Researcher's Guide 2025, Example
+Medicare fee-for-service primary pay for both Part A and Part B, or
+"for other" (Appendix C \verb{$PAYCAT.} labels): Medicare primary coverage (Researcher's Guide 2025, Example
 8 and Section 4, Table 7). \code{"MPAB"} alone requires both parts. Secondary
 payer (\code{MSP-EGHP}, \code{MSP-nonEGHP}), \code{HMO} and \code{WAIT} spans are not
 Medicare primary, and claims are incomplete for them; see

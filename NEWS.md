@@ -17,6 +17,9 @@
   like USRDS data (data file types, USRDS file names, `USRDS_ID` columns), by
   path only, checking the files git would commit (#49).
 
+* `get_PS_CLM_costs(remove_missing_values = TRUE)` now drops claims with a
+  missing `CLM_PMT_AMT`; the argument had no effect before (#54).
+
 * `verify_medicare_primary()` accepts payer codes (`MPAB`, `MPO`) as well as
   their labels, merges coverage spans nested inside earlier ones, stops when
   coverage dates are not `Date`s, and warns about patients missing from the

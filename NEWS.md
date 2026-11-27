@@ -17,6 +17,10 @@
   like USRDS data (data file types, USRDS file names, `USRDS_ID` columns), by
   path only, checking the files git would commit (#49).
 
+* New `claims_followup_end()` finds the last day of claims-based follow-up:
+  the earliest of death, the end of Medicare-primary coverage, the date the
+  claims are complete to, a study end date and a maximum length (#23).
+
 * `get_PS_CLM_costs(remove_missing_values = TRUE)` now drops claims with a
   missing `CLM_PMT_AMT`; the argument had no effect before (#54).
 

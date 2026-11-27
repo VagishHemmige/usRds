@@ -13,7 +13,8 @@ establish_dx_date(
 )
 }
 \arguments{
-\item{df}{data frame of claims created by a \verb{get_*_ICD} function}
+\item{df}{data frame of claims created by a \verb{get_*_ICD} function, with
+\code{USRDS_ID}, \code{CLM_FROM} (class \code{Date}) and \code{HCFASAF}}
 
 \item{diagnosis_established}{A string stored in the \code{diagnosis} column of
 the result, naming the diagnosis being dated (for example \code{"cryptococcus"}).}

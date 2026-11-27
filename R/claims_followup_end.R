@@ -19,7 +19,8 @@
 #' @param df A data frame with a column `USRDS_ID` and the columns named
 #'   below.
 #' @param index_date The name of a `Date` column in `df`: the first day of
-#'   follow-up.
+#'   follow-up. A missing value means follow-up never starts:
+#'   `followup_end` is then `NA`, with reason `"no_index"`.
 #' @param coverage_end The name of a `Date` column in `df` holding the end of
 #'   the Medicare-primary spell that contains the index date, as returned by
 #'   [verify_medicare_primary()] through `coverage_end_variable`. A missing
@@ -34,13 +35,15 @@
 #'   release.
 #' @param study_end Optional last day of the study: a `Date`, or the name of
 #'   a `Date` column in `df`.
-#' @param max_days Optional largest number of days after the index date; the
-#'   last day is `index_date + max_days`.
+#' @param max_days Optional largest number of whole days after the index
+#'   date; the last day is `index_date + max_days`.
 #'
 #' @return `df` with two added columns: `followup_end` (`Date`) and
 #'   `followup_end_reason`, one of `"death"`, `"coverage_end"`,
-#'   `"claims_end"`, `"study_end"`, `"max_days"` or `"no_coverage"`. When two
-#'   ends fall on the same day, the reason is the first in that order.
+#'   `"claims_end"`, `"study_end"`, `"max_days"`, `"no_coverage"` or
+#'   `"no_index"`. When two ends fall on the same day, the reason is the first
+#'   in that order. A missing index date takes precedence over missing
+#'   coverage.
 #' @export
 #'
 #' @examples
@@ -98,10 +101,10 @@ claims_followup_end <- function(
   }
   if (
     !is.null(max_days) &&
-      (!is.numeric(max_days) || length(max_days) != 1 || is.na(max_days) ||
-        max_days < 0)
+      (!is.numeric(max_days) || length(max_days) != 1 || !is.finite(max_days) ||
+        max_days < 0 || max_days != round(max_days))
   ) {
-    cli::cli_abort("{.arg max_days} must be a single number, 0 or more.")
+    cli::cli_abort("{.arg max_days} must be a single whole number of days, 0 or more.")
   }
   added <- intersect(c("followup_end", "followup_end_reason"), names(df))
   if (length(added) > 0) {
@@ -135,6 +138,9 @@ claims_followup_end <- function(
   no_coverage <- is.na(df[[coverage_end]])
   followup_end[no_coverage] <- as.Date(NA)
   reason[no_coverage] <- "no_coverage"
+  no_index <- is.na(index)
+  followup_end[no_index] <- as.Date(NA)
+  reason[no_index] <- "no_index"
 
   before_index <- !is.na(followup_end) & !is.na(index) & followup_end < index
   if (any(before_index)) {

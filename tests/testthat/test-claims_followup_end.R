@@ -113,3 +113,32 @@ test_that("claims_followup_end() checks its arguments (#23)", {
     claims_followup_end(patients, "index", "coverage_end")
   )
 })
+
+test_that("claims_followup_end() gives no end to rows without an index date (#23)", {
+  patients <- followup_patients()[2:3, ]
+  patients$index[1] <- as.Date(NA)
+
+  result <- claims_followup_end(
+    patients,
+    index_date = "index",
+    coverage_end = "coverage_end",
+    claims_end = as.Date("2011-06-30")
+  )
+
+  expect_equal(result$followup_end, as.Date(c(NA, "2011-06-30")))
+  expect_equal(result$followup_end_reason, c("no_index", "claims_end"))
+})
+
+test_that("claims_followup_end() takes only whole days for max_days (#23)", {
+  patient <- followup_patients()[3, ]
+  run <- function(days) {
+    claims_followup_end(
+      patient, "index", "coverage_end",
+      claims_end = as.Date("2023-12-31"), max_days = days
+    )$followup_end
+  }
+
+  expect_equal(run(0), as.Date("2010-01-01"))
+  expect_equal(run(364), as.Date("2010-12-31"))
+  expect_snapshot(error = TRUE, run(0.5))
+})

@@ -33,3 +33,11 @@
       ! `claims_end` is required.
       i Give the date the claims in your release are complete to, for example `as.Date("2023-12-31")` for the 2025 standard analysis files.
 
+# claims_followup_end() takes only whole days for max_days (#23)
+
+    Code
+      run(0.5)
+    Condition
+      Error in `claims_followup_end()`:
+      ! `max_days` must be a single whole number of days, 0 or more.
+

@@ -12,6 +12,10 @@
   like USRDS data (data file types, USRDS file names, `USRDS_ID` columns), by
   path only, checking the files git would commit (#49).
 
+* New `claims_followup_end()` finds the last day of claims-based follow-up:
+  the earliest of death, the end of Medicare-primary coverage, the date the
+  claims are complete to, a study end date and a maximum length (#23).
+
 * `verify_medicare_primary()` accepts payer codes (`MPAB`, `MPO`) as well as
   their labels, merges coverage spans nested inside earlier ones, stops when
   coverage dates are not `Date`s, and warns about patients missing from the

@@ -21,5 +21,5 @@
     Condition
       Error in `establish_dx_date()`:
       ! CLM_FROM must be of class <Date>, not <POSIXct>.
-      i The `get_*_ICD()` extractors return dates; convert with `as.Date()` if the claims came from elsewhere.
+      i Convert it with `as.Date()` before calling `establish_dx_date()`.
 

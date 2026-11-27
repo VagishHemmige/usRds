@@ -72,8 +72,8 @@ establish_dx_date <- function(
     cli::cli_abort(c(
       "{.field CLM_FROM} must be of class {.cls Date}, not
       {.cls {class(df$CLM_FROM)[1]}}.",
-      "i" = "The {.code get_*_ICD()} extractors return dates; convert with
-      {.fn as.Date} if the claims came from elsewhere."
+      "i" = "Convert it with {.fn as.Date} before calling
+      {.fn establish_dx_date}."
     ))
   }
   if (!is.character(inpatient_types)) {

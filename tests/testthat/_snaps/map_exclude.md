@@ -61,5 +61,5 @@
       x patients.parquet (2 copies): ESRD Core/patients.parquet; backup/patients.parquet
       i Paths are relative to '<USRDS_WD>'. List every copy with `usRds::usrds_files("duplicates")`.
       i Only copies in the format that will be read count: for each file and year, the first format in `format_preference` that is present is read, and copies in other formats are only reported.
-      i Keep one copy of each file under `USRDS_WD` (move backups elsewhere), or skip the folders that hold the extra copies. For example, to skip folders named "backup": `set_USRDS_wd("<USRDS_WD>", exclude = "backup")`
+      i Keep one copy of each file under `USRDS_WD` (move backups elsewhere), or skip the folders that hold the extra copies: run your `set_USRDS_wd()` call again with those folders added to `exclude` (for example `exclude = "backup"`), keeping your other arguments.
 

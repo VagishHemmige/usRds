@@ -158,6 +158,28 @@ test_that("excluding the preferred copy can expose duplicates in the next format
   expect_equal(nrow(usrds_files("duplicates")), 0)
 })
 
+test_that("a retry with the same format_preference keeps the chosen format", {
+  local_usrds_dir(c(
+    "ESRD Core/patients.parquet",
+    "exports/patients.csv",
+    "backup/patients.csv"
+  ))
+  csv_first <- c("csv", "parquet", "sas7bdat")
+
+  expect_error(
+    .map_USRDS_files(format_preference = csv_first, quiet = TRUE),
+    class = "usrds_duplicate_files"
+  )
+  retry <- .map_USRDS_files(
+    format_preference = csv_first,
+    exclude = "backup",
+    quiet = TRUE
+  )
+
+  expect_equal(retry$file_suffix, "csv")
+  expect_equal(usrds_files("excluded")$relative_path, "backup/patients.csv")
+})
+
 test_that("a stop on an incomplete group still maps the files found", {
   local_usrds_dir(c(
     "5) ESRD Institution/det2007a.sas7bdat",

@@ -98,19 +98,6 @@ get_IN_CLM_costs <- function(years, usrds_ids = NULL) {
     }) |>
     dplyr::bind_rows() |>
     dplyr::mutate(
-      HCFASAF = factor(
-        .data$HCFASAF,
-        levels = c("I", "M", "O", "D", "N", "H", "S", "Q"),
-        labels = c(
-          "Inpatient",
-          "Inpatient (REBUS)",
-          "Outpatient",
-          "Dialysis",
-          "Skilled Nursing Facility",
-          "Home Health",
-          "Hospice",
-          "Non-claim / auxiliary"
-        )
-      )
+      HCFASAF = .hcfasaf_factor(.data$HCFASAF)
     )
 }

@@ -32,6 +32,13 @@
   to, a study end date and a maximum length
   ([\#23](https://github.com/VagishHemmige/usRds/issues/23)).
 
+- [`establish_dx_date()`](https://vagishhemmige.github.io/usRds/reference/establish_dx_date.md)
+  gains `date_as` (date the diagnosis at the confirming claim, as
+  before, or at the first claim), `window_days` (largest gap between two
+  non-inpatient claims) and `inpatient_types`. REBUS inpatient stays
+  (`HCFASAF` code `M`) now count as inpatient claims
+  ([\#4](https://github.com/VagishHemmige/usRds/issues/4)).
+
 - [`get_IN_REV_costs()`](https://vagishhemmige.github.io/usRds/reference/get_IN_REV_costs.md)
   returns `CLM_THRU`, `REV_DT` and the revenue center `CODE`, so its
   output can be prorated, and drops revenue center `0001` total lines by

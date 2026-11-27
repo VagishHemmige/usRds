@@ -1,26 +1,55 @@
 # Establish date a diagnosis is made
 
 Given a data frame of claims created with a `get_*_ICD` command, this
-function will keep the date of either the second outpatient or first
-inpatient claim with that code, using the `HCFASAF` variable to classify
-claims as outpatient or inpatient.
+function finds, for each patient, the claim that establishes the
+diagnosis: the first inpatient claim, or the second claim of any other
+type, using the `HCFASAF` variable to classify claims as inpatient or
+not. Patients whose claims never meet that rule are dropped.
 
 ## Usage
 
 ``` r
-establish_dx_date(df, diagnosis_established = "diagnosis")
+establish_dx_date(
+  df,
+  diagnosis_established = "diagnosis",
+  date_as = c("confirming", "first"),
+  window_days = Inf,
+  inpatient_types = c("Inpatient", "Inpatient (REBUS)")
+)
 ```
 
 ## Arguments
 
 - df:
 
-  data frame of claims created by a `get_*_ICD` function
+  data frame of claims created by a `get_*_ICD` function, with
+  `USRDS_ID`, `CLM_FROM` (class `Date`) and `HCFASAF`
 
 - diagnosis_established:
 
   A string stored in the `diagnosis` column of the result, naming the
   diagnosis being dated (for example `"cryptococcus"`).
+
+- date_as:
+
+  Which date to return. `"confirming"` (the default) is the date of the
+  claim that establishes the diagnosis: the inpatient claim, or the
+  second other claim. `"first"` is the date of the patient's earliest
+  claim within `window_days` before that confirming claim, so with the
+  default window it is the patient's first claim with the code.
+
+- window_days:
+
+  The largest number of days between a claim of another type and the
+  claim before it for the pair to establish the diagnosis. `Inf` (the
+  default) sets no limit. An inpatient claim establishes the diagnosis
+  on its own, whatever the window.
+
+- inpatient_types:
+
+  Values of `HCFASAF` that count as inpatient claims. The default
+  includes `"Inpatient (REBUS)"`, code `M` in older files, which
+  Appendix C 2025 (`$HCFASAF.`) describes as an inpatient stay.
 
 ## Value
 

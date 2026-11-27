@@ -251,3 +251,27 @@ test_that("verify_medicare_primary() keeps later spans after a missing end date 
   expect_true(result$medicare_primary_TF)
   expect_equal(result$coverage_start, as.Date("2010-01-01") + 9)
 })
+
+test_that("verify_medicare_primary() keeps a spell with a missing end date inside it (#5)", {
+  # From ChatGPT's second review of #114: days 0-20, 10-?, 21-100 form one
+  # spell. The missing end adds nothing, so the spell is days 0-100 and the
+  # index on day 90 has 90 days of coverage.
+  history <- data.frame(
+    USRDS_ID = 1,
+    PAYER = "MPAB",
+    BEGDATE = as.Date("2010-01-01") + c(0, 10, 21),
+    ENDDATE = as.Date("2010-01-01") + c(20, NA, 100)
+  )
+  patient <- data.frame(USRDS_ID = 1, index = as.Date("2010-01-01") + 90)
+
+  result <- verify_medicare_primary(
+    patient,
+    index_date = "index",
+    lookback_days = 60,
+    medicare_coverage_df = history,
+    coverage_start_variable = "coverage_start"
+  )
+
+  expect_true(result$medicare_primary_TF)
+  expect_equal(result$coverage_start, as.Date("2010-01-01"))
+})

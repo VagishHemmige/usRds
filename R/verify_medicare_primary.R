@@ -297,7 +297,13 @@ verify_medicare_primary <- function(
       dplyr::group_by(.data$USRDS_ID, .data$group_id) |>
       dplyr::summarise(
         BEGDATE = min(.data$BEGDATE),
-        ENDDATE = max(.data$ENDDATE),
+        #A missing end date adds nothing to the spell; a spell whose end
+        #dates are all missing keeps a missing end (#5).
+        ENDDATE = if (all(is.na(.data$ENDDATE))) {
+          .data$ENDDATE[1]
+        } else {
+          max(.data$ENDDATE, na.rm = TRUE)
+        },
         .groups = "drop"
       ) |>
       dplyr::select(-"group_id") |>

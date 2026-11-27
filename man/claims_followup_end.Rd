@@ -19,7 +19,8 @@ claims_followup_end(
 below.}
 
 \item{index_date}{The name of a \code{Date} column in \code{df}: the first day of
-follow-up.}
+follow-up. A missing value means follow-up never starts:
+\code{followup_end} is then \code{NA}, with reason \code{"no_index"}.}
 
 \item{coverage_end}{The name of a \code{Date} column in \code{df} holding the end of
 the Medicare-primary spell that contains the index date, as returned by
@@ -39,14 +40,16 @@ release.}
 \item{study_end}{Optional last day of the study: a \code{Date}, or the name of
 a \code{Date} column in \code{df}.}
 
-\item{max_days}{Optional largest number of days after the index date; the
-last day is \code{index_date + max_days}.}
+\item{max_days}{Optional largest number of whole days after the index
+date; the last day is \code{index_date + max_days}.}
 }
 \value{
 \code{df} with two added columns: \code{followup_end} (\code{Date}) and
 \code{followup_end_reason}, one of \code{"death"}, \code{"coverage_end"},
-\code{"claims_end"}, \code{"study_end"}, \code{"max_days"} or \code{"no_coverage"}. When two
-ends fall on the same day, the reason is the first in that order.
+\code{"claims_end"}, \code{"study_end"}, \code{"max_days"}, \code{"no_coverage"} or
+\code{"no_index"}. When two ends fall on the same day, the reason is the first
+in that order. A missing index date takes precedence over missing
+coverage.
 }
 \description{
 For each row, finds the last day of follow-up for a claims-based outcome:

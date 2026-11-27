@@ -109,3 +109,13 @@ test_that("establish_dx_date() checks its options (#4)", {
   expect_snapshot(error = TRUE, establish_dx_date(claims, window_days = -1))
   expect_snapshot(error = TRUE, establish_dx_date(claims, date_as = "last"))
 })
+
+test_that("establish_dx_date() requires CLM_FROM to be a Date", {
+  claims <- data.frame(
+    USRDS_ID = c(1, 1),
+    CLM_FROM = as.POSIXct(c("2010-01-01", "2010-01-11"), tz = "UTC"),
+    HCFASAF = "Outpatient"
+  )
+
+  expect_snapshot(error = TRUE, establish_dx_date(claims, window_days = 30))
+})

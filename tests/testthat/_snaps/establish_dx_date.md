@@ -14,3 +14,12 @@
       Error in `establish_dx_date()`:
       ! `date_as` must be one of "confirming" or "first", not "last".
 
+# establish_dx_date() requires CLM_FROM to be a Date
+
+    Code
+      establish_dx_date(claims, window_days = 30)
+    Condition
+      Error in `establish_dx_date()`:
+      ! CLM_FROM must be of class <Date>, not <POSIXct>.
+      i The `get_*_ICD()` extractors return dates; convert with `as.Date()` if the claims came from elsewhere.
+

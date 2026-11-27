@@ -6,7 +6,8 @@
 #' type, using the `HCFASAF` variable to classify claims as inpatient or
 #' not. Patients whose claims never meet that rule are dropped.
 #'
-#' @param df data frame of claims created by a `get_*_ICD` function
+#' @param df data frame of claims created by a `get_*_ICD` function, with
+#'   `USRDS_ID`, `CLM_FROM` (class `Date`) and `HCFASAF`
 #' @param diagnosis_established A string stored in the `diagnosis` column of
 #'   the result, naming the diagnosis being dated (for example `"cryptococcus"`).
 #' @param date_as Which date to return. `"confirming"` (the default) is the
@@ -66,6 +67,14 @@ establish_dx_date <- function(
     cli::cli_abort(
       "{.arg window_days} must be a single number of days, 0 or more, or {.code Inf}."
     )
+  }
+  if (!inherits(df$CLM_FROM, "Date")) {
+    cli::cli_abort(c(
+      "{.field CLM_FROM} must be of class {.cls Date}, not
+      {.cls {class(df$CLM_FROM)[1]}}.",
+      "i" = "The {.code get_*_ICD()} extractors return dates; convert with
+      {.fn as.Date} if the claims came from elsewhere."
+    ))
   }
   if (!is.character(inpatient_types)) {
     cli::cli_abort("{.arg inpatient_types} must be a character vector.")

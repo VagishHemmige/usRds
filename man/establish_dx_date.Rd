@@ -4,22 +4,44 @@
 \alias{establish_dx_date}
 \title{Establish date a diagnosis is made}
 \usage{
-establish_dx_date(df, diagnosis_established = "diagnosis")
+establish_dx_date(
+  df,
+  diagnosis_established = "diagnosis",
+  date_as = c("confirming", "first"),
+  window_days = Inf,
+  inpatient_types = c("Inpatient", "Inpatient (REBUS)")
+)
 }
 \arguments{
 \item{df}{data frame of claims created by a \verb{get_*_ICD} function}
 
 \item{diagnosis_established}{A string stored in the \code{diagnosis} column of
 the result, naming the diagnosis being dated (for example \code{"cryptococcus"}).}
+
+\item{date_as}{Which date to return. \code{"confirming"} (the default) is the
+date of the claim that establishes the diagnosis: the inpatient claim, or
+the second other claim. \code{"first"} is the date of the patient's earliest
+claim within \code{window_days} before that confirming claim, so with the
+default window it is the patient's first claim with the code.}
+
+\item{window_days}{The largest number of days between a claim of another
+type and the claim before it for the pair to establish the diagnosis.
+\code{Inf} (the default) sets no limit. An inpatient claim establishes the
+diagnosis on its own, whatever the window.}
+
+\item{inpatient_types}{Values of \code{HCFASAF} that count as inpatient claims.
+The default includes \code{"Inpatient (REBUS)"}, code \code{M} in older files,
+which Appendix C 2025 (\verb{$HCFASAF.}) describes as an inpatient stay.}
 }
 \value{
 A data frame filtered to keep the claim which establishes that a diagnosis has been made
 }
 \description{
-Given a data frame of claims created with a \verb{get_*_ICD} command, this function
-will keep the date of either the second outpatient or
-first inpatient claim with that code, using the \code{HCFASAF} variable to classify claims as outpatient
-or inpatient.
+Given a data frame of claims created with a \verb{get_*_ICD} command, this
+function finds, for each patient, the claim that establishes the
+diagnosis: the first inpatient claim, or the second claim of any other
+type, using the \code{HCFASAF} variable to classify claims as inpatient or
+not. Patients whose claims never meet that rule are dropped.
 }
 \examples{
 # Made-up claims: patient 1 has two outpatient claims, patient 2 one

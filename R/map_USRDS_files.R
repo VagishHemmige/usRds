@@ -322,6 +322,8 @@
   )
   lines <- gsub("}", "}}", gsub("{", "{{", lines, fixed = TRUE), fixed = TRUE)
   n_more <- nrow(copies) - nrow(shown)
+  # Forward slashes, so the suggested call can be pasted into R on Windows.
+  wd_shown <- gsub("\\", "/", usrds_wd, fixed = TRUE)
   bullets <- c(
     "{nrow(copies)} USRDS file{?s} {?has/have} more than one copy in the
      same format, so {?its/their} claims would be read more than once.",
@@ -338,9 +340,9 @@
            and year, the first format in {.arg format_preference} that is
            present is read, and copies in other formats are only reported.",
     "i" = "Keep one copy of each file under {.envvar USRDS_WD} (move backups
-           elsewhere), or skip the folders that hold the extra copies with
-           {.code set_USRDS_wd(exclude = )}, then run {.code set_USRDS_wd()}
-           again."
+           elsewhere), or skip the folders that hold the extra copies. For
+           example, to skip folders named {.val backup}:
+           {.code set_USRDS_wd(\"{wd_shown}\", exclude = \"backup\")}"
   )
   cli::cli_abort(bullets, class = "usrds_duplicate_files", call = call)
 }

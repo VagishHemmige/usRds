@@ -158,6 +158,21 @@ test_that("excluding the preferred copy can expose duplicates in the next format
   expect_equal(nrow(usrds_files("duplicates")), 0)
 })
 
+test_that("a stop on an incomplete group still maps the files found", {
+  local_usrds_dir(c(
+    "5) ESRD Institution/det2007a.sas7bdat",
+    "backup/det2007b.sas7bdat"
+  ))
+
+  expect_error(
+    .map_USRDS_files(exclude = "backup", on_incomplete = "error", quiet = TRUE),
+    class = "usrds_incomplete_files"
+  )
+  expect_equal(usrds_files("mapped")$file_name, "det2007a.sas7bdat")
+  expect_gt(nrow(usrds_files("incomplete")), 0)
+  expect_equal(usrds_files("excluded")$relative_path, "backup/det2007b.sas7bdat")
+})
+
 test_that("a scan that excludes every file says so and keeps its reports", {
   local_usrds_dir(c("backup/patients.parquet", "Other/notes.csv"))
 

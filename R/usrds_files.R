@@ -22,8 +22,11 @@
 #'     `exclude`.
 #'
 #' `"unrecognised"`, `"duplicates"` and `"excluded"` describe the latest
-#' scan even when it stopped with an error, so you can see why. The other
-#' lists need a successful scan.
+#' scan even when it stopped with an error, so you can see why. After a stop
+#' on same-format copies, no files are mapped and the other lists are not
+#' available. After a stop on an incomplete claim-file group
+#' (`on_incomplete = "error"`), the files found are still mapped and can be
+#' read, so check `usrds_files("incomplete")` before using them.
 #'
 #' @return A tibble. Paths in `relative_path` are relative to the USRDS
 #'   folder.
@@ -64,8 +67,8 @@ usrds_files <- function(
         stopped with an error.",
         "i" = "See why with {.run usRds::usrds_files(\"duplicates\")},
         {.run usRds::usrds_files(\"excluded\")} or
-        {.run usRds::usrds_files(\"unrecognised\")}, then run
-        {.code set_USRDS_wd()} again."
+        {.run usRds::usrds_files(\"unrecognised\")}, then call
+        {.fn set_USRDS_wd} again with your USRDS folder and {.arg exclude}."
       ))
     }
     cli::cli_abort(c(

@@ -29,6 +29,15 @@
 * `get_PS_CLM_costs(remove_missing_values = TRUE)` now drops claims with a
   missing `CLM_PMT_AMT`; the argument had no effect before (#54).
 
+* New `prepare_medicare_coverage()` builds the Medicare-primary coverage
+  spells from the payer history once. Passing its result to
+  `verify_medicare_primary()` skips rebuilding them on every call, which made
+  checks inside a matching loop slow (#5).
+
+* `verify_medicare_primary()` gains `payers`, the payers that count as
+  Medicare primary, as codes or labels; the default is still `MPAB` and
+  `MPO` (#5).
+
 * `verify_medicare_primary()` accepts payer codes (`MPAB`, `MPO`) as well as
   their labels, merges coverage spans nested inside earlier ones, stops when
   coverage dates are not `Date`s, and warns about patients missing from the

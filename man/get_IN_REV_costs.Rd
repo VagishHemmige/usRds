@@ -4,27 +4,39 @@
 \alias{get_IN_REV_costs}
 \title{Retrieve Institutional costs Claims}
 \usage{
-get_IN_REV_costs(years, usrds_ids = NULL)
+get_IN_REV_costs(years, usrds_ids = NULL, drop_total_lines = TRUE)
 }
 \arguments{
 \item{years}{Integer vector of years to include.}
 
 \item{usrds_ids}{Optional vector of USRDS_IDs to filter to specific patients.}
+
+\item{drop_total_lines}{If \code{TRUE} (the default), drop lines with revenue
+center code \code{0001}. The 2025 Researcher's Guide (Section 5,
+"Institutional Claims Details and Revenue Center Details") reports that
+the \code{0001} line's \code{REV_CH} is the sum of the claim's other lines'
+\code{REV_CH}, so keeping it counts the charges twice. The Guide does not
+describe \code{REVPMT} on that line; dropping the line removes its \code{REVPMT}
+too. Lines whose code is missing are kept. In files that have \code{CDTYPE}
+(det files before 2008, which also hold diagnosis and procedure lines),
+only revenue center lines (\code{CDTYPE} \code{"R"}) are dropped or have their
+codes padded; the other lines, including those with a missing or blank
+\code{CDTYPE}, are returned unchanged for now.}
 }
 \value{
 A data frame with one row per revenue center line and columns
-\code{USRDS_ID}, \code{CLM_FROM} (Date), \code{REV_CH} (revenue center total charge),
-\code{REVPMT} (revenue center payment amount) and \code{HCFASAF} (claim type, as a
-factor). Descriptions are from Appendix B of the 2025 Researcher's Guide
-(for example table \code{OP_DET_2023}).
+\code{USRDS_ID}, \code{CLM_FROM} and \code{CLM_THRU} (claim from and through dates),
+\code{REV_DT} (revenue center date), \code{CODE} (revenue center code, as text with
+its leading zeros), \code{REV_CH} (revenue center total charge), \code{REVPMT}
+(revenue center payment amount) and \code{HCFASAF} (claim type, as a factor).
+Dates are of class \code{Date}. Descriptions are from Appendix B of the 2025
+Researcher's Guide (for example table \code{OP_DET_2023}). A column a file
+does not have is \code{NA} for that file's lines. Dates stored as text that
+cannot be read become \code{NA}, with a warning naming the file and column.
 
-It has no \code{CLM_THRU}, so it cannot go straight into
-\code{\link[=prorate_costs_by_day]{prorate_costs_by_day()}} (GitHub #66). It also has no revenue center
-code. The 2025 Researcher's Guide (Section 5, "Institutional Claims
-Details and Revenue Center Details") warns that revenue center code
-\code{0001} holds the sum of the claim's other lines, so totals of \code{REV_CH}
-may count charges twice where those lines are present. Do not add these
-amounts to claim totals from \code{\link[=get_IN_CLM_costs]{get_IN_CLM_costs()}} for the same claims.
+With \code{CLM_FROM} and \code{CLM_THRU}, the result can go straight into
+\code{\link[=prorate_costs_by_day]{prorate_costs_by_day()}}. Do not add these amounts to claim totals from
+\code{\link[=get_IN_CLM_costs]{get_IN_CLM_costs()}} for the same claims.
 }
 \description{
 Searches institutional claim files for costs for specified USRDS_IDs in specified years.

@@ -189,3 +189,126 @@ test_that("get_PS_CLM_costs() reads \".\" as a missing payment and keeps zero an
   expect_equal(dropped$CLM_PMT_AMT, c(-5, 0), ignore_attr = "label")
   expect_equal(dropped$USRDS_ID, c(1, 3), ignore_attr = "label")
 })
+
+# Two outpatient claims: patient 1's has two lines and a 0001 total line.
+rev_rows_with_total <- function() {
+  data.frame(
+    USRDS_ID = c(1, 1, 1, 2),
+    HCFASAF = "O",
+    CLM_FROM = c("01JAN2010", "01JAN2010", "01JAN2010", "01FEB2010"),
+    CLM_THRU = c("03JAN2010", "03JAN2010", "03JAN2010", "01FEB2010"),
+    REV_DT = c("01JAN2010", "02JAN2010", "", "01FEB2010"),
+    CODE = c("0300", "0636", "0001", "0300"),
+    REV_CH = c(120, 80, 200, 50),
+    REVPMT = c(60, 40, 100, 25)
+  )
+}
+
+test_that("get_IN_REV_costs() returns CODE, CLM_THRU and REV_DT (#112, #66)", {
+  local_cost_csv("rev2010a", 2010, rev_rows_with_total())
+
+  result <- suppressMessages(
+    get_IN_REV_costs(years = 2010, drop_total_lines = FALSE)
+  )
+
+  expect_equal(result$CODE, c("0300", "0636", "0001", "0300"), ignore_attr = "label")
+  expect_s3_class(result$CLM_THRU, "Date")
+  expect_equal(
+    result$CLM_THRU,
+    as.Date(c("2010-01-03", "2010-01-03", "2010-01-03", "2010-02-01")),
+    ignore_attr = "label"
+  )
+  expect_equal(
+    result$REV_DT,
+    as.Date(c("2010-01-01", "2010-01-02", NA, "2010-02-01")),
+    ignore_attr = "label"
+  )
+})
+
+test_that("get_IN_REV_costs() drops revenue center 0001 total lines by default (#112)", {
+  local_cost_csv("rev2010a", 2010, rev_rows_with_total())
+
+  result <- suppressMessages(get_IN_REV_costs(years = 2010))
+
+  expect_equal(result$CODE, c("0300", "0636", "0300"), ignore_attr = "label")
+  expect_equal(sum(result$REV_CH), 250)
+  expect_equal(sum(result$REVPMT), 125)
+})
+
+test_that("get_IN_REV_costs() keeps leading zeros of codes read as numbers (#112)", {
+  rows <- rev_rows_with_total()
+  rows$CODE <- as.numeric(rows$CODE)
+  local_cost_csv("rev2010a", 2010, rows)
+
+  result <- suppressMessages(get_IN_REV_costs(years = 2010))
+
+  expect_type(result$CODE, "character")
+  expect_equal(result$CODE, c("0300", "0636", "0300"), ignore_attr = "label")
+})
+
+test_that("get_IN_REV_costs() fills missing date and code columns with typed NA", {
+  rows <- rev_rows()[, setdiff(names(rev_rows()), "CODE")]
+  local_cost_csv("rev2010a", 2010, rows)
+
+  result <- suppressMessages(get_IN_REV_costs(years = 2010))
+
+  expect_type(result$CODE, "character")
+  expect_s3_class(result$CLM_THRU, "Date")
+  expect_equal(nrow(result), 3)
+})
+
+test_that("get_IN_REV_costs() output prorates with totals kept (#66)", {
+  local_cost_csv("rev2010a", 2010, rev_rows_with_total())
+  lines <- suppressMessages(get_IN_REV_costs(years = 2010))
+
+  prorated <- prorate_costs_by_day(lines)
+
+  expect_equal(sum(prorated$REVPMT_PRORATED), sum(lines$REVPMT))
+})
+
+test_that("revenue lines read as date-times give Dates that prorate one day at a time", {
+  lines <- data.frame(
+    USRDS_ID = 1,
+    HCFASAF = "O",
+    CLM_FROM = as.POSIXct("2010-01-01", tz = "UTC"),
+    CLM_THRU = as.POSIXct("2010-01-03", tz = "UTC"),
+    REV_DT = as.POSIXct("2010-01-01", tz = "UTC"),
+    CODE = "0300",
+    REV_CH = 90,
+    REVPMT = 30
+  )
+
+  standard <- .standardise_revenue_lines(lines, "rev2010a.sas7bdat")
+  standard$.usrds_revenue_line <- NULL
+  prorated <- prorate_costs_by_day(standard)
+
+  expect_s3_class(standard$CLM_FROM, "Date")
+  expect_s3_class(standard$CLM_THRU, "Date")
+  expect_s3_class(standard$REV_DT, "Date")
+  expect_equal(
+    sort(unique(prorated$service_date)),
+    as.Date(c("2010-01-01", "2010-01-02", "2010-01-03"))
+  )
+  expect_equal(sum(prorated$REVPMT_PRORATED), 30)
+})
+
+test_that("get_IN_REV_costs() leaves diagnosis and procedure lines of mixed det files alone", {
+  rows <- data.frame(
+    USRDS_ID = 1,
+    HCFASAF = "O",
+    CLM_FROM = "01JAN2007",
+    CLM_THRU = "03JAN2007",
+    CDTYPE = c("R", "R", "R", "I", NA, ""),
+    CODE = c("300", "636", "1", "0001", "1", "1"),
+    REV_CH = c(120, 80, 200, NA, 5, 5),
+    REVPMT = c(60, 40, 100, NA, 5, 5)
+  )
+  local_cost_csv("rev2010a", 2010, rows)
+
+  dropped <- suppressMessages(get_IN_REV_costs(years = 2010))
+  kept <- suppressMessages(get_IN_REV_costs(years = 2010, drop_total_lines = FALSE))
+
+  expect_equal(dropped$CODE, c("0300", "0636", "0001", "1", "1"), ignore_attr = "label")
+  expect_equal(kept$CODE, c("0300", "0636", "0001", "0001", "1", "1"), ignore_attr = "label")
+  expect_false("CDTYPE" %in% names(dropped))
+})

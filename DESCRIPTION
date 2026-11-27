@@ -29,7 +29,7 @@ Depends:
 Imports: 
     arrow,
     cli,
-    dplyr,
+    dplyr (>= 1.1.1),
     fs,
     haven,
     lubridate,

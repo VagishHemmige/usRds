@@ -76,3 +76,54 @@
   }
   df
 }
+
+#' Label claim types (`HCFASAF`) as a factor
+#'
+#' Codes and meanings follow the Appendix C 2025 `$HCFASAF.` format: D
+#' dialysis, E durable medical equipment, H home health, I inpatient, M
+#' PMMIS inpatient stay (labelled "Inpatient (REBUS)" as before), N skilled
+#' nursing, O outpatient, P physician/supplier, Q PMMIS quarterly dialysis,
+#' S hospice. Codes not in that list become `NA` with a warning, so claims
+#' are not dropped downstream without notice (#27).
+#'
+#' The Researcher's Guide 2025 (Section 5, Table 10) also lists `P` as
+#' "Quarterly Dialysis Records" for institutional files, while Appendix C
+#' 2025 gives `P` as physician/supplier and `Q` as PMMIS quarterly dialysis.
+#' The extractors read 2006 onward, including the combined `det2006`/
+#' `det2007` files. A schema report on the maintainer's files (2026-11-22,
+#' codes only) found `M` and `Q` in the older institutional files and `P`
+#' only in physician/supplier files, so the map follows Appendix C and keeps
+#' `P` as Physician/Supplier, as seven of the eight extractors did before
+#' (`get_IN_CLM_costs()` had no `P` level). A different meaning of `P` in
+#' some release would need a layout-specific map.
+#'
+#' @param code Claim type codes.
+#' @noRd
+.hcfasaf_factor <- function(code) {
+  levels <- c("I", "M", "O", "D", "N", "H", "S", "Q", "P", "E")
+  labels <- c(
+    "Inpatient",
+    "Inpatient (REBUS)",
+    "Outpatient",
+    "Dialysis",
+    "Skilled Nursing Facility",
+    "Home Health",
+    "Hospice",
+    "Quarterly dialysis (PMMIS)",
+    "Physician/Supplier",
+    "Durable Medical Equipment"
+  )
+  code <- as.character(code)
+  unknown <- !is.na(code) & !code %in% levels
+  if (any(unknown)) {
+    cli::cli_warn(
+      c(
+        "{sum(unknown)} claim{?s} {?has/have} a claim type ({.field HCFASAF})
+        not in Appendix C and {?was/were} set to {.code NA}.",
+        "i" = "Unknown code{?s}: {.val {unique(code[unknown])}}."
+      ),
+      class = "usrds_unknown_claim_type"
+    )
+  }
+  factor(code, levels = levels, labels = labels)
+}

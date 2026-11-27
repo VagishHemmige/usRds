@@ -88,21 +88,7 @@ get_PS_HCPCS <- function(hcpcs_codes = NULL, years, usrds_ids = NULL) {
     }) |>
     dplyr::bind_rows() |>
     dplyr::mutate(
-      HCFASAF = factor(
-        .data$HCFASAF,
-        levels = c("I", "M", "O", "D", "N", "H", "S", "Q", "P"),
-        labels = c(
-          "Inpatient",
-          "Inpatient (REBUS)",
-          "Outpatient",
-          "Dialysis",
-          "Skilled Nursing Facility",
-          "Home Health",
-          "Hospice",
-          "Non-claim / auxiliary",
-          "Physician/Supplier"
-        )
-      )
+      HCFASAF = .hcfasaf_factor(.data$HCFASAF)
     ) |>
     labelled::set_variable_labels(
       USRDS_ID = "USRDS patient ID number",

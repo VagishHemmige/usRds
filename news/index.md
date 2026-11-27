@@ -25,6 +25,13 @@
   the files git would commit
   ([\#49](https://github.com/VagishHemmige/usRds/issues/49)).
 
+- New
+  [`claims_followup_end()`](https://vagishhemmige.github.io/usRds/reference/claims_followup_end.md)
+  finds the last day of claims-based follow-up: the earliest of death,
+  the end of Medicare-primary coverage, the date the claims are complete
+  to, a study end date and a maximum length
+  ([\#23](https://github.com/VagishHemmige/usRds/issues/23)).
+
 - `get_PS_CLM_costs(remove_missing_values = TRUE)` now drops claims with
   a missing `CLM_PMT_AMT`; the argument had no effect before
   ([\#54](https://github.com/VagishHemmige/usRds/issues/54)).

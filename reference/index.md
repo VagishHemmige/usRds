@@ -23,6 +23,9 @@
 - [`check_repo_for_usrds_data()`](https://vagishhemmige.github.io/usRds/reference/check_repo_for_usrds_data.md)
   : Check a project folder for files that look like USRDS data
 
+- [`claims_followup_end()`](https://vagishhemmige.github.io/usRds/reference/claims_followup_end.md)
+  : End of claims-based follow-up
+
 - [`convert_usrds_to_parquet()`](https://vagishhemmige.github.io/usRds/reference/convert_usrds_to_parquet.md)
   : Convert all USRDS raw files in a directory to Parquet
 

@@ -27,7 +27,21 @@
       dplyr::mutate(CLM_THRU = lubridate::as_date(.data$CLM_THRU)) |>
       dplyr::collect()
   } else if (file_suffix == "csv") {
-    readr::read_csv(file_path, show_col_types = FALSE) |>
+    # Amounts are read as numbers, with "." (SAS missing) as NA, so a
+    # missing payment is NA and an unreadable one is reported by readr.
+    header <- names(readr::read_csv(file_path, n_max = 0, show_col_types = FALSE))
+    amount_cols <- header[
+      toupper(header) %in%
+        setdiff(variablelist, c("USRDS_ID", "HCFASAF", "CLM_FROM", "CLM_THRU"))
+    ]
+    col_types <- readr::cols(.default = readr::col_guess())
+    col_types$cols[amount_cols] <- rep(list(readr::col_double()), length(amount_cols))
+    readr::read_csv(
+      file_path,
+      col_types = col_types,
+      na = c("", "NA", "."),
+      show_col_types = FALSE
+    ) |>
       dplyr::rename_with(toupper) |>
       .filter_in("USRDS_ID", usrds_ids) |>
       dplyr::select(dplyr::all_of(variablelist)) |>

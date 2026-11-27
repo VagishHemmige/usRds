@@ -8,12 +8,19 @@
 #' and the claim files in the package's internal tables. Names and
 #' extensions are matched without regard to case. Files with other names are
 #' counted and set aside. Folders ending in `_chunks` (left by an interrupted
-#' Parquet conversion) are ignored. When a file exists in more than one format, the
+#' Parquet conversion) are ignored, and so are folders named in `exclude`.
+#' When a file exists in more than one format, the
 #' first format in `format_preference` is kept. Two copies of a file in the
 #' same format are an error. Claim-file groups that are only partly present
 #' for a year are reported, or are an error when `on_incomplete = "error"`.
 #'
+#' The reports of the latest scan (unrecognised, excluded and duplicate
+#' files) are kept even when the scan stops with an error, so
+#' [usrds_files()] can show them; the map itself is cleared.
+#'
 #' @param format_preference Formats to use, most preferred first.
+#' @param exclude Folder names to skip. `NULL` uses the value stored by the
+#'   last [set_USRDS_wd()], or else `getOption("usRds.exclude")`.
 #' @param on_incomplete What to do when only part of a year's file group is
 #'   present: `"warn"` or `"error"`.
 #' @param quiet If `TRUE`, the summary message and the incomplete-group
@@ -25,13 +32,21 @@
 .map_USRDS_files <- function(
   format_preference = .usrds_env$format_preference,
   on_incomplete = c("warn", "error"),
-  quiet = FALSE
+  quiet = FALSE,
+  exclude = NULL
 ) {
   on_incomplete <- rlang::arg_match(on_incomplete)
   if (is.null(format_preference)) {
     format_preference <- .usrds_formats
   }
   format_preference <- .check_format_preference(format_preference)
+  if (is.null(exclude)) {
+    exclude <- .usrds_env$exclude
+  }
+  if (is.null(exclude)) {
+    exclude <- getOption("usRds.exclude", character())
+  }
+  exclude <- .check_exclude(exclude)
 
   # Clear the previous map first, so a failed mapping never leaves another
   # folder's files in place.
@@ -41,6 +56,8 @@
   .usrds_env$unrecognised <- NULL
   .usrds_env$duplicates <- NULL
   .usrds_env$unread_duplicates <- NULL
+  .usrds_env$excluded <- NULL
+  .usrds_env$scanned <- FALSE
   .usrds_env$medicare_history <- NULL
 
   USRDS_wd <- Sys.getenv("USRDS_WD")
@@ -60,6 +77,21 @@
   relative_paths <- relative_paths[
     !grepl("_chunks(/|$)", dirname(relative_paths), ignore.case = TRUE)
   ]
+  in_excluded <- .in_excluded_folder(relative_paths, exclude)
+  .usrds_env$excluded <- tibble::tibble(
+    file_path = file.path(USRDS_wd, relative_paths[in_excluded]),
+    relative_path = relative_paths[in_excluded],
+    file_name = basename(relative_paths[in_excluded])
+  )
+  relative_paths <- relative_paths[!in_excluded]
+  .usrds_env$duplicates <- .same_format_copies(
+    tibble::tibble(
+      file_path = character(), file_name = character(), file_root = character(),
+      Year = numeric(), file_suffix = character()
+    ),
+    usrds_wd = USRDS_wd
+  )
+  .usrds_env$scanned <- TRUE
 
   inventory <- tibble::tibble(
     file_path = file.path(USRDS_wd, relative_paths),
@@ -91,6 +123,15 @@
         "i" = "{nrow(unrecognised)} file{?s} with {?a name/names} usRds does
                not recognise {?was/were} set aside, for example
                {.file {shown}}."
+      )
+    }
+    n_excluded <- nrow(.usrds_env$excluded)
+    if (n_excluded > 0) {
+      bullets <- c(
+        bullets,
+        "i" = "{n_excluded} file{?s} in excluded folders ({.val {exclude}})
+               {?was/were} skipped. List them with
+               {.run usRds::usrds_files(\"excluded\")}."
       )
     }
     cli::cli_abort(bullets)
@@ -138,7 +179,13 @@
   .usrds_env$incomplete <- incomplete
 
   if (!quiet) {
-    .report_file_map(inventory, file_list, unrecognised, format_preference)
+    .report_file_map(
+      inventory,
+      file_list,
+      unrecognised,
+      format_preference,
+      exclude
+    )
   }
   if (nrow(incomplete) > 0) {
     .report_incomplete_groups(incomplete, on_incomplete, quiet)
@@ -285,9 +332,15 @@
   }
   bullets <- c(
     bullets,
-    "i" = "Paths are relative to {.file {usrds_wd}}.",
+    "i" = "Paths are relative to {.file {usrds_wd}}. List every copy with
+           {.run usRds::usrds_files(\"duplicates\")}.",
+    "i" = "Only copies in the format that will be read count: for each file
+           and year, the first format in {.arg format_preference} that is
+           present is read, and copies in other formats are only reported.",
     "i" = "Keep one copy of each file under {.envvar USRDS_WD} (move backups
-           elsewhere), then run {.code set_USRDS_wd()} again."
+           elsewhere), or skip the folders that hold the extra copies with
+           {.code set_USRDS_wd(exclude = )}, then run {.code set_USRDS_wd()}
+           again."
   )
   cli::cli_abort(bullets, class = "usrds_duplicate_files", call = call)
 }
@@ -321,7 +374,8 @@
   inventory,
   file_list,
   unrecognised,
-  format_preference
+  format_preference,
+  exclude = character()
 ) {
   counts <- table(factor(file_list$file_suffix, levels = .usrds_formats))
   labels <- c(parquet = "Parquet", sas7bdat = "SAS", csv = "CSV")
@@ -356,6 +410,21 @@
              not recognise {?was/were} set aside, for example
              {.file {shown}}. List them with
              {.run usRds::usrds_files(\"unrecognised\")}."
+    )
+  }
+  excluded <- .usrds_env$excluded
+  if (!is.null(excluded) && nrow(excluded) > 0) {
+    per_folder <- vapply(
+      exclude,
+      function(folder) sum(.in_excluded_folder(excluded$relative_path, folder)),
+      integer(1)
+    )
+    per_folder <- paste0(exclude, ": ", per_folder)
+    bullets <- c(
+      bullets,
+      "i" = "{nrow(excluded)} file{?s} in excluded folders {?was/were}
+             skipped ({per_folder}). List them with
+             {.run usRds::usrds_files(\"excluded\")}."
     )
   }
   cli::cli_inform(bullets)
@@ -404,4 +473,41 @@
     cli::cli_warn(bullets, class = "usrds_incomplete_files")
   }
   invisible()
+}
+
+# Folder names to skip: a character vector of plain names, no paths.
+.check_exclude <- function(exclude, call = rlang::caller_env()) {
+  if (!is.character(exclude) || anyNA(exclude) || any(!nzchar(trimws(exclude)))) {
+    cli::cli_abort(
+      "{.arg exclude} must be a character vector of folder names, with no
+      missing or empty values.",
+      call = call
+    )
+  }
+  with_separator <- exclude[grepl("[/\\\\]", exclude) | exclude %in% c(".", "..")]
+  if (length(with_separator) > 0) {
+    cli::cli_abort(
+      c(
+        "{.arg exclude} takes folder names, not paths: {.val {with_separator}}.",
+        "i" = "Give the name of the folder to skip, for example
+        {.val backup}; every folder with that name is skipped."
+      ),
+      call = call
+    )
+  }
+  unique(exclude)
+}
+
+# TRUE for relative paths with an excluded folder among their folders (not
+# the file name), compared without regard to case.
+.in_excluded_folder <- function(relative_paths, exclude) {
+  if (length(exclude) == 0 || length(relative_paths) == 0) {
+    return(rep(FALSE, length(relative_paths)))
+  }
+  folders <- strsplit(dirname(relative_paths), "/", fixed = TRUE)
+  vapply(
+    folders,
+    function(parts) any(tolower(parts) %in% tolower(exclude)),
+    logical(1)
+  )
 }

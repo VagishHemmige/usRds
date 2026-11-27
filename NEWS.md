@@ -39,6 +39,13 @@
   `verify_medicare_primary()` skips rebuilding them on every call, which made
   checks inside a matching loop slow (#5).
 
+* `set_USRDS_wd()` gains `exclude`, folder names to skip (default
+  `getOption("usRds.exclude")`, also used when usRds maps the folder on
+  loading), and its help explains which copy of a file is read.
+  `usrds_files()` gains `"duplicates"` (every same-format copy that stops the
+  map) and `"excluded"`; these and `"unrecognised"` are available even after
+  a failed scan (#125).
+
 * `verify_medicare_primary()` gains `payers`, the payers that count as
   Medicare primary, as codes or labels; the default is still `MPAB` and
   `MPO` (#5).

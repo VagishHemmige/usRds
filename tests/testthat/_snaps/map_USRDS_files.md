@@ -14,8 +14,9 @@
       Error in `.map_USRDS_files()`:
       ! 1 USRDS file has more than one copy in the same format, so its claims would be read more than once.
       x inc2010a.csv (2 copies): 5) ESRD Institution/inc2010a.csv; backups/inc2010a.csv
-      i Paths are relative to '<USRDS_WD>'.
-      i Keep one copy of each file under `USRDS_WD` (move backups elsewhere), then run `set_USRDS_wd()` again.
+      i Paths are relative to '<USRDS_WD>'. List every copy with `usRds::usrds_files("duplicates")`.
+      i Only copies in the format that will be read count: for each file and year, the first format in `format_preference` that is present is read, and copies in other formats are only reported.
+      i Keep one copy of each file under `USRDS_WD` (move backups elsewhere), or skip the folders that hold the extra copies with `set_USRDS_wd(exclude = )`, then run `set_USRDS_wd()` again.
 
 # .map_USRDS_files() lists each duplicated file on its own line
 
@@ -26,8 +27,9 @@
       ! 2 USRDS files have more than one copy in the same format, so their claims would be read more than once.
       x inc2010a.csv (3 copies): 5) ESRD Institution/inc2010a.csv; backups/2019/inc2010a.csv; backups/inc2010a.csv
       x patients.sas7bdat (2 copies): ESRD Core/patients.sas7bdat; old/patients.SAS7BDAT
-      i Paths are relative to '<USRDS_WD>'.
-      i Keep one copy of each file under `USRDS_WD` (move backups elsewhere), then run `set_USRDS_wd()` again.
+      i Paths are relative to '<USRDS_WD>'. List every copy with `usRds::usrds_files("duplicates")`.
+      i Only copies in the format that will be read count: for each file and year, the first format in `format_preference` that is present is read, and copies in other formats are only reported.
+      i Keep one copy of each file under `USRDS_WD` (move backups elsewhere), or skip the folders that hold the extra copies with `set_USRDS_wd(exclude = )`, then run `set_USRDS_wd()` again.
 
 # .map_USRDS_files() only reports duplicates in a format it will not read
 

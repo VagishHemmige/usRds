@@ -89,7 +89,14 @@ set_USRDS_wd("/path/to/usrds_data", permanent = TRUE)
   set_USRDS_wd("/path/to/usrds_data", format_preference = c("sas7bdat", "csv"))
   ```
 
-- If there are two copies of a file in the same format (for example a backup in any subfolder), it stops and lists both, so the same claims are never read twice.
+- If there are two copies of a file in the format it will read (for example a backup in any subfolder), it stops and lists both, so the same claims are never read twice. Copies in other formats only get a note. `usrds_files("duplicates")` lists every copy, even after the stop. Move the extra copies out of the folder, or skip the folders that hold them:
+
+  ```r
+  set_USRDS_wd("/path/to/usrds_data", exclude = c("backup", "old exports"))
+  usrds_files("excluded")
+  ```
+
+  `exclude` matches whole folder names, in any case. To skip the same folders every session, including when usRds maps the folder as it loads, put `options(usRds.exclude = c("backup", "old exports"))` in your project's `.Rprofile`.
 - If only part of a year's claim files is present (for example some, but not all, of the 2007 institutional files), it warns and lists the missing files. Use `on_incomplete = "error"` to stop instead.
 
 This working directory is used by all downstream functions to locate USRDS files.

@@ -14,8 +14,19 @@
 #'     is not being read.
 #'   * `"incomplete"`: years where only part of a claim-file group is present,
 #'     with the missing files in the `missing` list column.
+#'   * `"duplicates"`: every copy of a file that has more than one copy in
+#'     the format being read, one row per copy. These stop
+#'     [set_USRDS_wd()]; move the extra copies or skip their folders with
+#'     `exclude`.
+#'   * `"excluded"`: files skipped because they sit in a folder named in
+#'     `exclude`.
 #'
-#' @return A tibble.
+#' `"unrecognised"`, `"duplicates"` and `"excluded"` describe the latest
+#' scan even when it stopped with an error, so you can see why. The other
+#' lists need a successful scan.
+#'
+#' @return A tibble. Paths in `relative_path` are relative to the USRDS
+#'   folder.
 #' @export
 #'
 #' @examples
@@ -23,6 +34,7 @@
 #' set_USRDS_wd("C:/Data/USRDS")
 #' usrds_files()
 #' usrds_files("unrecognised")
+#' usrds_files("duplicates")
 #' }
 usrds_files <- function(
   which = c(
@@ -30,11 +42,32 @@ usrds_files <- function(
     "other_formats",
     "unrecognised",
     "unread_duplicates",
-    "incomplete"
+    "incomplete",
+    "duplicates",
+    "excluded"
   )
 ) {
   which <- rlang::arg_match(which)
+  scan_reports <- c("unrecognised", "duplicates", "excluded")
+  if (which %in% scan_reports && isTRUE(.usrds_env$scanned)) {
+    return(switch(
+      which,
+      unrecognised = .usrds_env$unrecognised,
+      duplicates = .duplicate_copies(.usrds_env$duplicates),
+      excluded = .usrds_env$excluded
+    ))
+  }
   if (is.null(.usrds_env$file_list)) {
+    if (isTRUE(.usrds_env$scanned)) {
+      cli::cli_abort(c(
+        "No USRDS files are mapped: the last scan of the USRDS folder
+        stopped with an error.",
+        "i" = "See why with {.run usRds::usrds_files(\"duplicates\")},
+        {.run usRds::usrds_files(\"excluded\")} or
+        {.run usRds::usrds_files(\"unrecognised\")}, then run
+        {.code set_USRDS_wd()} again."
+      ))
+    }
     cli::cli_abort(c(
       "No USRDS files are mapped yet.",
       "i" = "Run {.code set_USRDS_wd(\"<your USRDS folder>\")} first."
@@ -51,5 +84,23 @@ usrds_files <- function(
     unrecognised = .usrds_env$unrecognised,
     unread_duplicates = .usrds_env$unread_duplicates,
     incomplete = .usrds_env$incomplete
+  )
+}
+
+# One row per copy, from the grouped copies the file map stores.
+.duplicate_copies <- function(groups) {
+  if (is.null(groups) || nrow(groups) == 0) {
+    return(tibble::tibble(
+      file_name = character(),
+      Year = numeric(),
+      file_suffix = character(),
+      relative_path = character()
+    ))
+  }
+  tibble::tibble(
+    file_name = rep(groups$file_name, lengths(groups$paths)),
+    Year = rep(groups$Year, lengths(groups$paths)),
+    file_suffix = rep(groups$file_suffix, lengths(groups$paths)),
+    relative_path = unlist(groups$paths, use.names = FALSE)
   )
 }

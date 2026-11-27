@@ -64,14 +64,18 @@ test_that("get_PS_CLM_costs() keeps only the requested patients", {
   expect_equal(result$CLM_PMT_AMT, c(80, 10), ignore_attr = "label")
 })
 
-test_that("get_PS_CLM_costs() keeps claims with a missing payment (#54)", {
+test_that("get_PS_CLM_costs() drops claims with a missing payment by default (#54)", {
   rows <- ps_clm_rows()
   rows$CLM_PMT_AMT[2] <- NA
   local_cost_csv("ps_clm_2013", 2013, rows)
 
-  result <- suppressMessages(get_PS_CLM_costs(years = 2013))
+  dropped <- suppressMessages(get_PS_CLM_costs(years = 2013))
+  kept <- suppressMessages(
+    get_PS_CLM_costs(years = 2013, remove_missing_values = FALSE)
+  )
 
-  expect_equal(nrow(result), 3)
+  expect_equal(dropped$USRDS_ID, c(1, 3), ignore_attr = "label")
+  expect_equal(nrow(kept), 3)
 })
 
 test_that("get_PS_CLM_costs() output prorates and keeps its totals", {
@@ -168,6 +172,22 @@ test_that("get_IN_REV_costs() keeps only the requested patients", {
 
   expect_equal(result$USRDS_ID, 2, ignore_attr = "label")
   expect_equal(result$REVPMT, 25, ignore_attr = "label")
+})
+
+test_that("get_PS_CLM_costs() reads \".\" as a missing payment and keeps zero and negative ones (#54)", {
+  rows <- ps_clm_rows()
+  rows$CLM_PMT_AMT <- c("-5", ".", "0")
+  local_cost_csv("ps_clm_2013", 2013, rows)
+
+  dropped <- suppressMessages(get_PS_CLM_costs(years = 2013))
+  kept <- suppressMessages(
+    get_PS_CLM_costs(years = 2013, remove_missing_values = FALSE)
+  )
+
+  expect_type(kept$CLM_PMT_AMT, "double")
+  expect_equal(kept$CLM_PMT_AMT, c(-5, NA, 0), ignore_attr = "label")
+  expect_equal(dropped$CLM_PMT_AMT, c(-5, 0), ignore_attr = "label")
+  expect_equal(dropped$USRDS_ID, c(1, 3), ignore_attr = "label")
 })
 
 # Two outpatient claims: patient 1's has two lines and a 0001 total line.

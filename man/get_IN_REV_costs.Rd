@@ -20,7 +20,8 @@ describe \code{REVPMT} on that line; dropping the line removes its \code{REVPMT}
 too. Lines whose code is missing are kept. In files that have \code{CDTYPE}
 (det files before 2008, which also hold diagnosis and procedure lines),
 only revenue center lines (\code{CDTYPE} \code{"R"}) are dropped or have their
-codes padded; the other lines are returned unchanged for now.}
+codes padded; the other lines, including those with a missing or blank
+\code{CDTYPE}, are returned unchanged for now.}
 }
 \value{
 A data frame with one row per revenue center line and columns

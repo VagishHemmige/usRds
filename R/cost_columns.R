@@ -27,20 +27,23 @@
     "REV_CH",
     "REVPMT"
   ),
+  # Kind of amount: what the provider billed ("submitted charge"), what
+  # Medicare's fee schedule allows ("allowed amount"; Appendix B calls these
+  # "allowed charge(s)"), money paid, or a deductible.
   measure = c(
     "payment",
     "payment",
     "payment",
     "payment",
-    "charge",
-    "charge",
+    "submitted charge",
+    "allowed amount",
     "deductible",
-    "charge",
+    "submitted charge",
     "payment",
-    "charge",
-    "charge",
+    "submitted charge",
+    "allowed amount",
     "payment",
-    "charge",
+    "submitted charge",
     "payment"
   ),
   extractor = c(

@@ -12,6 +12,11 @@
   like USRDS data (data file types, USRDS file names, `USRDS_ID` columns), by
   path only, checking the files git would commit (#49).
 
+* `establish_dx_date()` gains `date_as` (date the diagnosis at the
+  confirming claim, as before, or at the first claim), `window_days` (largest
+  gap between two non-inpatient claims) and `inpatient_types`. REBUS
+  inpatient stays (`HCFASAF` code `M`) now count as inpatient claims (#4).
+
 * `verify_medicare_primary()` accepts payer codes (`MPAB`, `MPO`) as well as
   their labels, merges coverage spans nested inside earlier ones, stops when
   coverage dates are not `Date`s, and warns about patients missing from the

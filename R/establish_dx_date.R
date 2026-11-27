@@ -1,14 +1,26 @@
 #' Establish date a diagnosis is made
 #'
-#' Given a data frame of claims created with a `get_*_ICD` command, this function
-#' will keep the date of either the second outpatient or
-#' first inpatient claim with that code, using the `HCFASAF` variable to classify claims as outpatient
-#' or inpatient.
-#'
+#' Given a data frame of claims created with a `get_*_ICD` command, this
+#' function finds, for each patient, the claim that establishes the
+#' diagnosis: the first inpatient claim, or the second claim of any other
+#' type, using the `HCFASAF` variable to classify claims as inpatient or
+#' not. Patients whose claims never meet that rule are dropped.
 #'
 #' @param df data frame of claims created by a `get_*_ICD` function
 #' @param diagnosis_established A string stored in the `diagnosis` column of
 #'   the result, naming the diagnosis being dated (for example `"cryptococcus"`).
+#' @param date_as Which date to return. `"confirming"` (the default) is the
+#'   date of the claim that establishes the diagnosis: the inpatient claim, or
+#'   the second other claim. `"first"` is the date of the patient's earliest
+#'   claim within `window_days` before that confirming claim, so with the
+#'   default window it is the patient's first claim with the code.
+#' @param window_days The largest number of days between a claim of another
+#'   type and the claim before it for the pair to establish the diagnosis.
+#'   `Inf` (the default) sets no limit. An inpatient claim establishes the
+#'   diagnosis on its own, whatever the window.
+#' @param inpatient_types Values of `HCFASAF` that count as inpatient claims.
+#'   The default includes `"Inpatient (REBUS)"`, code `M` in older files,
+#'   which Appendix C 2025 (`$HCFASAF.`) describes as an inpatient stay.
 #'
 #' @return A data frame filtered to keep the claim which establishes that a diagnosis has been made
 #' @export
@@ -37,19 +49,56 @@
 #' establish_dx_date(result)
 #' }
 
-establish_dx_date <- function(df, diagnosis_established = "diagnosis") {
+establish_dx_date <- function(
+  df,
+  diagnosis_established = "diagnosis",
+  date_as = c("confirming", "first"),
+  window_days = Inf,
+  inpatient_types = c("Inpatient", "Inpatient (REBUS)")
+) {
+  date_as <- rlang::arg_match(date_as)
+  if (
+    !is.numeric(window_days) ||
+      length(window_days) != 1 ||
+      is.na(window_days) ||
+      window_days < 0
+  ) {
+    cli::cli_abort(
+      "{.arg window_days} must be a single number of days, 0 or more, or {.code Inf}."
+    )
+  }
+  if (!is.character(inpatient_types)) {
+    cli::cli_abort("{.arg inpatient_types} must be a character vector.")
+  }
+
   df |>
     dplyr::arrange(.data$USRDS_ID, .data$CLM_FROM) |>
-    dplyr::mutate(claim_value = ifelse(.data$HCFASAF == "Inpatient", 2, 1)) |>
     dplyr::group_by(.data$USRDS_ID) |>
-    dplyr::mutate(cum_sum_claims = cumsum(.data$claim_value)) |>
-    dplyr::filter(.data$cum_sum_claims > 1) |>
-    dplyr::slice(1) |>
-    dplyr::ungroup() |>
-    dplyr::select(-"cum_sum_claims", -"claim_value") |>
+    dplyr::mutate(
+      # A claim confirms the diagnosis if it is inpatient, or if the claim
+      # before it is within window_days.
+      confirms = as.character(.data$HCFASAF) %in% .env$inpatient_types |
+        (!is.na(dplyr::lag(.data$CLM_FROM)) &
+          as.numeric(.data$CLM_FROM - dplyr::lag(.data$CLM_FROM)) <=
+            .env$window_days),
+      confirming_date = .data$CLM_FROM[which(.data$confirms)[1]]
+    ) |>
+    dplyr::filter(
+      !is.na(.data$confirming_date),
+      as.numeric(.data$confirming_date - .data$CLM_FROM) <= .env$window_days,
+      .data$CLM_FROM <= .data$confirming_date
+    ) |>
+    dplyr::summarise(
+      date_established = if (.env$date_as == "first") {
+        min(.data$CLM_FROM)
+      } else {
+        .data$confirming_date[1]
+      },
+      .groups = "drop"
+    ) |>
     dplyr::transmute(
       USRDS_ID = .data$USRDS_ID,
       diagnosis = .env$diagnosis_established,
-      date_established = .data$CLM_FROM
+      date_established = .data$date_established
     )
 }

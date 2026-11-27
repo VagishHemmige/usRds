@@ -34,3 +34,78 @@ test_that("establish_dx_date() labels with the argument, not a data column of th
 
   expect_equal(result$diagnosis, "diabetes")
 })
+
+test_that("establish_dx_date() counts REBUS inpatient stays as inpatient (#4)", {
+  claims <- data.frame(
+    USRDS_ID = 1,
+    CLM_FROM = as.Date("2005-03-01"),
+    HCFASAF = factor("Inpatient (REBUS)")
+  )
+
+  expect_equal(establish_dx_date(claims)$date_established, as.Date("2005-03-01"))
+  expect_equal(
+    nrow(establish_dx_date(claims, inpatient_types = "Inpatient")),
+    0
+  )
+})
+
+test_that("establish_dx_date(window_days =) needs two other claims close together (#4)", {
+  # Patient 1: claims 100 days apart, then a third 20 days later.
+  # Patient 2: claims 100 days apart only.
+  claims <- data.frame(
+    USRDS_ID = c(1, 1, 1, 2, 2),
+    CLM_FROM = as.Date("2010-01-01") + c(0, 100, 120, 0, 100),
+    HCFASAF = "Physician/Supplier"
+  )
+
+  no_window <- establish_dx_date(claims)
+  windowed <- establish_dx_date(claims, window_days = 30)
+
+  expect_equal(no_window$date_established, as.Date("2010-01-01") + c(100, 100))
+  expect_equal(windowed$USRDS_ID, 1)
+  expect_equal(windowed$date_established, as.Date("2010-01-01") + 120)
+})
+
+test_that("establish_dx_date(date_as = \"first\") dates the earliest claim in the window (#4)", {
+  # Patient 1: two outpatient claims; patient 2: an outpatient claim, then an
+  # inpatient claim; patient 3: an old claim outside the window, then a pair.
+  claims <- data.frame(
+    USRDS_ID = c(1, 1, 2, 2, 3, 3, 3),
+    CLM_FROM = as.Date("2010-01-01") + c(0, 10, 0, 5, 0, 200, 210),
+    HCFASAF = c(
+      "Outpatient", "Outpatient",
+      "Outpatient", "Inpatient",
+      "Outpatient", "Outpatient", "Outpatient"
+    )
+  )
+
+  confirming <- establish_dx_date(claims, window_days = 30)
+  first <- establish_dx_date(claims, date_as = "first", window_days = 30)
+
+  expect_equal(confirming$date_established, as.Date("2010-01-01") + c(10, 5, 210))
+  expect_equal(first$date_established, as.Date("2010-01-01") + c(0, 0, 200))
+})
+
+test_that("establish_dx_date() keeps today's dates by default (#4)", {
+  claims <- data.frame(
+    USRDS_ID = c(1, 1, 1, 2),
+    CLM_FROM = as.Date("2010-01-01") + c(0, 400, 800, 0),
+    HCFASAF = c("Outpatient", "Outpatient", "Inpatient", "Physician/Supplier")
+  )
+
+  expect_equal(
+    establish_dx_date(claims)$date_established,
+    as.Date("2010-01-01") + 400
+  )
+})
+
+test_that("establish_dx_date() checks its options (#4)", {
+  claims <- data.frame(
+    USRDS_ID = 1,
+    CLM_FROM = as.Date("2010-01-01"),
+    HCFASAF = "Inpatient"
+  )
+
+  expect_snapshot(error = TRUE, establish_dx_date(claims, window_days = -1))
+  expect_snapshot(error = TRUE, establish_dx_date(claims, date_as = "last"))
+})

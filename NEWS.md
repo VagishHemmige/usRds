@@ -17,6 +17,10 @@
   like USRDS data (data file types, USRDS file names, `USRDS_ID` columns), by
   path only, checking the files git would commit (#49).
 
+* New `claims_followup_end()` finds the last day of claims-based follow-up:
+  the earliest of death, the end of Medicare-primary coverage, the date the
+  claims are complete to, a study end date and a maximum length (#23).
+
 * `get_IN_REV_costs()` returns `CLM_THRU`, `REV_DT` and the revenue center
   `CODE`, so its output can be prorated, and drops revenue center `0001`
   total lines by default (`drop_total_lines`), which counted each claim twice

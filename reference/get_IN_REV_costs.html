@@ -48,7 +48,7 @@ Handles CSV, SAS, and Parquet formats.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_IN_REV_costs</span><span class="op">(</span><span class="va">years</span>, usrds_ids <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_IN_REV_costs</span><span class="op">(</span><span class="va">years</span>, usrds_ids <span class="op">=</span> <span class="cn">NULL</span>, drop_total_lines <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -62,21 +62,35 @@ Handles CSV, SAS, and Parquet formats.</p>
 <dt id="arg-usrds-ids">usrds_ids<a class="anchor" aria-label="anchor" href="#arg-usrds-ids"></a></dt>
 <dd><p>Optional vector of USRDS_IDs to filter to specific patients.</p></dd>
 
+
+<dt id="arg-drop-total-lines">drop_total_lines<a class="anchor" aria-label="anchor" href="#arg-drop-total-lines"></a></dt>
+<dd><p>If <code>TRUE</code> (the default), drop lines with revenue
+center code <code>0001</code>. The 2025 Researcher's Guide (Section 5,
+"Institutional Claims Details and Revenue Center Details") reports that
+the <code>0001</code> line's <code>REV_CH</code> is the sum of the claim's other lines'
+<code>REV_CH</code>, so keeping it counts the charges twice. The Guide does not
+describe <code>REVPMT</code> on that line; dropping the line removes its <code>REVPMT</code>
+too. Lines whose code is missing are kept. In files that have <code>CDTYPE</code>
+(det files before 2008, which also hold diagnosis and procedure lines),
+only revenue center lines (<code>CDTYPE</code> <code>"R"</code>) are dropped or have their
+codes padded; the other lines, including those with a missing or blank
+<code>CDTYPE</code>, are returned unchanged for now.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A data frame with one row per revenue center line and columns
-<code>USRDS_ID</code>, <code>CLM_FROM</code> (Date), <code>REV_CH</code> (revenue center total charge),
-<code>REVPMT</code> (revenue center payment amount) and <code>HCFASAF</code> (claim type, as a
-factor). Descriptions are from Appendix B of the 2025 Researcher's Guide
-(for example table <code>OP_DET_2023</code>).</p>
-<p>It has no <code>CLM_THRU</code>, so it cannot go straight into
-<code><a href="prorate_costs_by_day.html">prorate_costs_by_day()</a></code> (GitHub #66). It also has no revenue center
-code. The 2025 Researcher's Guide (Section 5, "Institutional Claims
-Details and Revenue Center Details") warns that revenue center code
-<code>0001</code> holds the sum of the claim's other lines, so totals of <code>REV_CH</code>
-may count charges twice where those lines are present. Do not add these
-amounts to claim totals from <code><a href="get_IN_CLM_costs.html">get_IN_CLM_costs()</a></code> for the same claims.</p>
+<code>USRDS_ID</code>, <code>CLM_FROM</code> and <code>CLM_THRU</code> (claim from and through dates),
+<code>REV_DT</code> (revenue center date), <code>CODE</code> (revenue center code, as text with
+its leading zeros), <code>REV_CH</code> (revenue center total charge), <code>REVPMT</code>
+(revenue center payment amount) and <code>HCFASAF</code> (claim type, as a factor).
+Dates are of class <code>Date</code>. Descriptions are from Appendix B of the 2025
+Researcher's Guide (for example table <code>OP_DET_2023</code>). A column a file
+does not have is <code>NA</code> for that file's lines. Dates stored as text that
+cannot be read become <code>NA</code>, with a warning naming the file and column.</p>
+<p>With <code>CLM_FROM</code> and <code>CLM_THRU</code>, the result can go straight into
+<code><a href="prorate_costs_by_day.html">prorate_costs_by_day()</a></code>. Do not add these amounts to claim totals from
+<code><a href="get_IN_CLM_costs.html">get_IN_CLM_costs()</a></code> for the same claims.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>

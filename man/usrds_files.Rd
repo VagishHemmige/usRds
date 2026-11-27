@@ -5,7 +5,8 @@
 \title{List the USRDS files mapped by \code{set_USRDS_wd()}}
 \usage{
 usrds_files(
-  which = c("mapped", "other_formats", "unrecognised", "unread_duplicates", "incomplete")
+  which = c("mapped", "other_formats", "unrecognised", "unread_duplicates", "incomplete",
+    "duplicates", "excluded")
 )
 }
 \arguments{
@@ -21,10 +22,24 @@ would never be read.
 is not being read.
 \item \code{"incomplete"}: years where only part of a claim-file group is present,
 with the missing files in the \code{missing} list column.
-}}
+\item \code{"duplicates"}: every copy of a file that has more than one copy in
+the format being read, one row per copy. These stop
+\code{\link[=set_USRDS_wd]{set_USRDS_wd()}}; move the extra copies or skip their folders with
+\code{exclude}.
+\item \code{"excluded"}: files skipped because they sit in a folder named in
+\code{exclude}.
+}
+
+\code{"unrecognised"}, \code{"duplicates"} and \code{"excluded"} describe the latest
+scan even when it stopped with an error, so you can see why. After a stop
+on same-format copies, no files are mapped and the other lists are not
+available. After a stop on an incomplete claim-file group
+(\code{on_incomplete = "error"}), the files found are still mapped and can be
+read, so check \code{usrds_files("incomplete")} before using them.}
 }
 \value{
-A tibble.
+A tibble. Paths in \code{relative_path} are relative to the USRDS
+folder.
 }
 \description{
 Returns what \code{\link[=set_USRDS_wd]{set_USRDS_wd()}} found when it last mapped the USRDS folder:
@@ -35,5 +50,6 @@ the files the package reads, and the files it set aside or flagged.
 set_USRDS_wd("C:/Data/USRDS")
 usrds_files()
 usrds_files("unrecognised")
+usrds_files("duplicates")
 }
 }

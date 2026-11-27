@@ -14,8 +14,13 @@ get_IN_REV_costs(years, usrds_ids = NULL, drop_total_lines = TRUE)
 \item{drop_total_lines}{If \code{TRUE} (the default), drop lines with revenue
 center code \code{0001}. The 2025 Researcher's Guide (Section 5,
 "Institutional Claims Details and Revenue Center Details") reports that
-the \code{0001} line holds the sum of the claim's other lines, so keeping it
-counts the claim twice. Lines whose code is missing are kept.}
+the \code{0001} line's \code{REV_CH} is the sum of the claim's other lines'
+\code{REV_CH}, so keeping it counts the charges twice. The Guide does not
+describe \code{REVPMT} on that line; dropping the line removes its \code{REVPMT}
+too. Lines whose code is missing are kept. In files that have \code{CDTYPE}
+(det files before 2008, which also hold diagnosis and procedure lines),
+only revenue center lines (\code{CDTYPE} \code{"R"}) are dropped or have their
+codes padded; the other lines are returned unchanged for now.}
 }
 \value{
 A data frame with one row per revenue center line and columns

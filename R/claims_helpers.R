@@ -93,9 +93,9 @@
 #' `det2007` files. A schema report on the maintainer's files (2026-11-22,
 #' codes only) found `M` and `Q` in the older institutional files and `P`
 #' only in physician/supplier files, so the map follows Appendix C and keeps
-#' `P` as Physician/Supplier, as all eight extractors did before. A
-#' different meaning of `P` in some release would need a layout-specific
-#' map.
+#' `P` as Physician/Supplier, as seven of the eight extractors did before
+#' (`get_IN_CLM_costs()` had no `P` level). A different meaning of `P` in
+#' some release would need a layout-specific map.
 #'
 #' @param code Claim type codes.
 #' @noRd

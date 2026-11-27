@@ -6,6 +6,13 @@
   changes are described in the pull requests on GitHub
   (<https://github.com/VagishHemmige/usRds/pulls?q=is%3Apr+is%3Amerged>).
 
+- Claim extractors label `HCFASAF` code `E` as “Durable Medical
+  Equipment”; it used to become `NA`, and
+  [`establish_dx_date()`](https://vagishhemmige.github.io/usRds/reference/establish_dx_date.md)
+  then dropped those claims. Code `Q` is now “Quarterly dialysis
+  (PMMIS)”, as in Appendix C, and unknown codes give a warning
+  ([\#27](https://github.com/VagishHemmige/usRds/issues/27)).
+
 - [`adjust_costs_for_inflation()`](https://vagishhemmige.github.io/usRds/reference/adjust_costs_for_inflation.md)
   now finds the CPI for each claim’s month in any locale; in a
   non-English session every `_ADJUSTED` amount used to be `NA`

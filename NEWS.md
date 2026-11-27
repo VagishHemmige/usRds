@@ -21,6 +21,11 @@
   the earliest of death, the end of Medicare-primary coverage, the date the
   claims are complete to, a study end date and a maximum length (#23).
 
+* `get_IN_REV_costs()` returns `CLM_THRU`, `REV_DT` and the revenue center
+  `CODE`, so its output can be prorated, and drops revenue center `0001`
+  total lines by default (`drop_total_lines`), which counted each claim twice
+  (#112, #66).
+
 * `get_PS_CLM_costs(remove_missing_values = TRUE)` now drops claims with a
   missing `CLM_PMT_AMT`; the argument had no effect before (#54).
 

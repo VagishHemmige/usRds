@@ -278,15 +278,17 @@ test_that("get_IN_REV_costs() leaves diagnosis and procedure lines of mixed det 
     HCFASAF = "O",
     CLM_FROM = "01JAN2007",
     CLM_THRU = "03JAN2007",
-    CDTYPE = c("R", "R", "R", "I"),
-    CODE = c("300", "636", "1", "0001"),
-    REV_CH = c(120, 80, 200, NA),
-    REVPMT = c(60, 40, 100, NA)
+    CDTYPE = c("R", "R", "R", "I", NA, ""),
+    CODE = c("300", "636", "1", "0001", "1", "1"),
+    REV_CH = c(120, 80, 200, NA, 5, 5),
+    REVPMT = c(60, 40, 100, NA, 5, 5)
   )
   local_cost_csv("rev2010a", 2010, rows)
 
-  result <- suppressMessages(get_IN_REV_costs(years = 2010))
+  dropped <- suppressMessages(get_IN_REV_costs(years = 2010))
+  kept <- suppressMessages(get_IN_REV_costs(years = 2010, drop_total_lines = FALSE))
 
-  expect_equal(result$CODE, c("0300", "0636", "0001"), ignore_attr = "label")
-  expect_false("CDTYPE" %in% names(result))
+  expect_equal(dropped$CODE, c("0300", "0636", "0001", "1", "1"), ignore_attr = "label")
+  expect_equal(kept$CODE, c("0300", "0636", "0001", "0001", "1", "1"), ignore_attr = "label")
+  expect_false("CDTYPE" %in% names(dropped))
 })

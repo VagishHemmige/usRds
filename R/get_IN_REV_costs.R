@@ -63,8 +63,8 @@
 # Before 2008 the det files mix revenue center lines (CDTYPE "R") with
 # diagnosis and procedure lines, whose CODE is an ICD code (Researcher's
 # Guide 2025, Section 5, "CDTYPE and CODE Variables"). Only revenue center
-# lines, or lines in files without CDTYPE, are padded and can be dropped as
-# 0001 totals; `.usrds_revenue_line` marks them until the lines are bound.
+# lines (CDTYPE "R"), or all lines of files without CDTYPE, are padded and
+# can be dropped as 0001 totals; `.usrds_revenue_line` marks them until the lines are bound.
 .standardise_revenue_lines <- function(file_data, file_path) {
   file_data <- .parse_claim_dates(
     file_data,
@@ -79,12 +79,13 @@
   if (!"CODE" %in% names(file_data)) {
     file_data$CODE <- NA_character_
   }
-  cdtype <- if ("CDTYPE" %in% names(file_data)) {
-    trimws(as.character(file_data$CDTYPE))
+  # In a file with CDTYPE, a line whose type is missing or blank is left
+  # alone, since its CODE may not be a revenue center code.
+  revenue_line <- if ("CDTYPE" %in% names(file_data)) {
+    trimws(as.character(file_data$CDTYPE)) %in% "R"
   } else {
-    rep(NA_character_, nrow(file_data))
+    rep(TRUE, nrow(file_data))
   }
-  revenue_line <- is.na(cdtype) | cdtype %in% c("", "R")
   file_data$CODE <- as.character(file_data$CODE)
   file_data$CODE[revenue_line] <- .pad_revenue_code(file_data$CODE[revenue_line])
   file_data$.usrds_revenue_line <- revenue_line
@@ -122,7 +123,8 @@
 #'   too. Lines whose code is missing are kept. In files that have `CDTYPE`
 #'   (det files before 2008, which also hold diagnosis and procedure lines),
 #'   only revenue center lines (`CDTYPE` `"R"`) are dropped or have their
-#'   codes padded; the other lines are returned unchanged for now.
+#'   codes padded; the other lines, including those with a missing or blank
+#'   `CDTYPE`, are returned unchanged for now.
 #'
 #' @return A data frame with one row per revenue center line and columns
 #'   `USRDS_ID`, `CLM_FROM` and `CLM_THRU` (claim from and through dates),

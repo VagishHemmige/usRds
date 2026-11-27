@@ -1,7 +1,7 @@
 Package: usRds
 Type: Package
 Title: Load, Label and Analyze United States Renal Data System Files
-Version: 0.1.0
+Version: 0.1.0.9000
 Authors@R: 
     c(
         person("Vagish", "Hemmige", email = "vagish.hemmige@gmail.com", role = c("aut", "cre", "cph"),

@@ -86,12 +86,16 @@
 #' S hospice. Codes not in that list become `NA` with a warning, so claims
 #' are not dropped downstream without notice (#27).
 #'
-#' The map is for the 2002-and-later claim layouts the extractors read (their
-#' lookup tables start in 2006 or later). In the 2001-and-earlier
-#' institutional files, the Researcher's Guide 2025 (Section 5, Table 10)
-#' lists `P` as quarterly dialysis records; this map labels `P`
-#' Physician/Supplier, as all eight extractors did before. Reading those
-#' older files would need a layout-specific map.
+#' The Researcher's Guide 2025 (Section 5, Table 10) also lists `P` as
+#' "Quarterly Dialysis Records" for institutional files, while Appendix C
+#' 2025 gives `P` as physician/supplier and `Q` as PMMIS quarterly dialysis.
+#' The extractors read 2006 onward, including the combined `det2006`/
+#' `det2007` files. A schema report on the maintainer's files (2026-11-22,
+#' codes only) found `M` and `Q` in the older institutional files and `P`
+#' only in physician/supplier files, so the map follows Appendix C and keeps
+#' `P` as Physician/Supplier, as all eight extractors did before. A
+#' different meaning of `P` in some release would need a layout-specific
+#' map.
 #'
 #' @param code Claim type codes.
 #' @noRd

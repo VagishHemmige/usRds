@@ -14,3 +14,8 @@
 
 - [Data protection and
   security](https://vagishhemmige.github.io/usRds/articles/data-protection.md):
+
+### Working with cost variables
+
+- [Working with cost
+  variables](https://vagishhemmige.github.io/usRds/articles/costs.md):

@@ -31,8 +31,11 @@ the format being read, one row per copy. These stop
 }
 
 \code{"unrecognised"}, \code{"duplicates"} and \code{"excluded"} describe the latest
-scan even when it stopped with an error, so you can see why. The other
-lists need a successful scan.}
+scan even when it stopped with an error, so you can see why. After a stop
+on same-format copies, no files are mapped and the other lists are not
+available. After a stop on an incomplete claim-file group
+(\code{on_incomplete = "error"}), the files found are still mapped and can be
+read, so check \code{usrds_files("incomplete")} before using them.}
 }
 \value{
 A tibble. Paths in \code{relative_path} are relative to the USRDS

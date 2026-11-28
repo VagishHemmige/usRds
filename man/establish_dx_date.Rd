@@ -9,7 +9,9 @@ establish_dx_date(
   diagnosis_established = "diagnosis",
   date_as = c("confirming", "first"),
   window_days = Inf,
-  inpatient_types = c("Inpatient", "Inpatient (REBUS)")
+  inpatient_types = c("Inpatient", "Inpatient (REBUS)"),
+  count_by = c("days", "rows"),
+  on_missing_date = c("warn", "error", "ignore")
 )
 }
 \arguments{
@@ -28,11 +30,25 @@ default window it is the patient's first claim with the code.}
 \item{window_days}{The largest number of days between a claim of another
 type and the claim before it for the pair to establish the diagnosis.
 \code{Inf} (the default) sets no limit. An inpatient claim establishes the
-diagnosis on its own, whatever the window.}
+diagnosis on its own, whatever the window. With \code{count_by = "days"}, two
+days are at least 1 day apart, so \code{window_days = 0} lets only inpatient
+claims establish the diagnosis.}
 
 \item{inpatient_types}{Values of \code{HCFASAF} that count as inpatient claims.
 The default includes \code{"Inpatient (REBUS)"}, code \code{M} in older files,
 which Appendix C 2025 (\verb{$HCFASAF.}) describes as an inpatient stay.}
+
+\item{count_by}{How claims of other types are counted. \code{"days"} (the
+default) counts distinct \code{CLM_FROM} dates, so the second claim must be on
+a later day, and \code{window_days} is the gap between two consecutive days
+with a claim. \code{"rows"} counts every row, so two rows on the same day
+establish the diagnosis.}
+
+\item{on_missing_date}{What to do with claims whose \code{CLM_FROM} is missing.
+They are always left out, because they cannot be placed in time.
+\code{"warn"} (the default) says how many were left out and how many patients
+with such a claim got no diagnosis date; \code{"error"} stops instead;
+\code{"ignore"} leaves them out silently.}
 }
 \value{
 A data frame filtered to keep the claim which establishes that a diagnosis has been made
@@ -40,9 +56,22 @@ A data frame filtered to keep the claim which establishes that a diagnosis has b
 \description{
 Given a data frame of claims created with a \verb{get_*_ICD} command, this
 function finds, for each patient, the claim that establishes the
-diagnosis: the first inpatient claim, or the second claim of any other
-type, using the \code{HCFASAF} variable to classify claims as inpatient or
-not. Patients whose claims never meet that rule are dropped.
+diagnosis: the first inpatient claim, or a claim of any other type on a
+second, later day, using the \code{HCFASAF} variable to classify claims as
+inpatient or not. Patients whose claims never meet that rule are dropped.
+}
+\details{
+By default, rows on the same day count once, so several rows from one
+visit (diagnosis positions or line items) cannot meet the two-claim rule
+on their own. This follows the rule of one inpatient claim or two
+outpatient claims on separate dates (Naik et al. 2016,
+\doi{10.1111/tri.12711}). \code{count_by = "rows"} counts every row, as
+this function did before the option was added.
+
+With \code{date_as = "first"} and the default \code{window_days = Inf}, the date
+returned can be a claim recorded years before the claim that confirms the
+diagnosis. Set a finite \code{window_days} when dating the diagnosis at the
+first claim.
 }
 \examples{
 # Made-up claims: patient 1 has two outpatient claims, patient 2 one

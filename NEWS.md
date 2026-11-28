@@ -21,6 +21,11 @@
   the earliest of death, the end of Medicare-primary coverage, the date the
   claims are complete to, a study end date and a maximum length (#23).
 
+* `establish_dx_date()` now needs two non-inpatient claims on different days:
+  several rows from one day count once. `count_by = "rows"` restores the old
+  count. Claims with a missing `CLM_FROM` are left out with a warning that
+  counts them and the patients they affect (`on_missing_date`) (#4).
+
 * `establish_dx_date()` gains `date_as` (date the diagnosis at the
   confirming claim, as before, or at the first claim), `window_days` (largest
   gap between two non-inpatient claims) and `inpatient_types`. REBUS
